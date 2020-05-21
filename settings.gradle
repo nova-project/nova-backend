@@ -1,0 +1,3 @@
+rootProject.name = 'nova-backend'
+include 'nova-bootstrap'
+

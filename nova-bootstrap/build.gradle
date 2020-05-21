@@ -1,0 +1,10 @@
+plugins {
+    id 'application'
+}
+
+application {
+    mainClassName = 'net.nova_project.backend.Bootstrap'
+}
+
+dependencies {
+}
