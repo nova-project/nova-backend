@@ -32,17 +32,19 @@ subprojects {
         withSourcesJar()
     }
 
+    github {
+        slug = 'nova-project/nova-backend'
+        username = findProperty('github.username') ?: System.getenv('GITHUB_PACKAGES_USERNAME')
+        token = findProperty('github.token') ?: System.getenv('GITHUB_PACKAGES_TOKEN')
+        travis = false
+    }
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
                 from components.java
             }
         }
-    }
-
-    github {
-        username = findProperty('github.username') ?: System.getenv("GITHUB_PACKAGES_USERNAME")
-        token = findProperty('github.token') ?: System.getenv("GITHUB_PACKAGES_TOKEN")
     }
 
     javadoc {
