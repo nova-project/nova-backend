@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"net.nova_project.backend","l":"Bootstrap"},{"p":"net.nova_project.backend","l":"Nova"}]
