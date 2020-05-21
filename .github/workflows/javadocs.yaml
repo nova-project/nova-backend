@@ -1,4 +1,4 @@
-name: Docker Push
+name: JavaDocs
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
       - v*
 
 jobs:
-  push:
+  docs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
 
@@ -33,10 +33,11 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew installDist
+      - name: Build JavaDocs with Gradle
+        run: ./gradlew aggregateJavadoc
 
       - name: generate version
+        id: version
         run: |
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
@@ -47,7 +48,7 @@ jobs:
           # Use Docker `latest` tag convention
           [ "$VERSION" == "master" ] && VERSION=latest
 
-          echo VERSION=$VERSION
+          echo "::set-output name=version::$VERSION"
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v3
@@ -55,8 +56,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           BRANCH: gh-pages
           FOLDER: build/docs/aggregateJavadoc
-          DEBUG: false
-          TARGET_FOLDER: "$VERSION"
+          TARGET_FOLDER: ${{ steps.version.outputs.version }}
           CLEAN: true
           GIT_CONFIG_NAME: GitHub Actions
           GIT_CONFIG_EMAIL: actions@github.com
