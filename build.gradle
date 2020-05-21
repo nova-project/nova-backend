@@ -41,8 +41,8 @@ subprojects {
     }
 
     github {
-        username = findProperty('github.username') ?: System.getenv("GITHUB_ACTOR")
-        token = findProperty('github.token') ?: System.getenv("GITHUB_TOKEN")
+        username = findProperty('github.username') ?: System.getenv("GITHUB_PACKAGES_USERNAME")
+        token = findProperty('github.token') ?: System.getenv("GITHUB_PACKAGES_TOKEN")
     }
 
     javadoc {
