@@ -1,8 +1,6 @@
 plugins {
     id 'io.freefair.lombok' version '5.1.0' apply false
     id 'io.freefair.git-version' version '5.1.0'
-    id 'io.freefair.github.base' version '5.1.0'
-    id 'io.freefair.github.pom' version '5.1.0' apply false
     id 'io.freefair.github.package-registry-maven-publish' version '5.1.0' apply false
     id 'io.freefair.aggregate-javadoc' version '5.1.0'
 }
@@ -11,13 +9,14 @@ allprojects {
     group 'net.nova-project.backend'
 }
 
-version = version.toString().startsWith("v") ? version.toString().substring(1) : version;
+version = version.toString().startsWith('v') ? version.toString().substring(1) : version;
 
 subprojects {
     apply plugin: 'java'
+    if (project.name != 'nova-bootstrap') apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
-    apply plugin: 'io.freefair.github.pom'
+    apply plugin: 'io.freefair.lombok'
     apply plugin: 'io.freefair.github.package-registry-maven-publish'
 
     repositories {
@@ -54,5 +53,9 @@ subprojects {
         if (JavaVersion.current().isJava9Compatible()) {
             options.addBooleanOption('html5', true)
         }
+    }
+
+    lombok {
+        config.put('lombok.equalsandhashcode.callsuper', 'CALL')
     }
 }

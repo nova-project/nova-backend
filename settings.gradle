@@ -1,3 +1,4 @@
 rootProject.name = 'nova-backend'
 include 'nova-bootstrap'
+include 'nova-logging'
 
