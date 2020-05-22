@@ -27,6 +27,7 @@ subprojects {
     targetCompatibility = JavaVersion.VERSION_14
 
     dependencies {
+        if (project.name != 'nova-logging') implementation project(':nova-logging')
     }
 
     java {
