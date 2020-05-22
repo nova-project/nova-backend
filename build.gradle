@@ -3,13 +3,16 @@ plugins {
     id 'io.freefair.git-version' version '5.1.0'
     id 'io.freefair.github.package-registry-maven-publish' version '5.1.0' apply false
     id 'io.freefair.aggregate-javadoc' version '5.1.0'
+    id 'maven-publish'
 }
 
 allprojects {
     group 'net.nova-project.backend'
 }
 
-version = version.toString().startsWith('v') ? version.toString().substring(1) : version;
+version version.toString().startsWith('v') ? version.toString().substring(1) : version;
+version version.toString() == "master-SNAPSHOT" ? 'development' : version;
+def targetVersion = version
 
 subprojects {
     apply plugin: 'java'
@@ -46,6 +49,7 @@ subprojects {
         publications {
             mavenJava(MavenPublication) {
                 from components.java
+                version = targetVersion
             }
         }
     }
