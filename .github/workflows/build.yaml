@@ -26,7 +26,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew installDist
+        run: ./gradlew check installDist
 
       - uses: actions/upload-artifact@v2
         with:

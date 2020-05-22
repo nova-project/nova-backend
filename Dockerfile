@@ -6,7 +6,7 @@ COPY . /nova-backend
 RUN apt update \
   && apt install git -y \
   && chmod +x ./gradlew \
-  && ./gradlew installDist
+  && ./gradlew check installDist
 
 FROM adoptopenjdk:14-jdk-hotspot-bionic
 
