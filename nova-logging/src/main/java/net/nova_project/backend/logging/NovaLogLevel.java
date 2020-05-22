@@ -8,14 +8,14 @@ import org.apache.logging.log4j.Level;
 /**
  * Levels used for identifying the severity of an event. Levels are organized from most specific to least:
  * <ul>
- * <li>{@link NovaLogLevel#OFF} (most specific, no logging)</li>
- * <li>{@link NovaLogLevel#FATAL} (most specific, little data)</li>
- * <li>{@link NovaLogLevel#ERROR}</li>
- * <li>{@link NovaLogLevel#WARN}</li>
- * <li>{@link NovaLogLevel#INFO}</li>
- * <li>{@link NovaLogLevel#DEBUG}</li>
- * <li>{@link NovaLogLevel#TRACE} (least specific, a lot of data)</li>
- * <li>{@link NovaLogLevel#ALL} (least specific, all data)</li>
+ *   <li>{@link NovaLogLevel#OFF} (most specific, no logging)</li>
+ *   <li>{@link NovaLogLevel#FATAL} (most specific, little data)</li>
+ *   <li>{@link NovaLogLevel#ERROR}</li>
+ *   <li>{@link NovaLogLevel#WARN}</li>
+ *   <li>{@link NovaLogLevel#INFO}</li>
+ *   <li>{@link NovaLogLevel#DEBUG}</li>
+ *   <li>{@link NovaLogLevel#TRACE} (least specific, a lot of data)</li>
+ *   <li>{@link NovaLogLevel#ALL} (least specific, all data)</li>
  * </ul>
  * <p>
  * Typically, configuring a level in a filter or on a logger will cause logging events of that level and those that are
@@ -67,7 +67,20 @@ public enum NovaLogLevel {
     ALL(Level.ALL);
 
     /**
-     * Holden the {@code Log4j2} version of the loglevel.
+     * Holds the {@code Log4j2} version of the loglevel.
      */
     private final Level level;
+
+    /**
+     * Gets a {@link NovaLogLevel} from the name.
+     *
+     * @param name the name of the log level
+     * @return the {@link NovaLogLevel} with the specified name
+     */
+    public static NovaLogLevel getByName(final String name) {
+        for (final NovaLogLevel level : NovaLogLevel.values()) {
+            if (level.name().equalsIgnoreCase(name)) return level;
+        }
+        return null;
+    }
 }
