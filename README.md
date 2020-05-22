@@ -1,4 +1,4 @@
-# Nova Backend
+<h1 align="center">Nova Backend</h1>
 This is the Backend of the Nova Project.
 
 ## Getting Started
