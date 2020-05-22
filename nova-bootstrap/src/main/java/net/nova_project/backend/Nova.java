@@ -8,6 +8,6 @@ public class Nova {
 
     public Nova(final String[] args) {
         NovaLogConfigurer.redirectSysLog();
-       log.info("Hello World!");
+        log.info("Hello World!");
     }
 }

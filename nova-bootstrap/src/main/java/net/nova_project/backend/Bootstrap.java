@@ -1,7 +1,5 @@
 package net.nova_project.backend;
 
-import net.nova_project.backend.logging.NovaLogConfigurer;
-
 /**
  * This is the main entry point class of the Nova Backend,
  * is contains the {@link Bootstrap#main(String[])} method,
