@@ -58,5 +58,6 @@ jobs:
           FOLDER: build/docs/aggregateJavadoc
           TARGET_FOLDER: ${{ steps.version.outputs.version }}
           CLEAN: true
+          DEBUG: true
           GIT_CONFIG_NAME: GitHub Actions
           GIT_CONFIG_EMAIL: actions@github.com
