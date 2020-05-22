@@ -2,7 +2,6 @@ package net.nova_project.backend.logging;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.LoggerConfig;
 
 import java.io.PrintStream;
 
@@ -29,8 +28,9 @@ public class NovaLogConfigurer {
      */
     public static void setLoglevel(final NovaLogLevel level) {
         final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-        final LoggerConfig loggerConfig = ctx.getConfiguration().getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
-        loggerConfig.setLevel(level.getLevel());
+        ctx.getConfiguration()
+                .getLoggerConfig(LogManager.ROOT_LOGGER_NAME)
+                .setLevel(level.getLevel());
         ctx.updateLoggers();
     }
 }

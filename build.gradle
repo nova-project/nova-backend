@@ -11,7 +11,7 @@ allprojects {
 }
 
 version version.toString().startsWith('v') ? version.toString().substring(1) : version;
-version version.toString() == "master-SNAPSHOT" ? 'development' : version;
+version version.toString() == 'master-SNAPSHOT' ? 'development' : version;
 def targetVersion = version
 
 subprojects {
@@ -31,6 +31,10 @@ subprojects {
 
     dependencies {
         if (project.name != 'nova-logging') implementation project(':nova-logging')
+
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0-M1'
+        testImplementation 'org.mockito:mockito-junit-jupiter:3.3.3'
+        testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.7.0-M1'
     }
 
     java {
@@ -62,5 +66,12 @@ subprojects {
 
     lombok {
         config.put('lombok.equalsandhashcode.callsuper', 'CALL')
+    }
+
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events 'passed', 'skipped', 'failed'
+        }
     }
 }
