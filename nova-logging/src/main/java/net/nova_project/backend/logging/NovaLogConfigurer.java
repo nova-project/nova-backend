@@ -10,7 +10,11 @@ import java.io.PrintStream;
  *
  * @see NovaLogLevel
  */
-public class NovaLogConfigurer {
+public final class NovaLogConfigurer {
+
+    private NovaLogConfigurer() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Configure redirects for {@link System#out} and {@link System#err} to the logger.

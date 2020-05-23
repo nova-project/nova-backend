@@ -30,15 +30,15 @@ class NovaLogOutputStream extends OutputStream {
      * all contents in which it is written to a logger.
      *
      * @param name     the name for the new created logger
-     * @param level    the {@link NovaLogLevel} in witch the content from
+     * @param logLevel the {@link NovaLogLevel} in witch the content from
      *                 the stream should be logged.
      * @param original the origin {@link PrintStream} e.g. {@link System#out} or {@link System#err}.
      *                 Its used to print exceptions without the logger prefix. ([timestamp] [thread] ...)
      *                 Set this to {@code null} to disable this feature.
      */
-    NovaLogOutputStream(final String name, final NovaLogLevel level, final PrintStream original) {
+    NovaLogOutputStream(final String name, final NovaLogLevel logLevel, final PrintStream original) {
         this.logger = LogManager.getLogger(name);
-        this.level = level.getLevel();
+        this.level = logLevel.getLevel();
         this.original = original;
         this.memory = "";
     }

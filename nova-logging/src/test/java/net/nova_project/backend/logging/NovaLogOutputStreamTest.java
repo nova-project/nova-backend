@@ -1,9 +1,9 @@
 package net.nova_project.backend.logging;
 
+import net.nova_project.backend.tests.RefectionUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,10 +29,6 @@ class NovaLogOutputStreamTest {
 //    }
 
     private String getMemory(final NovaLogOutputStream logOutputStream) throws NoSuchFieldException, IllegalAccessException {
-        final Field memoryField = NovaLogOutputStream.class.getDeclaredField("memory");
-        memoryField.setAccessible(true);
-        final String memory = (String) memoryField.get(logOutputStream);
-        memoryField.setAccessible(false);
-        return memory;
+        return (String) RefectionUtils.getFieldValue(logOutputStream, "memory");
     }
 }

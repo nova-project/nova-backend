@@ -1,5 +1,6 @@
 package net.nova_project.backend.logging;
 
+import net.nova_project.backend.tests.RefectionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -10,6 +11,11 @@ import java.io.PrintStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NovaLogConfigurerTest {
+
+    @Test
+    void testConstructor() throws IllegalAccessException, InstantiationException {
+        assertTrue(RefectionUtils.checkPrivateUnsupportedOperationConstructor(NovaLogConfigurer.class));
+    }
 
     @Test
     void redirectSysLog() {

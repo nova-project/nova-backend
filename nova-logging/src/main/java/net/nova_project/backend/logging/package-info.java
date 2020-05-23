@@ -1,5 +1,5 @@
 /**
- * Logging tools for the Nova Backend
+ * This package contains logging tools for the nova backend.
  *
  * @see net.nova_project.backend.logging.NovaLogConfigurer
  * @see net.nova_project.backend.logging.NovaLogLevel

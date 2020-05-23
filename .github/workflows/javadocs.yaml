@@ -34,7 +34,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build JavaDocs with Gradle
-        run: ./gradlew aggregateJavadoc
+        run: ./gradlew check aggregateJavadoc
 
       - name: generate version
         id: version
