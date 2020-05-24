@@ -1,0 +1,18 @@
+apply plugin: 'java'
+if (project.name != 'nova-bootstrap') apply plugin: 'java-library'
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = JavaVersion.VERSION_14
+targetCompatibility = JavaVersion.VERSION_14
+
+dependencies {
+    if (project.name != 'nova-logging') implementation project(':nova-logging')
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}

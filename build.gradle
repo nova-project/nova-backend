@@ -1,104 +1,27 @@
 plugins {
-    id 'io.freefair.lombok' version '5.1.0' apply false
     id 'io.freefair.git-version' version '5.1.0'
-    id 'io.freefair.github.package-registry-maven-publish' version '5.1.0' apply false
     id 'io.freefair.aggregate-javadoc' version '5.1.0'
-    id 'maven-publish'
+    id 'io.freefair.lombok' version '5.1.0' apply false
+    id 'io.freefair.javadoc-utf-8' version '5.1.0'
+    id 'io.freefair.javadoc-links' version '5.1.0'
+    id 'io.freefair.aggregate-jacoco-report' version '5.1.0'
 }
 
 repositories {
     mavenCentral()
 }
 
-version version.toString().startsWith('v') ? version.toString().substring(1) : version;
-version version.toString() == 'master-SNAPSHOT' ? 'development' : version;
-def targetVersion = version
+allprojects {
+    group 'net.nova_project.backend'
+    version version.toString().startsWith('v') ? version.toString().substring(1) : version;
+    version version.toString() == 'master-SNAPSHOT' ? 'development' : version;
+}
 
 subprojects {
-    apply plugin: 'java'
-    if (project.name != 'nova-bootstrap') apply plugin: 'java-library'
-    apply plugin: 'maven-publish'
-    apply plugin: 'signing'
-    apply plugin: 'checkstyle'
-    apply plugin: 'jacoco'
-    apply plugin: 'io.freefair.lombok'
-    apply plugin: 'io.freefair.github.package-registry-maven-publish'
-
-    repositories {
-        mavenCentral()
-    }
-
-    sourceCompatibility = JavaVersion.VERSION_14
-    targetCompatibility = JavaVersion.VERSION_14
-
-    dependencies {
-        if (project.name != 'nova-logging') implementation project(':nova-logging')
-
-        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0-M1'
-        testImplementation 'org.mockito:mockito-junit-jupiter:3.3.3'
-        testImplementation project(':nova-test-utils')
-        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0-M1'
-    }
-
-    java {
-        withJavadocJar()
-        withSourcesJar()
-    }
-
-    github {
-        slug = 'nova-project/nova-backend'
-        username = findProperty('github.username') ?: System.getenv('GITHUB_PACKAGES_USERNAME')
-        token = findProperty('github.token') ?: System.getenv('GITHUB_PACKAGES_TOKEN')
-        travis = false
-    }
-
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                from components.java
-                version = targetVersion
-            }
-        }
-    }
-
-    javadoc {
-        if (JavaVersion.current().isJava9Compatible()) {
-            options.addBooleanOption('html5', true)
-        }
-    }
-
-    lombok {
-        config.put('lombok.equalsandhashcode.callsuper', 'CALL')
-    }
-
-    test {
-        useJUnitPlatform()
-        testLogging {
-            events 'passed', 'skipped', 'failed'
-        }
-
-        finalizedBy jacocoTestReport
-    }
-
-    checkstyle {
-        toolVersion = '8.32'
-    }
-
-    checkstyleMain {
-        configFile = file "${rootDir}/config/checkstyle/main.xml"
-    }
-
-    checkstyleTest {
-        configFile = file "${rootDir}/config/checkstyle/test.xml"
-    }
-
-    jacocoTestReport {
-        dependsOn test
-
-        reports {
-            html.enabled = true
-            xml.enabled = false
-            csv.enabled = false
-        }
-    }
+    apply from: "${rootDir}/gradle/java.gradle"
+    apply from: "${rootDir}/gradle/lombok.gradle"
+    apply from: "${rootDir}/gradle/test.gradle"
+    apply from: "${rootDir}/gradle/checkstyle.gradle"
+    apply from: "${rootDir}/gradle/javadoc.gradle"
+    apply from: "${rootDir}/gradle/jacoco.gradle"
 }
