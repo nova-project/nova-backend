@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class NovaLogConfigurerTest {
 
     @Test
-    void testConstructor() throws IllegalAccessException, InstantiationException {
+    void constructor() throws IllegalAccessException, InstantiationException {
         assertTrue(RefectionUtils.checkPrivateUnsupportedOperationConstructor(NovaLogConfigurer.class));
     }
 
