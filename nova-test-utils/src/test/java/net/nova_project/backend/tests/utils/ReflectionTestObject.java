@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public class ReflectionTestObject {
+public final class ReflectionTestObject {
 
     @Getter
     private String name;

@@ -28,7 +28,8 @@ class NovaLogOutputStreamTest {
 //    void flush() {
 //    }
 
-    private String getMemory(final NovaLogOutputStream logOutputStream) throws NoSuchFieldException, IllegalAccessException {
+    private String getMemory(final NovaLogOutputStream logOutputStream)
+            throws NoSuchFieldException, IllegalAccessException {
         return (String) RefectionUtils.getFieldValue(logOutputStream, "memory");
     }
 }

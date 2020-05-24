@@ -35,7 +35,8 @@ public final class RefectionUtils {
      *                                   constructor represents an abstract class
      * @throws NoSuchMethodException     if a matching constructor is not found
      */
-    public static <T> T newInstance(final Class<? extends T> clazz, final Class<?>[] paramTypes, Object[] params) throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
+    public static <T> T newInstance(final Class<? extends T> clazz, final Class<?>[] paramTypes, final Object[] params)
+            throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
         final Constructor<? extends T> constructor = clazz.getDeclaredConstructor(paramTypes);
         constructor.setAccessible(true);
         final T instance = constructor.newInstance(params);
@@ -45,7 +46,7 @@ public final class RefectionUtils {
 
     /**
      * Checks for a private constructor witch trows an
-     * {@link UnsupportedOperationException}
+     * {@link UnsupportedOperationException}.
      *
      * @param clazz the class of the constructor
      * @return a boolean if a private constructor witch throw
@@ -55,7 +56,8 @@ public final class RefectionUtils {
      *                                constructor represents an abstract class
      * @see RefectionUtils#newInstance(Class, Class[], Object[])
      */
-    public static boolean checkPrivateUnsupportedOperationConstructor(final Class<?> clazz) throws IllegalAccessException, InstantiationException {
+    public static boolean checkPrivateUnsupportedOperationConstructor(final Class<?> clazz)
+            throws IllegalAccessException, InstantiationException {
         try {
             RefectionUtils.newInstance(clazz, new Class[0], new Object[0]);
         } catch (final InvocationTargetException e) {
@@ -75,7 +77,8 @@ public final class RefectionUtils {
      * @throws NoSuchFieldException   if a field with the specified name does not exist
      * @throws IllegalAccessException is not normally thrown
      */
-    public static Object getFieldValue(final Object object, final String fieldName) throws NoSuchFieldException, IllegalAccessException {
+    public static Object getFieldValue(final Object object, final String fieldName)
+            throws NoSuchFieldException, IllegalAccessException {
         final Field memoryField = object.getClass().getDeclaredField(fieldName);
         memoryField.setAccessible(true);
         final Object value = memoryField.get(object);
@@ -92,7 +95,8 @@ public final class RefectionUtils {
      * @throws NoSuchFieldException   if a field with the specified name does not exist
      * @throws IllegalAccessException is not normally thrown
      */
-    public static void steFieldValue(final Object object, final String fieldName, final Object value) throws NoSuchFieldException, IllegalAccessException {
+    public static void steFieldValue(final Object object, final String fieldName, final Object value)
+            throws NoSuchFieldException, IllegalAccessException {
         final Field memoryField = object.getClass().getDeclaredField(fieldName);
         memoryField.setAccessible(true);
         memoryField.set(object, value);

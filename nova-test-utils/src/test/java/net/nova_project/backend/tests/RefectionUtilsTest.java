@@ -34,14 +34,18 @@ class RefectionUtilsTest {
     }
 
     @Test
-    void newInstance() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    void newInstance() throws InvocationTargetException, NoSuchMethodException,
+            InstantiationException, IllegalAccessException {
         final String firstString = "First";
         final String secondString = "Second";
 
         assertEquals(
                 firstString + secondString,
-                RefectionUtils.newInstance(ReflectionTestObject.class, new Class[]{String.class, String.class}, new String[]{firstString, secondString})
-                        .getName()
+                RefectionUtils.newInstance(
+                        ReflectionTestObject.class,
+                        new Class[]{String.class, String.class},
+                        new String[]{firstString, secondString}
+                ).getName()
         );
     }
 

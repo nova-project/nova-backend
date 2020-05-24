@@ -102,12 +102,16 @@
         <!-- Checks for Javadoc comments.                     -->
         <!-- See https://checkstyle.org/config_javadoc.html -->
         <module name="InvalidJavadocPosition"/>
-        <module name="JavadocMethod"/>
-        <module name="JavadocType"/>
+
+        <!-- CUSTOM -->
+        <!-- <module name="JavadocMethod"/> -->
+        <!-- CUSTOM -->
+        <!-- <module name="JavadocType"/> -->
         <!-- CUSTOM: -->
         <!-- <module name="JavadocVariable"/> -->
         <module name="JavadocStyle"/>
-        <module name="MissingJavadocMethod"/>
+        <!-- CUSTOM -->
+        <!-- <module name="MissingJavadocMethod"/> -->
 
         <!-- Checks for Naming Conventions.                  -->
         <!-- See https://checkstyle.org/config_naming.html -->
@@ -167,10 +171,12 @@
         <!-- See https://checkstyle.org/config_coding.html -->
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
-        <module name="HiddenField"/>
+        <!-- CUSTOM -->
+        <!-- <module name="HiddenField"/> -->
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
-        <module name="MagicNumber"/>
+        <!--  CUSTOM -->
+        <!-- <module name="MagicNumber"/> -->
         <module name="MissingSwitchDefault"/>
         <module name="MultipleVariableDeclarations"/>
         <module name="SimplifyBooleanExpression"/>
@@ -198,6 +204,6 @@
             <property name="optional" value="true"/>
         </module>
 
+        <module name="SuppressWarningsHolder"/>
     </module>
-
 </module>
