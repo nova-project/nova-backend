@@ -13,8 +13,7 @@ repositories {
 
 allprojects {
     group 'net.nova_project.backend'
-    version version.toString().startsWith('v') ? version.toString().substring(1) : version;
-    version version.toString() == 'master-SNAPSHOT' ? 'development' : version;
+    version version.toString().startsWith('v') ? version.toString().substring(1) : version
 }
 
 subprojects {
