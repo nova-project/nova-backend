@@ -4,7 +4,32 @@ on:
   - push
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Set up JDK 14
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Check style with Gradle
+        run: ./gradlew check
+
   build:
+    needs: check
     runs-on: ubuntu-latest
 
     steps:
@@ -26,7 +51,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew check installDist
+        run: ./gradlew installDist
 
       - uses: actions/upload-artifact@v2
         with:
