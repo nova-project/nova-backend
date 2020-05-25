@@ -8,4 +8,5 @@ application {
 
 dependencies {
     implementation project(':nova-injection')
+    implementation project(':nova-service')
 }

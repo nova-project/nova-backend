@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,6 +17,7 @@ import java.util.Set;
  * @see InjectionHandler#getInjector()
  * @see InjectionBinder
  */
+@Slf4j
 public class InjectionHandler {
 
     private final Set<InjectionBinder> binders;
@@ -48,8 +50,20 @@ public class InjectionHandler {
      * {@link InjectionHandler#addInjectionBinder(InjectionBinder)} configured bindings.
      *
      * @param stage the {@link Stage} witch should be used for the Guice internal injection.
+     * @see InjectionHandler#recreateBindings()
      */
     public void createBindings(final Stage stage) {
-        this.injector = Guice.createInjector(stage, new InjectionModule(this.binders));
+        if (this.injector == null) this.injector = Guice.createInjector(stage, new InjectionModule(this.binders));
+        else {
+            log.warn("The bindings are already created. Use {} instead.", InjectionHandler.class.getName() + ".recreateBindings()");
+        }
+    }
+
+    /**
+     * This method trigger the internal Guice reregistration for all before in
+     * {@link InjectionHandler#addInjectionBinder(InjectionBinder)} configured bindings.
+     */
+    public void recreateBindings() {
+        this.injector = this.injector.createChildInjector(new InjectionModule(this.binders));
     }
 }

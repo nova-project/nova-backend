@@ -617,3 +617,4 @@ gradle-app.setting
 ### Custom ###
 run
 lombok.config
+tmp

@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Set;
 
+/**
+ *
+ */
 @RequiredArgsConstructor
 class InjectionModule extends AbstractModule {
 
