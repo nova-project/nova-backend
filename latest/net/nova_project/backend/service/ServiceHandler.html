@@ -19,7 +19,7 @@
 <script type="text/javascript" src="../../../../script-dir/jquery-ui.js"></script>
 </head>
 <body class="class-declaration">
-<script type="text/javascript">var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
+<script type="text/javascript">var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -114,7 +114,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/ja
 </thead>
 <tbody>
 <tr class="altColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E()">ServiceHandler</a></span>()</code></th>
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(net.nova_project.backend.injection.InjectionHandler)">ServiceHandler</a></span>&#8203;(<a href="../injection/InjectionHandler.html" title="class in net.nova_project.backend.injection">InjectionHandler</a>&nbsp;injectionHandler)</code></th>
 <td class="colLast">
 <div class="block">This is an handler witch handles all services.</div>
 </td>
@@ -157,34 +157,41 @@ extends <a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/ja
 </td>
 </tr>
 <tr class="altColor" id="i2">
+<td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getService(java.lang.Class)">getService</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;? extends T&gt;&nbsp;clazz)</code></th>
+<td class="colLast">
+<div class="block">This method gets a Service by it's class type.</div>
+</td>
+</tr>
+<tr class="rowColor" id="i3">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#init(net.nova_project.backend.service.event.InitServiceEvent)">init</a></span>&#8203;(<a href="event/InitServiceEvent.html" title="class in net.nova_project.backend.service.event">InitServiceEvent</a>&nbsp;event)</code></th>
 <td class="colLast">
 <div class="block">This method inits all services.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i3">
+<tr class="altColor" id="i4">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#postInit(net.nova_project.backend.service.event.PostInitServiceEvent)">postInit</a></span>&#8203;(<a href="event/PostInitServiceEvent.html" title="class in net.nova_project.backend.service.event">PostInitServiceEvent</a>&nbsp;event)</code></th>
 <td class="colLast">
 <div class="block">This method post inits all services.</div>
 </td>
 </tr>
-<tr class="altColor" id="i4">
+<tr class="rowColor" id="i5">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#preInit(net.nova_project.backend.service.event.PreInitServiceEvent)">preInit</a></span>&#8203;(<a href="event/PreInitServiceEvent.html" title="class in net.nova_project.backend.service.event">PreInitServiceEvent</a>&nbsp;event)</code></th>
 <td class="colLast">
 <div class="block">This method pre inits all services.</div>
 </td>
 </tr>
-<tr class="rowColor" id="i5">
+<tr class="altColor" id="i6">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#start(net.nova_project.backend.service.event.StartServiceEvent)">start</a></span>&#8203;(<a href="event/StartServiceEvent.html" title="class in net.nova_project.backend.service.event">StartServiceEvent</a>&nbsp;event)</code></th>
 <td class="colLast">
 <div class="block">This method starts all services.</div>
 </td>
 </tr>
-<tr class="altColor" id="i6">
+<tr class="rowColor" id="i7">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#stop(net.nova_project.backend.service.event.StopServiceEvent)">stop</a></span>&#8203;(<a href="event/StopServiceEvent.html" title="class in net.nova_project.backend.service.event">StopServiceEvent</a>&nbsp;event)</code></th>
 <td class="colLast">
@@ -215,9 +222,13 @@ extends <a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/ja
 <ul class="blockList">
 <li class="blockList">
 <section class="detail">
-<h3><a id="&lt;init&gt;()">ServiceHandler</a></h3>
-<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="memberName">ServiceHandler</span>()</div>
+<h3><a id="&lt;init&gt;(net.nova_project.backend.injection.InjectionHandler)">ServiceHandler</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="memberName">ServiceHandler</span>&#8203;(<span class="arguments"><a href="../injection/InjectionHandler.html" title="class in net.nova_project.backend.injection">InjectionHandler</a>&nbsp;injectionHandler)</span></div>
 <div class="block">This is an handler witch handles all services.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>injectionHandler</code> - the global instance of the <a href="../injection/InjectionHandler.html" title="class in net.nova_project.backend.injection"><code>InjectionHandler</code></a></dd>
+</dl>
 </section>
 </li>
 </ul>
@@ -238,6 +249,8 @@ extends <a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/ja
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>service</code> - the class of the new service.</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="#getService(java.lang.Class)"><code>getService(Class)</code></a></dd>
 </dl>
 </section>
 </li>
@@ -250,6 +263,21 @@ extends <a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/ja
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>service</code> - the service witch should be enabled.</dd>
+</dl>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="getService(java.lang.Class)">getService</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="typeParameters">&lt;T&gt;</span>&nbsp;<span class="returnType">T</span>&nbsp;<span class="memberName">getService</span>&#8203;(<span class="arguments"><a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;? extends T&gt;&nbsp;clazz)</span></div>
+<div class="block">This method gets a Service by it's class type.</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>T</code> - the service</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>clazz</code> - the class type of the service</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the service</dd>
 </dl>
 </section>
 </li>
