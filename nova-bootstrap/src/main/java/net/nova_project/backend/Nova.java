@@ -29,7 +29,7 @@ public final class Nova {
     Nova(final String[] args) {
         NovaLogConfigurer.redirectSysLog();
         this.injectionHandler = new InjectionHandler();
-        this.serviceHandler = new ServiceHandler();
+        this.serviceHandler = new ServiceHandler(this.injectionHandler);
 
         this.init();
         this.start();
@@ -56,7 +56,6 @@ public final class Nova {
         this.injectionHandler.addInjectionBinder(
                 binder -> this.serviceHandler.preInit(new PreInitServiceEvent(binder))
         );
-
         this.injectionHandler.recreateBindings();
 
         // INIT

@@ -1,6 +1,7 @@
 package net.nova_project.backend.service;
 
 import lombok.extern.slf4j.Slf4j;
+import net.nova_project.backend.injection.InjectionHandler;
 import net.nova_project.backend.service.event.InitServiceEvent;
 import net.nova_project.backend.service.event.PostInitServiceEvent;
 import net.nova_project.backend.service.event.PreInitServiceEvent;
@@ -18,13 +19,17 @@ import java.util.Set;
 @Slf4j
 public final class ServiceHandler {
 
+    private final InjectionHandler injectionHandler;
     private final Map<Class<?>, ServiceData> services;
     private final Set<Class<?>> enabledServices;
 
     /**
      * This is an handler witch handles all services.
+     *
+     * @param injectionHandler the global instance of the {@link InjectionHandler}
      */
-    public ServiceHandler() {
+    public ServiceHandler(final InjectionHandler injectionHandler) {
+        this.injectionHandler = injectionHandler;
         this.services = new HashMap<>();
         this.enabledServices = new HashSet<>();
     }
@@ -36,23 +41,12 @@ public final class ServiceHandler {
      * @see ServiceHandler#getService(Class)
      */
     public void addService(final Class<?> service) {
-        final ServiceData data = ServiceParser.parseService(service);
+        final ServiceData data = ServiceParser.parseService(this.injectionHandler, service);
         if (data == null) {
             log.error("Can't register service class {}.", service.getName());
             return;
         }
         this.services.put(service, data);
-    }
-
-    /**
-     * This method gets a Service by it's class type.
-     *
-     * @param clazz the class type of the service
-     * @param <T>   the service
-     * @return the service
-     */
-    public <T> T getService(final Class<? extends T> clazz) {
-        return clazz.cast(this.services.get(clazz));
     }
 
     /**
@@ -64,6 +58,17 @@ public final class ServiceHandler {
     public void enableService(final Class<?> service) {
         if (!this.services.containsKey(service)) this.addService(service);
         this.enabledServices.add(service);
+    }
+
+    /**
+     * This method gets a Service by it's class type.
+     *
+     * @param clazz the class type of the service
+     * @param <T>   the service
+     * @return the service
+     */
+    public <T> T getService(final Class<? extends T> clazz) {
+        return clazz.cast(this.services.get(clazz));
     }
 
     /**
