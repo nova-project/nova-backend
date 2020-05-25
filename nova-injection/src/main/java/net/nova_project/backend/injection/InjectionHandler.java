@@ -55,7 +55,10 @@ public class InjectionHandler {
     public void createBindings(final Stage stage) {
         if (this.injector == null) this.injector = Guice.createInjector(stage, new InjectionModule(this.binders));
         else {
-            log.warn("The bindings are already created. Use {} instead.", InjectionHandler.class.getName() + ".recreateBindings()");
+            log.warn(
+                    "The bindings are already created. Use {} instead.",
+                    InjectionHandler.class.getName() + ".recreateBindings()"
+            );
         }
     }
 
