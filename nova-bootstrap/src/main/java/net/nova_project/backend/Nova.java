@@ -1,5 +1,6 @@
 package net.nova_project.backend;
 
+import com.google.inject.Stage;
 import lombok.extern.slf4j.Slf4j;
 import net.nova_project.backend.injection.InjectionHandler;
 import net.nova_project.backend.logging.NovaLogConfigurer;
@@ -30,18 +31,40 @@ public final class Nova {
         this.injectionHandler = new InjectionHandler();
         this.serviceHandler = new ServiceHandler();
 
-        this.serviceHandler.enableService(TestService.class);
-
         this.init();
         this.start();
+    }
+
+    private void enableServices() {
+        this.serviceHandler.enableService(TestService.class);
     }
 
     private void init() {
         log.info("Initializing backend...");
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown, "shutdown-thread"));
-        this.serviceHandler.preInit(new PreInitServiceEvent());
+
+        this.injectionHandler.addInjectionBinder(binder -> {
+            binder.bind(Nova.class).toInstance(this);
+            binder.bind(InjectionHandler.class).toInstance(this.injectionHandler);
+            binder.bind(ServiceHandler.class).toInstance(this.serviceHandler);
+        });
+        this.injectionHandler.createBindings(Stage.DEVELOPMENT);
+        this.enableServices();
+
+        // PRE INIT
+        // TODO Use config to change between development and production
+        this.injectionHandler.addInjectionBinder(
+                binder -> this.serviceHandler.preInit(new PreInitServiceEvent(binder))
+        );
+
+        this.injectionHandler.recreateBindings();
+
+        // INIT
         this.serviceHandler.init(new InitServiceEvent());
+
+        // POST INIT
         this.serviceHandler.postInit(new PostInitServiceEvent());
+
         log.info("Initialized backend...");
     }
 

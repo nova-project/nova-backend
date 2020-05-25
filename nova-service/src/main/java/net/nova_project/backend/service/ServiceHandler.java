@@ -33,6 +33,7 @@ public final class ServiceHandler {
      * This method adds a service.
      *
      * @param service the class of the new service.
+     * @see ServiceHandler#getService(Class)
      */
     public void addService(final Class<?> service) {
         final ServiceData data = ServiceParser.parseService(service);
@@ -41,6 +42,17 @@ public final class ServiceHandler {
             return;
         }
         this.services.put(service, data);
+    }
+
+    /**
+     * This method gets a Service by it's class type.
+     *
+     * @param clazz the class type of the service
+     * @param <T>   the service
+     * @return the service
+     */
+    public <T> T getService(final Class<? extends T> clazz) {
+        return clazz.cast(this.services.get(clazz));
     }
 
     /**
