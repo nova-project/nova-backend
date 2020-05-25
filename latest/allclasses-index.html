@@ -19,8 +19,8 @@
 <script type="text/javascript" src="script-dir/jquery-ui.js"></script>
 </head>
 <body class="all-classes-index">
-<script type="text/javascript">var data = {"i0":2,"i1":1,"i2":2,"i3":2,"i4":2,"i5":4,"i6":2};
-var tabs = {65535:["t0","All Classes"],1:["t1","Interface Summary"],2:["t2","Class Summary"],4:["t3","Enum Summary"]};
+<script type="text/javascript">var data = {"i0":2,"i1":32,"i2":2,"i3":1,"i4":2,"i5":2,"i6":2,"i7":4,"i8":32,"i9":2,"i10":32,"i11":2,"i12":2,"i13":32,"i14":2,"i15":32,"i16":2,"i17":32,"i18":2,"i19":2};
+var tabs = {65535:["t0","All Classes"],1:["t1","Interface Summary"],2:["t2","Class Summary"],4:["t3","Enum Summary"],32:["t6","Annotation Types Summary"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -70,7 +70,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="allClassesContainer">
 <div class="typeSummary">
-<div role="tablist" aria-orientation="horizontal"><button role="tab" aria-selected="true" aria-controls="typeSummary_tabpanel" tabindex="0" onkeydown="switchTab(event)" id="t0" class="activeTableTab">All Classes</button><button role="tab" aria-selected="false" aria-controls="typeSummary_tabpanel" tabindex="-1" onkeydown="switchTab(event)" id="t1" class="tableTab" onclick="show(1);">Interface Summary</button><button role="tab" aria-selected="false" aria-controls="typeSummary_tabpanel" tabindex="-1" onkeydown="switchTab(event)" id="t2" class="tableTab" onclick="show(2);">Class Summary</button><button role="tab" aria-selected="false" aria-controls="typeSummary_tabpanel" tabindex="-1" onkeydown="switchTab(event)" id="t3" class="tableTab" onclick="show(4);">Enum Summary</button></div>
+<div role="tablist" aria-orientation="horizontal"><button role="tab" aria-selected="true" aria-controls="typeSummary_tabpanel" tabindex="0" onkeydown="switchTab(event)" id="t0" class="activeTableTab">All Classes</button><button role="tab" aria-selected="false" aria-controls="typeSummary_tabpanel" tabindex="-1" onkeydown="switchTab(event)" id="t1" class="tableTab" onclick="show(1);">Interface Summary</button><button role="tab" aria-selected="false" aria-controls="typeSummary_tabpanel" tabindex="-1" onkeydown="switchTab(event)" id="t2" class="tableTab" onclick="show(2);">Class Summary</button><button role="tab" aria-selected="false" aria-controls="typeSummary_tabpanel" tabindex="-1" onkeydown="switchTab(event)" id="t3" class="tableTab" onclick="show(4);">Enum Summary</button><button role="tab" aria-selected="false" aria-controls="typeSummary_tabpanel" tabindex="-1" onkeydown="switchTab(event)" id="t6" class="tableTab" onclick="show(32);">Annotation Types Summary</button></div>
 <div id="typeSummary_tabpanel" role="tabpanel">
 <table aria-labelledby="t0">
 <thead>
@@ -89,6 +89,14 @@ loadScripts(document, 'script');</script>
 </th>
 </tr>
 <tr class="rowColor" id="i1">
+<td class="colFirst"><a href="net/nova_project/backend/service/event/InitService.html" title="annotation in net.nova_project.backend.service.event">InitService</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="altColor" id="i2">
+<td class="colFirst"><a href="net/nova_project/backend/service/event/InitServiceEvent.html" title="class in net.nova_project.backend.service.event">InitServiceEvent</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="rowColor" id="i3">
 <td class="colFirst"><a href="net/nova_project/backend/injection/InjectionBinder.html" title="interface in net.nova_project.backend.injection">InjectionBinder</a></td>
 <th class="colLast" scope="row">
 <div class="block">This interface provide the method <a href="net/nova_project/backend/injection/InjectionBinder.html#bindInjections(com.google.inject.Binder)"><code>InjectionBinder.bindInjections(com.google.inject.Binder)</code></a> to collects
@@ -96,33 +104,81 @@ loadScripts(document, 'script');</script>
  the <a href="net/nova_project/backend/injection/InjectionHandler.html" title="class in net.nova_project.backend.injection"><code>InjectionHandler</code></a>.</div>
 </th>
 </tr>
-<tr class="altColor" id="i2">
+<tr class="altColor" id="i4">
 <td class="colFirst"><a href="net/nova_project/backend/injection/InjectionHandler.html" title="class in net.nova_project.backend.injection">InjectionHandler</a></td>
 <th class="colLast" scope="row">
 <div class="block">This handle the dependency injection of the nova backend.</div>
 </th>
 </tr>
-<tr class="rowColor" id="i3">
+<tr class="rowColor" id="i5">
 <td class="colFirst"><a href="net/nova_project/backend/Nova.html" title="class in net.nova_project.backend">Nova</a></td>
-<th class="colLast" scope="row">&nbsp;</th>
+<th class="colLast" scope="row">
+<div class="block">This is the main class, of the nova backend.</div>
+</th>
 </tr>
-<tr class="altColor" id="i4">
+<tr class="altColor" id="i6">
 <td class="colFirst"><a href="net/nova_project/backend/logging/NovaLogConfigurer.html" title="class in net.nova_project.backend.logging">NovaLogConfigurer</a></td>
 <th class="colLast" scope="row">
 <div class="block">This is a tool to setup the log system for the nova backend.</div>
 </th>
 </tr>
-<tr class="rowColor" id="i5">
+<tr class="rowColor" id="i7">
 <td class="colFirst"><a href="net/nova_project/backend/logging/NovaLogLevel.html" title="enum in net.nova_project.backend.logging">NovaLogLevel</a></td>
 <th class="colLast" scope="row">
 <div class="block">Levels used for identifying the severity of an event.</div>
 </th>
 </tr>
-<tr class="altColor" id="i6">
+<tr class="altColor" id="i8">
+<td class="colFirst"><a href="net/nova_project/backend/service/event/PostInitService.html" title="annotation in net.nova_project.backend.service.event">PostInitService</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="rowColor" id="i9">
+<td class="colFirst"><a href="net/nova_project/backend/service/event/PostInitServiceEvent.html" title="class in net.nova_project.backend.service.event">PostInitServiceEvent</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="altColor" id="i10">
+<td class="colFirst"><a href="net/nova_project/backend/service/event/PreInitService.html" title="annotation in net.nova_project.backend.service.event">PreInitService</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="rowColor" id="i11">
+<td class="colFirst"><a href="net/nova_project/backend/service/event/PreInitServiceEvent.html" title="class in net.nova_project.backend.service.event">PreInitServiceEvent</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="altColor" id="i12">
 <td class="colFirst"><a href="net/nova_project/backend/tests/RefectionUtils.html" title="class in net.nova_project.backend.tests">RefectionUtils</a></td>
 <th class="colLast" scope="row">
 <div class="block">Some reflection utils for example to set the value of a private field.</div>
 </th>
+</tr>
+<tr class="rowColor" id="i13">
+<td class="colFirst"><a href="net/nova_project/backend/service/Service.html" title="annotation in net.nova_project.backend.service">Service</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="altColor" id="i14">
+<td class="colFirst"><a href="net/nova_project/backend/service/ServiceHandler.html" title="class in net.nova_project.backend.service">ServiceHandler</a></td>
+<th class="colLast" scope="row">
+<div class="block">This is an handler witch handles all services.</div>
+</th>
+</tr>
+<tr class="rowColor" id="i15">
+<td class="colFirst"><a href="net/nova_project/backend/service/event/StartService.html" title="annotation in net.nova_project.backend.service.event">StartService</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="altColor" id="i16">
+<td class="colFirst"><a href="net/nova_project/backend/service/event/StartServiceEvent.html" title="class in net.nova_project.backend.service.event">StartServiceEvent</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="rowColor" id="i17">
+<td class="colFirst"><a href="net/nova_project/backend/service/event/StopService.html" title="annotation in net.nova_project.backend.service.event">StopService</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="altColor" id="i18">
+<td class="colFirst"><a href="net/nova_project/backend/service/event/StopServiceEvent.html" title="class in net.nova_project.backend.service.event">StopServiceEvent</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="rowColor" id="i19">
+<td class="colFirst"><a href="net/nova_project/backend/TestService.html" title="class in net.nova_project.backend">TestService</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
 </tr>
 </tbody>
 </table>

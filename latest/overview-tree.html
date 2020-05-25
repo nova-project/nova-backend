@@ -66,6 +66,8 @@ loadScripts(document, 'script');</script>
 <li><a href="net/nova_project/backend/package-tree.html">net.nova_project.backend</a>, </li>
 <li><a href="net/nova_project/backend/injection/package-tree.html">net.nova_project.backend.injection</a>, </li>
 <li><a href="net/nova_project/backend/logging/package-tree.html">net.nova_project.backend.logging</a>, </li>
+<li><a href="net/nova_project/backend/service/package-tree.html">net.nova_project.backend.service</a>, </li>
+<li><a href="net/nova_project/backend/service/event/package-tree.html">net.nova_project.backend.service.event</a>, </li>
 <li><a href="net/nova_project/backend/tests/package-tree.html">net.nova_project.backend.tests</a></li>
 </ul>
 </div>
@@ -76,10 +78,17 @@ loadScripts(document, 'script');</script>
 <li class="circle">java.lang.<a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink"><span class="typeNameLink">Object</span></a>
 <ul>
 <li class="circle">net.nova_project.backend.<a href="net/nova_project/backend/Bootstrap.html" title="class in net.nova_project.backend"><span class="typeNameLink">Bootstrap</span></a></li>
+<li class="circle">net.nova_project.backend.service.event.<a href="net/nova_project/backend/service/event/InitServiceEvent.html" title="class in net.nova_project.backend.service.event"><span class="typeNameLink">InitServiceEvent</span></a></li>
 <li class="circle">net.nova_project.backend.injection.<a href="net/nova_project/backend/injection/InjectionHandler.html" title="class in net.nova_project.backend.injection"><span class="typeNameLink">InjectionHandler</span></a></li>
 <li class="circle">net.nova_project.backend.<a href="net/nova_project/backend/Nova.html" title="class in net.nova_project.backend"><span class="typeNameLink">Nova</span></a></li>
 <li class="circle">net.nova_project.backend.logging.<a href="net/nova_project/backend/logging/NovaLogConfigurer.html" title="class in net.nova_project.backend.logging"><span class="typeNameLink">NovaLogConfigurer</span></a></li>
+<li class="circle">net.nova_project.backend.service.event.<a href="net/nova_project/backend/service/event/PostInitServiceEvent.html" title="class in net.nova_project.backend.service.event"><span class="typeNameLink">PostInitServiceEvent</span></a></li>
+<li class="circle">net.nova_project.backend.service.event.<a href="net/nova_project/backend/service/event/PreInitServiceEvent.html" title="class in net.nova_project.backend.service.event"><span class="typeNameLink">PreInitServiceEvent</span></a></li>
 <li class="circle">net.nova_project.backend.tests.<a href="net/nova_project/backend/tests/RefectionUtils.html" title="class in net.nova_project.backend.tests"><span class="typeNameLink">RefectionUtils</span></a></li>
+<li class="circle">net.nova_project.backend.service.<a href="net/nova_project/backend/service/ServiceHandler.html" title="class in net.nova_project.backend.service"><span class="typeNameLink">ServiceHandler</span></a></li>
+<li class="circle">net.nova_project.backend.service.event.<a href="net/nova_project/backend/service/event/StartServiceEvent.html" title="class in net.nova_project.backend.service.event"><span class="typeNameLink">StartServiceEvent</span></a></li>
+<li class="circle">net.nova_project.backend.service.event.<a href="net/nova_project/backend/service/event/StopServiceEvent.html" title="class in net.nova_project.backend.service.event"><span class="typeNameLink">StopServiceEvent</span></a></li>
+<li class="circle">net.nova_project.backend.<a href="net/nova_project/backend/TestService.html" title="class in net.nova_project.backend"><span class="typeNameLink">TestService</span></a></li>
 </ul>
 </li>
 </ul>
@@ -88,6 +97,17 @@ loadScripts(document, 'script');</script>
 <h2 title="Interface Hierarchy">Interface Hierarchy</h2>
 <ul>
 <li class="circle">net.nova_project.backend.injection.<a href="net/nova_project/backend/injection/InjectionBinder.html" title="interface in net.nova_project.backend.injection"><span class="typeNameLink">InjectionBinder</span></a></li>
+</ul>
+</section>
+<section class="hierarchy">
+<h2 title="Annotation Type Hierarchy">Annotation Type Hierarchy</h2>
+<ul>
+<li class="circle">net.nova_project.backend.service.event.<a href="net/nova_project/backend/service/event/InitService.html" title="annotation in net.nova_project.backend.service.event"><span class="typeNameLink">InitService</span></a> (implements java.lang.annotation.<a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation" class="externalLink">Annotation</a>)</li>
+<li class="circle">net.nova_project.backend.service.event.<a href="net/nova_project/backend/service/event/PostInitService.html" title="annotation in net.nova_project.backend.service.event"><span class="typeNameLink">PostInitService</span></a> (implements java.lang.annotation.<a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation" class="externalLink">Annotation</a>)</li>
+<li class="circle">net.nova_project.backend.service.event.<a href="net/nova_project/backend/service/event/PreInitService.html" title="annotation in net.nova_project.backend.service.event"><span class="typeNameLink">PreInitService</span></a> (implements java.lang.annotation.<a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation" class="externalLink">Annotation</a>)</li>
+<li class="circle">net.nova_project.backend.service.<a href="net/nova_project/backend/service/Service.html" title="annotation in net.nova_project.backend.service"><span class="typeNameLink">Service</span></a> (implements java.lang.annotation.<a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation" class="externalLink">Annotation</a>)</li>
+<li class="circle">net.nova_project.backend.service.event.<a href="net/nova_project/backend/service/event/StartService.html" title="annotation in net.nova_project.backend.service.event"><span class="typeNameLink">StartService</span></a> (implements java.lang.annotation.<a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation" class="externalLink">Annotation</a>)</li>
+<li class="circle">net.nova_project.backend.service.event.<a href="net/nova_project/backend/service/event/StopService.html" title="annotation in net.nova_project.backend.service.event"><span class="typeNameLink">StopService</span></a> (implements java.lang.annotation.<a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation" class="externalLink">Annotation</a>)</li>
 </ul>
 </section>
 <section class="hierarchy">
