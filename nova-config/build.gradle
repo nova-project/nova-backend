@@ -1,0 +1,4 @@
+dependencies {
+    implementation project(':nova-service')
+    implementation 'org.yaml:snakeyaml:1.26'
+}
