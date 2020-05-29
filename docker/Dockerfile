@@ -3,8 +3,7 @@ FROM adoptopenjdk/openjdk14:alpine-slim AS builder
 WORKDIR /nova-backend
 COPY . /nova-backend
 
-RUN apt update \
-  && apt install git -y \
+RUN apk add --update --no-cache git \
   && chmod +x ./gradlew \
   && ./gradlew installDist
 
