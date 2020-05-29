@@ -2,7 +2,6 @@
 
 [![Releases](https://badge.fury.io/gh/nova-project%2Fnova-backend.svg)](https://github.com/nova-project/nova-backend/releases)
 [![Github Actions](https://github.com/nova-project/nova-backend/workflows/Docker%20Push/badge.svg)](https://github.com/nova-project/nova-backend/actions)
-[![Maven Actions](https://github.com/nova-project/nova-backend/workflows/Maven%20Push/badge.svg)](https://github.com/nova-project/nova-backend/actions)
 
 This is the Backend of the Nova Project.
 
