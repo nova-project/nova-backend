@@ -1,6 +1,0 @@
-net.nova_project.backend
-net.nova_project.backend.injection
-net.nova_project.backend.logging
-net.nova_project.backend.service
-net.nova_project.backend.service.event
-net.nova_project.backend.tests

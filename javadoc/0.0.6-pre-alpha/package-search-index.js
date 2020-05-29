@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"net.nova_project.backend"},{"l":"net.nova_project.backend.injection"},{"l":"net.nova_project.backend.logging"},{"l":"net.nova_project.backend.service"},{"l":"net.nova_project.backend.service.event"},{"l":"net.nova_project.backend.tests"}]
