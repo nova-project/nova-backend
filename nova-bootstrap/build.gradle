@@ -3,10 +3,12 @@ plugins {
 }
 
 application {
-    mainClassName = 'net.nova_project.backend.Bootstrap'
+    mainClassName 'net.getnova.backend.Bootstrap'
 }
 
 dependencies {
     implementation project(':nova-injection')
     implementation project(':nova-service')
+    implementation project(':nova-config')
+    implementation project(':nova-sql')
 }

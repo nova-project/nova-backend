@@ -4,4 +4,6 @@ include 'nova-injection'
 include 'nova-logging'
 include 'nova-service'
 include 'nova-test-utils'
+include 'nova-sql'
+include 'nova-config'
 

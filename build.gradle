@@ -13,7 +13,7 @@ repositories {
 }
 
 allprojects {
-    group 'net.nova_project.backend'
+    group 'net.getnova.backend'
     version version.toString().startsWith('v') ? version.toString().substring(1) : version
 }
 
@@ -24,6 +24,7 @@ subprojects {
     apply from: "${rootDir}/gradle/checkstyle.gradle"
     apply from: "${rootDir}/gradle/javadoc.gradle"
     apply from: "${rootDir}/gradle/jacoco.gradle"
+    apply from: "${rootDir}/gradle/maven-publish.gradle"
 }
 
 task copyJavaDocStyles(type: Copy) {
