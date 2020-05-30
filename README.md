@@ -8,7 +8,7 @@
     <a style="text-decoration:none" href="https://github.com/nova-project/nova-backend/actions">
         <img alt="Docker Image Build" src="https://img.shields.io/github/workflow/status/nova-project/nova-backend/Docker%20Push?label=Docker%20Image%20Build&style=flat-square">
     </a>
-    <a style="text-decoration:none" href="https://hub.docker.com/u/getnova/nova-backend">
+    <a style="text-decoration:none" href="https://hub.docker.com/r/getnova/nova-backend">
         <img alt="DockerHub" src="https://img.shields.io/docker/pulls/getnova/nova-backend?style=flat-square">
     </a>
 </p>
