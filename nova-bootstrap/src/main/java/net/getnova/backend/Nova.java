@@ -18,14 +18,16 @@ import net.getnova.backend.service.ServiceHandler;
 @Slf4j
 public final class Nova {
 
-    private final PreInitHandler preInitHandler;
-    private final InitHandler initHandler;
-    private final PostInitHandler postInitHandler;
-    private final StartHandler startHandler;
-    private final StopHandler stopHandler;
+    private final NovaCli cli;
 
-    private final InjectionHandler injectionHandler;
-    private final ServiceHandler serviceHandler;
+    private PreInitHandler preInitHandler;
+    private InitHandler initHandler;
+    private PostInitHandler postInitHandler;
+    private StartHandler startHandler;
+    private StopHandler stopHandler;
+
+    private InjectionHandler injectionHandler;
+    private ServiceHandler serviceHandler;
 
     private NovaConfig config;
     private ConfigService configService;
@@ -37,14 +39,18 @@ public final class Nova {
      * @see Bootstrap#main(String[])
      */
     Nova(final String[] args) {
-        log.info(" _   _                   ____             _                  _");
-        log.info("| \\ | |                 |  _ \\           | |                | |");
-        log.info("|  \\| | _____   ____ _  | |_) | __ _  ___| | _____ _ __   __| |");
-        log.info("| . ` |/ _ \\ \\ / / _` | |  _ < / _` |/ __| |/ / _ \\ '_ \\ / _` |");
-        log.info("| |\\  | (_) \\ V / (_| | | |_) | (_| | (__|   <  __/ | | | (_| |");
-        log.info("|_| \\_|\\___/ \\_/ \\__,_| |____/ \\__,_|\\___|_|\\_\\___|_| |_|\\__,_|");
+        this.cli = new NovaCli(args);
+        if (this.cli.isHelp()) return;
+
+        log.info(" _   _                    ____             _                  _");
+        log.info("| \\ | |                  |  _ \\           | |                | |");
+        log.info("|  \\| | _____   ____ _   | |_) | __ _  ___| | _____ _ __   __| |");
+        log.info("| . ` |/ _ \\ \\ / / _` |  |  _ < / _` |/ __| |/ / _ \\ '_ \\ / _` |");
+        log.info("| |\\  | (_) \\ V / (_| |  | |_) | (_| | (__|   <  __/ | | | (_| |");
+        log.info("|_| \\_|\\___/ \\_/ \\__,_|  |____/ \\__,_|\\___|_|\\_\\___|_| |_|\\__,_|");
 
         NovaLogConfigurer.redirectSysLog();
+
         this.injectionHandler = new InjectionHandler();
         this.serviceHandler = new ServiceHandler(this.injectionHandler);
 
@@ -67,6 +73,7 @@ public final class Nova {
 
     private void registerServices() {
         this.configService = this.serviceHandler.addService(ConfigService.class);
+        if (this.cli.useEnvironment()) this.configService.useEnvironment();
     }
 
     /**

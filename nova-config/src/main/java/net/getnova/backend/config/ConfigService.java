@@ -43,8 +43,10 @@ public class ConfigService {
 
     @PreInitService
     private void preInit(final PreInitServiceEvent event) {
-        if (this.environment) ConfigUtils.loadFromEnvironment(this.configs);
-        else {
+        if (this.environment) {
+            log.info("Config values will be read from the environment variables.");
+            ConfigUtils.loadFromEnvironment(this.configs);
+        } else {
             try {
                 if (!this.configFile.exists()) {
                     final File parentFile = this.configFile.getParentFile();
