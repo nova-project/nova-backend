@@ -1,9 +1,20 @@
-<h1 align="center">Nova Backend</h1>
-
-[![Releases](https://img.shields.io/github/v/tag/nova-project/nova-backend)](https://github.com/nova-project/nova-backend/releases)
-[![Github Actions](https://github.com/nova-project/nova-backend/workflows/Docker%20Push/badge.svg)](https://github.com/nova-project/nova-backend/actions)
-
-This is the Backend of the Nova Project.
+<h1 align="center">
+    Nova Backend
+</h1>
+<p align="center">
+    <a style="text-decoration:none" href="https://github.com/nova-project/nova-backend/releases">
+        <img alt="Releases" src="https://img.shields.io/github/v/tag/nova-project/nova-backend?label=latest%20version&style=flat-square">
+    </a>
+    <a style="text-decoration:none" href="https://github.com/nova-project/nova-backend/actions">
+        <img alt="Docker Image Build" src="https://img.shields.io/github/workflow/status/nova-project/nova-backend/Docker%20Push?label=Docker%20Image%20Build&style=flat-square">
+    </a>
+    <a style="text-decoration:none" href="https://hub.docker.com/r/getnova/nova-backend">
+        <img alt="DockerHub" src="https://img.shields.io/docker/pulls/getnova/nova-backend?style=flat-square">
+    </a>
+</p>
+<p align="center">
+    This is the Backend of the Nova Project.
+</p>
 
 ## Getting Started
 
