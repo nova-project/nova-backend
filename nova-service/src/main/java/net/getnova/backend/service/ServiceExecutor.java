@@ -9,11 +9,11 @@ import net.getnova.backend.service.event.StopServiceEvent;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 final class ServiceExecutor {
@@ -94,6 +94,7 @@ final class ServiceExecutor {
                                     final Consumer<ServiceData> updateState,
                                     final Object eventData, final String action,
                                     final boolean invertDepends) throws ServiceException {
+
         final Collection<ServiceData> depends = getDepends(serviceHandler, services);
         if (!invertDepends && !depends.isEmpty()) {
             executeStep(serviceHandler, depends, skipService, function, updateState, eventData, action, false);
@@ -101,12 +102,12 @@ final class ServiceExecutor {
 
         for (final ServiceData service : services) {
             if (!skipService.apply(service)) {
+                updateState.accept(service);
                 final Method method = function.apply(service);
                 if (method != null) {
                     method.setAccessible(true);
                     try {
                         method.invoke(service.getInstance(), eventData);
-                        updateState.accept(service);
                     } catch (InvocationTargetException e) {
                         throw new ServiceException("Unable to " + action + " service "
                                 + service.getClazz().getName() + ".", e);
@@ -125,13 +126,15 @@ final class ServiceExecutor {
 
     private static Collection<ServiceData> getDepends(final ServiceHandler serviceHandler,
                                                       final Collection<ServiceData> services) {
-        return services.stream()
-                .flatMap(service -> Arrays.stream(service.getDepends()).map(dependingServiceClass -> {
-                    if (!serviceHandler.hasService(dependingServiceClass)) {
-                        serviceHandler.addService(dependingServiceClass);
-                    }
-                    return serviceHandler.getServiceData(dependingServiceClass);
-                }))
-                .collect(Collectors.toSet());
+        final List<ServiceData> dependServices = new LinkedList<>();
+
+        services.iterator().forEachRemaining(service -> {
+            for (final Class<?> depend : service.getDepends()) {
+                if (!serviceHandler.hasService(depend)) serviceHandler.addService(depend);
+                dependServices.add(serviceHandler.getServiceData(depend));
+            }
+        });
+
+        return dependServices;
     }
 }

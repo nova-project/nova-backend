@@ -12,4 +12,5 @@ dependencies {
     implementation project(':nova-service')
     implementation project(':nova-config')
     implementation project(':nova-sql')
+    implementation project(':nova-codec-http')
 }

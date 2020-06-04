@@ -29,7 +29,7 @@ public class SqlService {
     private SqlSessionFactory sessionFactory;
 
     /**
-     * Creates a new sql service.
+     * Creates a new {@link SqlService}.
      *
      * @param configService an instance of the {@link ConfigService},
      *                      it is injected by the dependency injection.

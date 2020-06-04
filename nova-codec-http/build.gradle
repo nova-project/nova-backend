@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(':nova-service')
+    implementation project(':nova-config')
+    implementation project(':nova-netty')
+    implementation 'javax.activation:activation:1.1.1'
+}

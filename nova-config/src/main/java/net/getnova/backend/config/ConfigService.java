@@ -26,7 +26,7 @@ public class ConfigService {
     private boolean environment;
 
     /**
-     * Creates a new config service.
+     * Creates a new {@link ConfigService}.
      */
     public ConfigService() {
         this.environment = false;

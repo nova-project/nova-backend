@@ -8,20 +8,24 @@
         <processorPath useClasspath="false">
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.12/48e4e5d60309ebd833bc528dcf77668eab3cd72c/lombok-1.18.12.jar" />
         </processorPath>
-        <module name="nova-backend.nova-injection.test" />
-        <module name="nova-backend.nova-sql.test" />
-        <module name="nova-backend.nova-logging.main" />
-        <module name="nova-backend.nova-config.main" />
-        <module name="nova-backend.nova-sql.main" />
-        <module name="nova-backend.nova-logging.test" />
-        <module name="nova-backend.nova-config.test" />
-        <module name="nova-backend.nova-test-utils.main" />
-        <module name="nova-backend.nova-injection.main" />
-        <module name="nova-backend.nova-service.test" />
-        <module name="nova-backend.nova-bootstrap.test" />
-        <module name="nova-backend.nova-bootstrap.main" />
+        <module name="nova-backend.nova-codec-http.main" />
         <module name="nova-backend.nova-test-utils.test" />
+        <module name="nova-backend.nova-sql.main" />
         <module name="nova-backend.nova-service.main" />
+        <module name="nova-backend.nova-netty.test" />
+        <module name="nova-backend.nova-test-utils.main" />
+        <module name="nova-backend.nova-injection.test" />
+        <module name="nova-backend.nova-bootstrap.test" />
+        <module name="nova-backend.nova-config.test" />
+        <module name="nova-backend.nova-logging.test" />
+        <module name="nova-backend.nova-netty.main" />
+        <module name="nova-backend.nova-injection.main" />
+        <module name="nova-backend.nova-bootstrap.main" />
+        <module name="nova-backend.nova-config.main" />
+        <module name="nova-backend.nova-logging.main" />
+        <module name="nova-backend.nova-service.test" />
+        <module name="nova-backend.nova-codec-http.test" />
+        <module name="nova-backend.nova-sql.test" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="14" />

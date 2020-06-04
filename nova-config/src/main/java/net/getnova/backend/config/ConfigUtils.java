@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +31,9 @@ final class ConfigUtils {
 
         for (final Field field : object.getClass().getDeclaredFields()) {
             if (!field.isAnnotationPresent(ConfigValue.class)) continue;
+            if (Modifier.isFinal(field.getModifiers())) {
+                log.warn("Can't update config values, because field {}.{} is final.", object.getClass().getName(), field.getName());
+            }
             final ConfigValue configValue = field.getAnnotation(ConfigValue.class);
             values.add(new ConfigValueData(configValue.id(), configValue.comment(), field, object));
         }

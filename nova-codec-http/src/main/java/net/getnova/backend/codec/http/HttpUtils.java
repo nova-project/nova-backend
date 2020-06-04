@@ -1,0 +1,187 @@
+package net.getnova.backend.codec.http;
+
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.DefaultHttpContent;
+import io.netty.handler.codec.http.DefaultHttpResponse;
+import io.netty.handler.codec.http.HttpContent;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpUtil;
+import io.netty.handler.codec.http.HttpVersion;
+import io.netty.util.CharsetUtil;
+
+import javax.activation.MimetypesFileTypeMap;
+import java.io.File;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.regex.Pattern;
+
+public final class HttpUtils {
+
+    public static final DateTimeFormatter HTTP_DATE_FORMAT = DateTimeFormatter.RFC_1123_DATE_TIME;
+    public static final ZoneOffset HTTP_TIME_ZONE = ZoneOffset.UTC;
+    private static final Pattern INSECURE_URI = Pattern.compile(".*[<>&\"].*");
+    private static final int HTTP_CACHE_SECONDS = 60;
+    private static final MimetypesFileTypeMap MIMETYPES_FILE_TYPE_MAP = new MimetypesFileTypeMap();
+
+    static {
+        MIMETYPES_FILE_TYPE_MAP.addMimeTypes("application/javascript js");
+        MIMETYPES_FILE_TYPE_MAP.addMimeTypes("text/css css");
+    }
+
+    private HttpUtils() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Validated and decodes a uri.
+     *
+     * @param uri the uri form the client
+     * @return the decoded uri
+     */
+    public static String decodeUri(final String uri) {
+        final String decodedUri = URLDecoder.decode(uri, StandardCharsets.UTF_8);
+
+        if (uri.isBlank()
+                || uri.charAt(0) != '/'
+                || uri.charAt(0) == '.'
+                || uri.charAt(uri.length() - 1) == '.'
+                || decodedUri.contains("/.")
+                || decodedUri.contains("./")
+                || INSECURE_URI.matcher(uri).matches()) {
+            return null;
+        }
+
+        return decodedUri;
+    }
+
+    /**
+     * Adds the HTTP {@code Date} header to a {@link HttpResponse}.
+     * The date is formatted in the {@link DateTimeFormatter#RFC_1123_DATE_TIME} format.
+     *
+     * @param response the {@link HttpResponse} to which the date header should be added
+     */
+    public static void setDateHeader(final HttpResponse response) {
+        response.headers().set(HttpHeaderNames.DATE, HTTP_DATE_FORMAT.format(ZonedDateTime.now(ZoneOffset.UTC)));
+    }
+
+    /**
+     * Adds the HTTP {@code Date} and all required Cache headers ({@code Expires},
+     * {@code Cache-Control}, {@code Last-Modified}) to a {@link HttpResponse}.
+     * The date is formatted in the {@link DateTimeFormatter#RFC_1123_DATE_TIME} format.
+     *
+     * @param response    the {@link HttpResponse} to which the date and cache headers should be added
+     * @param fileToCache the {@link File} from from which the cache data should be extracted
+     */
+    public static void setDateAndCacheHeaders(final HttpResponse response, final File fileToCache) {
+        final ZonedDateTime time = ZonedDateTime.now(ZoneOffset.UTC);
+        response.headers().set(HttpHeaderNames.DATE, HTTP_DATE_FORMAT.format(time));
+        response.headers().set(HttpHeaderNames.EXPIRES, HTTP_DATE_FORMAT.format(time.plus(HTTP_CACHE_SECONDS, ChronoUnit.SECONDS)));
+        response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, max-age=" + HTTP_CACHE_SECONDS);
+        response.headers().set(HttpHeaderNames.LAST_MODIFIED, HTTP_DATE_FORMAT.format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(fileToCache.lastModified()), HTTP_TIME_ZONE)));
+    }
+
+    /**
+     * Adds the HTTP {@code Content-Type} header to a {@link HttpResponse}.
+     *
+     * @param response the {@link HttpResponse} to which the content type header should be added
+     * @param file     the file from were the content type should be extracted
+     */
+    public static void setContentTypeHeader(final HttpResponse response, final File file) {
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, MIMETYPES_FILE_TYPE_MAP.getContentType(file));
+    }
+
+    /**
+     * Checks if the {@link File} has been edited since the specified {@link Instant}.
+     *
+     * @param instant the {@link Instant} with which it should be checked if the {@link File} has been edited
+     * @param file    the {@link File} which should be checked
+     * @return if the {@link File} has been edited since the specified {@link Instant}
+     */
+    public static boolean checkModified(final Instant instant, final File file) {
+        return !Instant.ofEpochMilli(file.lastModified()).equals(instant);
+    }
+
+    /**
+     * Sends a redirect ot the new uri to the specified {@link ChannelHandlerContext}.
+     *
+     * @param ctx     the {@link ChannelHandlerContext} to which the redirect should be send
+     * @param request the {@link HttpRequest} from the {@link ChannelHandlerContext}
+     * @param newUri  the new uri to witch the client should be redirected
+     */
+    public static void sendRedirect(final ChannelHandlerContext ctx, final HttpRequest request, final String newUri) {
+        final HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.MOVED_PERMANENTLY);
+        response.headers().set(HttpHeaderNames.LOCATION, newUri);
+        sendAndCleanupConnection(ctx, request, response, null);
+    }
+
+    /**
+     * Sends to the {@link ChannelHandlerContext} thad the requested content is not modified science the last.
+     *
+     * @param ctx     the {@link ChannelHandlerContext} to which the redirect should be send
+     * @param request the {@link HttpRequest} from the {@link ChannelHandlerContext}
+     */
+    public static void sendNotModified(final ChannelHandlerContext ctx, final HttpRequest request) {
+        final HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NOT_MODIFIED);
+        setDateHeader(response);
+        sendAndCleanupConnection(ctx, request, response, null);
+    }
+
+    /**
+     * Send a status to a {@link ChannelHandlerContext} (Client).
+     *
+     * @param ctx     the {@link ChannelHandlerContext} to which the message should be send
+     * @param request the request from the {@link ChannelHandlerContext} (Client)
+     * @param status  the status which should be send to the {@link ChannelHandlerContext} (Client)
+     */
+    public static void sendStatus(final ChannelHandlerContext ctx, final HttpRequest request, final HttpResponseStatus status) {
+        sendStatus(ctx, request, status, true);
+    }
+
+    /**
+     * Send a status to a {@link ChannelHandlerContext} (Client).
+     *
+     * @param ctx     the {@link ChannelHandlerContext} to which the message should be send
+     * @param request the request from the {@link ChannelHandlerContext} (Client)
+     * @param status  the status which should be send to the {@link ChannelHandlerContext} (Client)
+     * @param body    if the status code should be send also via. the {@link HttpContent} (Http Body)
+     */
+    public static void sendStatus(final ChannelHandlerContext ctx, final HttpRequest request, final HttpResponseStatus status, final boolean body) {
+        final HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, status);
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=" + StandardCharsets.UTF_8.toString());
+        sendAndCleanupConnection(ctx, request, response, body ? new DefaultHttpContent(Unpooled.copiedBuffer(status.toString() + "\r\n", CharsetUtil.UTF_8)) : null);
+    }
+
+    /**
+     * Sends a response to a {@link ChannelHandlerContext} (Client).
+     *
+     * @param ctx      the {@link ChannelHandlerContext} to which the message should be send
+     * @param request  the request from the {@link ChannelHandlerContext} (Client)
+     * @param response the response which should be send to the {@link ChannelHandlerContext} (Client)
+     * @param content  the content which should be send to the {@link ChannelHandlerContext} (Client)
+     */
+    public static void sendAndCleanupConnection(final ChannelHandlerContext ctx, final HttpRequest request, final HttpResponse response, final HttpContent content) {
+        final boolean keepAlive = HttpUtil.isKeepAlive(request);
+
+        HttpUtil.setContentLength(response, content == null ? 0 : content.content().readableBytes());
+        HttpUtil.setKeepAlive(response, keepAlive);
+
+        final ChannelFuture channelFuture;
+        if (content == null) channelFuture = ctx.writeAndFlush(response);
+        else {
+            ctx.write(response);
+            channelFuture = ctx.writeAndFlush(content);
+        }
+        if (keepAlive) channelFuture.addListener(ChannelFutureListener.CLOSE);
+    }
+}
