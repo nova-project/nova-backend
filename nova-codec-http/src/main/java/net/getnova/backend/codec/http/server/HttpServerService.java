@@ -51,6 +51,6 @@ public class HttpServerService {
      * @see HttpLocation
      */
     public void addLocationProvider(final String path, final HttpLocationProvider<?> provider) {
-        this.codec.addLocationProvider(path, provider);
+        this.codec.addLocationProvider(path.toLowerCase(), provider);
     }
 }

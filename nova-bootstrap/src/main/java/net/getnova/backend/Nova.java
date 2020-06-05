@@ -2,6 +2,7 @@ package net.getnova.backend;
 
 import com.google.inject.Stage;
 import lombok.extern.slf4j.Slf4j;
+import net.getnova.backend.api.ApiService;
 import net.getnova.backend.config.ConfigService;
 import net.getnova.backend.handler.InitHandler;
 import net.getnova.backend.handler.PostInitHandler;
@@ -84,6 +85,7 @@ public final class Nova {
                 log.error("Unable to enable service " + service + ".", e);
             }
         }
+        this.serviceHandler.addService(ApiService.class);
     }
 
     /**

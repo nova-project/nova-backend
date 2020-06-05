@@ -15,16 +15,16 @@ import net.getnova.backend.netty.NettyChannelHandler;
 @Getter(AccessLevel.PACKAGE)
 public abstract class HttpLocation<T> extends NettyChannelHandler<T> {
 
-    private final ChannelHandler[] handlers;
+    private final ChannelHandler[] parentHandlers;
 
     /**
      * Creates a new path mapping.
      *
-     * @param handlers the child {@link ChannelHandler}'s which
-     *                 are progressed before this {@link HttpLocation}
-     *                 is progressed.
+     * @param parentHandlers the parent {@link ChannelHandler}'s which
+     *                       are progressed before this {@link HttpLocation}
+     *                       is progressed.
      */
-    public HttpLocation(final ChannelHandler... handlers) {
-        this.handlers = handlers;
+    public HttpLocation(final ChannelHandler... parentHandlers) {
+        this.parentHandlers = parentHandlers;
     }
 }

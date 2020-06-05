@@ -28,6 +28,10 @@
         <module name="nova-backend.nova-codec-http.test" />
         <module name="nova-backend.nova-modules.main" />
         <module name="nova-backend.nova-sql.test" />
+        <module name="nova-backend.nova-json.main" />
+        <module name="nova-backend.nova-json.test" />
+        <module name="nova-backend.nova-api.test" />
+        <module name="nova-backend.nova-api.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="14" />

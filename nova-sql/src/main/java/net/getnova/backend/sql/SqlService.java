@@ -9,6 +9,7 @@ import net.getnova.backend.service.event.StartService;
 import net.getnova.backend.service.event.StartServiceEvent;
 import net.getnova.backend.service.event.StopService;
 import net.getnova.backend.service.event.StopServiceEvent;
+import org.hibernate.Session;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -73,5 +74,14 @@ public class SqlService {
     @StopService
     private void stop(final StopServiceEvent event) {
         if (this.validConfig && !error) this.sessionFactory.close();
+    }
+
+    /**
+     * Opens a new Sql-{@link Session}.
+     *
+     * @return the {@link Session}
+     */
+    public Session openSession() {
+        return this.sessionFactory.openSession();
     }
 }

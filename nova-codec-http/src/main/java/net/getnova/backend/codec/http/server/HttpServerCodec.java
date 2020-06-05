@@ -25,7 +25,7 @@ class HttpServerCodec implements Codec {
     /**
      * Adds a new {@link HttpLocationProvider} to the {@link Map} of location providers.
      *
-     * @param path     the path to the {@link HttpLocation}. Without a {@code /} at the start
+     * @param path     the path to the {@link HttpLocation}
      * @param provider {@link HttpLocationProvider} instance of the {@link HttpLocation}
      * @see HttpLocationProvider
      * @see HttpLocation

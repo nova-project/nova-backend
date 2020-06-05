@@ -9,4 +9,6 @@ include 'nova-config'
 include 'nova-netty'
 include 'nova-codec-http'
 include 'nova-modules'
+include 'nova-api'
+include 'nova-json'
 
