@@ -74,6 +74,13 @@ public final class Nova {
     private void registerServices() {
         this.configService = this.serviceHandler.addService(ConfigService.class);
         if (this.cli.useEnvironment()) this.configService.useEnvironment();
+        for (final String service : this.cli.enabledServices()) {
+            try {
+                this.serviceHandler.addService(Class.forName(service));
+            } catch (ClassNotFoundException e) {
+                log.error("Unable to enable service " + service + ".", e);
+            }
+        }
     }
 
     /**

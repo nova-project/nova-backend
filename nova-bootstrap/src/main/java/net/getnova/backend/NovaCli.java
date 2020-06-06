@@ -30,6 +30,7 @@ class NovaCli {
         options.addOption("e", "env", false, "Disable the configfile"
                 + " and reads the values from the environment variables.");
         options.addOption("h", "help", false, "prints this message");
+        options.addOption("s", "service", true, "Class name to the service class.");
         return options;
     }
 
@@ -42,5 +43,10 @@ class NovaCli {
 
     boolean useEnvironment() {
         return this.cmd != null && this.cmd.hasOption("e");
+    }
+
+    String[] enabledServices() {
+        if (this.cmd != null && this.cmd.hasOption("s")) return this.cmd.getOptionValues("s");
+        else return new String[0];
     }
 }

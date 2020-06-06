@@ -26,7 +26,7 @@ final class ServiceExecutor {
                                 final Collection<ServiceData> services,
                                 final PreInitServiceEvent event) throws ServiceException {
         executeStep(serviceHandler,
-                services,
+                new LinkedList<>(services),
                 ServiceData::isPreInit,
                 ServiceData::getPreInitMethod,
                 serviceData -> serviceData.setPreInit(true),
@@ -39,7 +39,7 @@ final class ServiceExecutor {
                              final Collection<ServiceData> services,
                              final InitServiceEvent event) throws ServiceException {
         executeStep(serviceHandler,
-                services,
+                new LinkedList<>(services),
                 ServiceData::isInit,
                 ServiceData::getInitMethod,
                 serviceData -> serviceData.setInit(true),
@@ -52,7 +52,7 @@ final class ServiceExecutor {
                                  final Collection<ServiceData> services,
                                  final PostInitServiceEvent event) throws ServiceException {
         executeStep(serviceHandler,
-                services,
+                new LinkedList<>(services),
                 ServiceData::isPostInit,
                 ServiceData::getPostInitMethod,
                 serviceData -> serviceData.setPostInit(true),
@@ -65,7 +65,7 @@ final class ServiceExecutor {
                               final Collection<ServiceData> services,
                               final StartServiceEvent event) throws ServiceException {
         executeStep(serviceHandler,
-                services,
+                new LinkedList<>(services),
                 ServiceData::isStarted,
                 ServiceData::getStartMethod,
                 serviceData -> serviceData.setStarted(true),
@@ -78,7 +78,7 @@ final class ServiceExecutor {
                              final Collection<ServiceData> services,
                              final StopServiceEvent event) throws ServiceException {
         executeStep(serviceHandler,
-                services,
+                new LinkedList<>(services),
                 serviceData -> !serviceData.isStarted(),
                 ServiceData::getStopMethod,
                 serviceData -> serviceData.setStarted(false),
