@@ -10,6 +10,7 @@ import net.getnova.backend.handler.StartHandler;
 import net.getnova.backend.handler.StopHandler;
 import net.getnova.backend.injection.InjectionHandler;
 import net.getnova.backend.logging.NovaLogConfigurer;
+import net.getnova.backend.modules.ModuleHandler;
 import net.getnova.backend.service.ServiceHandler;
 
 /**
@@ -28,6 +29,7 @@ public final class Nova {
 
     private InjectionHandler injectionHandler;
     private ServiceHandler serviceHandler;
+    private ModuleHandler moduleHandler;
 
     private NovaConfig config;
     private ConfigService configService;
@@ -60,6 +62,7 @@ public final class Nova {
             binder.bind(ServiceHandler.class).toInstance(this.serviceHandler);
         });
         this.injectionHandler.createBindings(Stage.DEVELOPMENT);
+        this.moduleHandler = new ModuleHandler();
 
         this.preInitHandler = this.injectionHandler.getInjector().getInstance(PreInitHandler.class);
         this.initHandler = this.injectionHandler.getInjector().getInstance(InitHandler.class);
@@ -89,8 +92,14 @@ public final class Nova {
     private void init() {
         log.info("Initializing backend...");
 
+        /* Load all modules. */
+        this.moduleHandler.loadModules();
+
         /* Adding all services which are required to run the minimal size of the backend. */
         this.registerServices();
+
+        /* Registration of all module services. */
+        this.moduleHandler.getModuleServices().forEach(this.serviceHandler::addService);
 
         /* Nova Internal Stuff */
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown, "shutdown-thread"));

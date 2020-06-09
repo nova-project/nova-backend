@@ -8,4 +8,5 @@ include 'nova-sql'
 include 'nova-config'
 include 'nova-netty'
 include 'nova-codec-http'
+include 'nova-modules'
 
