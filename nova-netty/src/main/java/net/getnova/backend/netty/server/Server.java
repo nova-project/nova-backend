@@ -1,7 +1,9 @@
 package net.getnova.backend.netty.server;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.ServerChannel;
 import io.netty.channel.epoll.Epoll;
 import io.netty.handler.ssl.SslContext;
@@ -40,6 +42,8 @@ public abstract class Server implements AutoCloseable {
         this.thread = new Thread(() -> {
             try {
                 this.channel = new ServerBootstrap()
+                        .option(ChannelOption.SO_BACKLOG, 1024)
+                        .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                         .group(this.nettyService.getBosGroup(), this.nettyService.getWorkerGroup())
                         .channel(this.getServerChannelType(EPOLL))
                         .childHandler(new NettyInitializer(this.sslContext, this.codecHandler.getInitializers()))

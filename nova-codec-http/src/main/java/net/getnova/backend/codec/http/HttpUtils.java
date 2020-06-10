@@ -4,21 +4,30 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.DefaultFileRegion;
 import io.netty.handler.codec.http.DefaultHttpContent;
 import io.netty.handler.codec.http.DefaultHttpResponse;
+import io.netty.handler.codec.http.HttpChunkedInput;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpMessage;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.handler.ssl.SslHandler;
+import io.netty.handler.stream.ChunkedFile;
 import io.netty.util.CharsetUtil;
 
 import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -31,7 +40,7 @@ public final class HttpUtils {
     public static final DateTimeFormatter HTTP_DATE_FORMAT = DateTimeFormatter.RFC_1123_DATE_TIME;
     public static final ZoneOffset HTTP_TIME_ZONE = ZoneOffset.UTC;
     private static final Pattern INSECURE_URI = Pattern.compile(".*[<>&\"].*");
-    private static final int HTTP_CACHE_SECONDS = 60;
+    private static final long HTTP_CACHE_SECONDS = Duration.ofDays(30).toSeconds();
     private static final MimetypesFileTypeMap MIMETYPES_FILE_TYPE_MAP = new MimetypesFileTypeMap();
 
     static {
@@ -66,6 +75,56 @@ public final class HttpUtils {
     }
 
     /**
+     * Checks if a file is accessible or exists.
+     *
+     * @param file the {@link File} witch should be checked
+     * @return if the file is accessible or exists
+     */
+    public static boolean fileExist(final File file) {
+        return file.exists() && file.canRead() && !file.isHidden();
+    }
+
+    /**
+     * Writes a {@link File} to a {@link ChannelHandlerContext}.
+     *
+     * @param ctx     the {@link ChannelHandlerContext} to which the message should be send
+     * @param request the request from the {@link ChannelHandlerContext} (Client)
+     * @param file    the {@link File} which should be send to the {@link ChannelHandlerContext} (Client)
+     * @throws IOException if there is an error while reading the file
+     */
+    public static void sendFile(final ChannelHandlerContext ctx, final HttpRequest request, final File file) throws IOException {
+        final String ifModifiedSince = request.headers().get(HttpHeaderNames.IF_MODIFIED_SINCE);
+        if (ifModifiedSince != null
+                && !ifModifiedSince.isEmpty()
+                && checkModified(ZonedDateTime.parse(ifModifiedSince, HTTP_DATE_FORMAT).toInstant(), file)) {
+            sendNotModified(ctx, request);
+            return;
+        }
+
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")) {
+            final long length = randomAccessFile.length();
+            final boolean keepAlive = HttpUtil.isKeepAlive(request);
+
+            final HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+            HttpUtil.setContentLength(response, length);
+            setContentTypeHeader(response, file);
+            setDateAndCacheHeaders(response, file);
+            HttpUtil.setKeepAlive(response, keepAlive);
+            ctx.write(response);
+
+            ChannelFuture lastContentFuture;
+            if (ctx.pipeline().get(SslHandler.class) == null) {
+                ctx.write(new DefaultFileRegion(randomAccessFile.getChannel(), 0, length), ctx.newProgressivePromise());
+                lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+            } else {
+                lastContentFuture = ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(randomAccessFile, 0, length, 8192)), ctx.newProgressivePromise());
+            }
+
+            if (!keepAlive) lastContentFuture.addListener(ChannelFutureListener.CLOSE);
+        }
+    }
+
+    /**
      * Adds the HTTP {@code Date} header to a {@link HttpResponse}.
      * The date is formatted in the {@link DateTimeFormatter#RFC_1123_DATE_TIME} format.
      *
@@ -92,13 +151,23 @@ public final class HttpUtils {
     }
 
     /**
-     * Adds the HTTP {@code Content-Type} header to a {@link HttpResponse}.
+     * Adds the HTTP {@code Content-Type} header to a {@link HttpMessage}.
      *
-     * @param response the {@link HttpResponse} to which the content type header should be added
-     * @param file     the file from were the content type should be extracted
+     * @param message the {@link HttpMessage} to which the content type header should be added
+     * @param file    the file from were the content type should be extracted
      */
-    public static void setContentTypeHeader(final HttpResponse response, final File file) {
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, MIMETYPES_FILE_TYPE_MAP.getContentType(file));
+    public static void setContentTypeHeader(final HttpMessage message, final File file) {
+        setContentTypeHeader(message, MIMETYPES_FILE_TYPE_MAP.getContentType(file));
+    }
+
+    /**
+     * Adds the HTTP {@code Content-Type} header to a {@link HttpMessage}.
+     *
+     * @param message     the {@link HttpMessage} to which the content type header should be added
+     * @param contentType the content type as a {@link CharSequence} which should be used
+     */
+    public static void setContentTypeHeader(final HttpMessage message, final CharSequence contentType) {
+        message.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
     }
 
     /**
@@ -109,7 +178,7 @@ public final class HttpUtils {
      * @return if the {@link File} has been edited since the specified {@link Instant}
      */
     public static boolean checkModified(final Instant instant, final File file) {
-        return !Instant.ofEpochMilli(file.lastModified()).equals(instant);
+        return instant.toEpochMilli() != file.lastModified();
     }
 
     /**
@@ -154,11 +223,13 @@ public final class HttpUtils {
      * @param ctx     the {@link ChannelHandlerContext} to which the message should be send
      * @param request the request from the {@link ChannelHandlerContext} (Client)
      * @param status  the status which should be send to the {@link ChannelHandlerContext} (Client)
-     * @param body    if the status code should be send also via. the {@link HttpContent} (Http Body)
+     * @param body    if the status code should be send also via the {@link HttpContent} (Http Body)
      */
     public static void sendStatus(final ChannelHandlerContext ctx, final HttpRequest request, final HttpResponseStatus status, final boolean body) {
         final HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, status);
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=" + StandardCharsets.UTF_8.toString());
+        if (body) {
+            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=" + StandardCharsets.UTF_8.toString());
+        }
         sendAndCleanupConnection(ctx, request, response, body ? new DefaultHttpContent(Unpooled.copiedBuffer(status.toString() + "\r\n", CharsetUtil.UTF_8)) : null);
     }
 
@@ -177,11 +248,11 @@ public final class HttpUtils {
         HttpUtil.setKeepAlive(response, keepAlive);
 
         final ChannelFuture channelFuture;
-        if (content == null) channelFuture = ctx.writeAndFlush(response);
+        if (content == null) channelFuture = ctx.write(response);
         else {
             ctx.write(response);
-            channelFuture = ctx.writeAndFlush(content);
+            channelFuture = ctx.write(content);
         }
-        if (keepAlive) channelFuture.addListener(ChannelFutureListener.CLOSE);
+        if (!keepAlive) channelFuture.addListener(ChannelFutureListener.CLOSE);
     }
 }

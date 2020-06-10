@@ -17,7 +17,7 @@ class HttpServerCodecInitializer implements CodecInitializer {
 
     @Override
     public void configure(final ChannelPipeline pipeline) {
-        pipeline.addLast("http-server-codec", new HttpServerCodec());
+        pipeline.addLast("http-server-codec", new HttpServerCodec(4096, 8192, 8192, false));
         pipeline.addLast("chunked-write-handler", new ChunkedWriteHandler());
         pipeline.addLast("http-server-content-handler", new HttpServerContentDecoder(this.injectionHandler, this.locationProviders));
     }
