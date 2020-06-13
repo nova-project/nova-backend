@@ -31,6 +31,6 @@ class HttpServerCodec implements Codec {
      * @see HttpLocation
      */
     void addLocationProvider(final String path, final HttpLocationProvider<?> provider) {
-        this.locationProviders.put(path.endsWith("/") || path.isEmpty() ? path : path + "/", provider);
+        this.locationProviders.put(path.startsWith("/") ? path.toLowerCase() : "/" + path.toLowerCase(), provider);
     }
 }

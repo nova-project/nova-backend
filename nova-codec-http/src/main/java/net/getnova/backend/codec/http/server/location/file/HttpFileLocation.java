@@ -24,6 +24,7 @@ class HttpFileLocation extends HttpLocation<HttpMessage> {
     private final String baseDir;
     private final boolean edit;
     private HttpRequest request;
+    private File file;
     private boolean finish = false;
 
     @Override
@@ -34,35 +35,43 @@ class HttpFileLocation extends HttpLocation<HttpMessage> {
 
     private void handleRequest(final ChannelHandlerContext ctx, final HttpRequest request) throws IOException {
         this.request = request;
-        if (request.method().equals(HttpMethod.GET)) {
-            final File file = new File(this.baseDir + request.uri());
 
-            if (!HttpUtils.fileExist(file)) {
-                HttpUtils.sendStatus(ctx, request, HttpResponseStatus.NOT_FOUND);
-                return;
-            }
-
-            if (file.isDirectory()) {
-                if (!request.uri().endsWith("/")) HttpUtils.sendRedirect(ctx, request, request.uri() + "/");
-                else sendDirectory(ctx, request.uri(), file);
-                return;
-            }
-
-            HttpUtils.sendFile(ctx, request, file);
+        if (!request.decoderResult().isSuccess()) {
+            HttpUtils.sendStatus(ctx, request, HttpResponseStatus.BAD_REQUEST);
             this.finish = true;
+            return;
+        }
+
+        this.file = new File(this.baseDir + request.uri());
+
+        final boolean head = request.method().equals(HttpMethod.HEAD);
+        if (request.method().equals(HttpMethod.GET) || head) {
+            this.finish = true;
+
+            if (!HttpUtils.fileExist(this.file)) {
+                HttpUtils.sendStatus(ctx, request, HttpResponseStatus.NOT_FOUND, !head);
+                return;
+            }
+
+            if (this.file.isDirectory()) {
+                if (!request.uri().endsWith("/")) HttpUtils.sendRedirect(ctx, request, request.uri() + '/');
+                else sendDirectory(ctx, request.uri(), this.file, head);
+                return;
+            }
+
+            HttpUtils.sendFile(ctx, request, this.file, head);
         } else {
             HttpUtils.sendStatus(ctx, request, HttpResponseStatus.METHOD_NOT_ALLOWED);
+            this.finish = true;
         }
     }
 
     private void handleContent(final ChannelHandlerContext ctx, final HttpContent content) {
-
     }
 
-    private void sendDirectory(final ChannelHandlerContext ctx, final String uri, final File file) {
+    private void sendDirectory(final ChannelHandlerContext ctx, final String uri, final File file, final boolean onlyHead) {
         final HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
         HttpUtils.setContentTypeHeader(response, HttpHeaderValues.TEXT_HTML);
-        HttpUtils.sendAndCleanupConnection(ctx, request, response,
-                new DefaultHttpContent(HttpFileLocationDirectoryBrowser.create(this.baseDir, uri, file)));
+        HttpUtils.sendAndCleanupConnection(ctx, request, response, onlyHead ? null : new DefaultHttpContent(HttpFileLocationDirectoryBrowser.create(this.baseDir, uri, file)));
     }
 }

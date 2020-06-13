@@ -47,7 +47,8 @@ final class HttpFileLocationDirectoryBrowser {
             Arrays.sort(files, (file1, file2) -> {
                 if (file1.isDirectory() && file2.isDirectory()) return 0;
                 else if (file1.isDirectory()) return -1;
-                else return 1;
+                else if (file2.isDirectory()) return 1;
+                else return 0;
             });
 
             boolean folder;

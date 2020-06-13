@@ -20,11 +20,13 @@ import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedFile;
 import io.netty.util.CharsetUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -35,6 +37,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.regex.Pattern;
 
+@Slf4j
 public final class HttpUtils {
 
     public static final DateTimeFormatter HTTP_DATE_FORMAT = DateTimeFormatter.RFC_1123_DATE_TIME;
@@ -58,20 +61,20 @@ public final class HttpUtils {
      * @param uri the uri form the client
      * @return the decoded uri
      */
-    public static String decodeUri(final String uri) {
-        final String decodedUri = URLDecoder.decode(uri, StandardCharsets.UTF_8);
+    public static URI decodeUri(final String uri) {
+        final String decoded = URLDecoder.decode(uri, StandardCharsets.UTF_8);
 
         if (uri.isBlank()
                 || uri.charAt(0) != '/'
                 || uri.charAt(0) == '.'
                 || uri.charAt(uri.length() - 1) == '.'
-                || decodedUri.contains("/.")
-                || decodedUri.contains("./")
+                || uri.contains("..")
+                || uri.contains("./")
                 || INSECURE_URI.matcher(uri).matches()) {
             return null;
         }
 
-        return decodedUri;
+        return URI.create(uri);
     }
 
     /**
@@ -107,12 +110,13 @@ public final class HttpUtils {
     /**
      * Writes a {@link File} to a {@link ChannelHandlerContext}.
      *
-     * @param ctx     the {@link ChannelHandlerContext} to which the message should be send
-     * @param request the request from the {@link ChannelHandlerContext} (Client)
-     * @param file    the {@link File} which should be send to the {@link ChannelHandlerContext} (Client)
+     * @param ctx      the {@link ChannelHandlerContext} to which the message should be send
+     * @param request  the request from the {@link ChannelHandlerContext} (Client)
+     * @param file     the {@link File} which should be send to the {@link ChannelHandlerContext} (Client)
+     * @param onlyHead only send the {@link HttpResponse} without the {@link HttpContent}. This is needed at {@link io.netty.handler.codec.http.HttpMethod#HEAD}
      * @throws IOException if there is an error while reading the file
      */
-    public static void sendFile(final ChannelHandlerContext ctx, final HttpRequest request, final File file) throws IOException {
+    public static void sendFile(final ChannelHandlerContext ctx, final HttpRequest request, final File file, final boolean onlyHead) throws IOException {
         final String ifModifiedSince = request.headers().get(HttpHeaderNames.IF_MODIFIED_SINCE);
         if (ifModifiedSince != null
                 && !ifModifiedSince.isEmpty()
@@ -121,27 +125,26 @@ public final class HttpUtils {
             return;
         }
 
-        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")) {
-            final long length = randomAccessFile.length();
-            final boolean keepAlive = HttpUtil.isKeepAlive(request);
+        final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+        final long length = randomAccessFile.length();
+        final boolean keepAlive = HttpUtil.isKeepAlive(request);
 
-            final HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
-            HttpUtil.setContentLength(response, length);
-            setContentTypeHeader(response, file);
-            setDateAndCacheHeaders(response, file);
-            HttpUtil.setKeepAlive(response, keepAlive);
-            ctx.write(response);
+        final HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+        HttpUtil.setContentLength(response, length);
+        setContentTypeHeader(response, file);
+        setDateAndCacheHeaders(response, file);
+        HttpUtil.setKeepAlive(response, keepAlive);
 
-            ChannelFuture lastContentFuture;
-            if (ctx.pipeline().get(SslHandler.class) == null) {
-                ctx.write(new DefaultFileRegion(randomAccessFile.getChannel(), 0, length), ctx.newProgressivePromise());
-                lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-            } else {
-                lastContentFuture = ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(randomAccessFile, 0, length, 8192)), ctx.newProgressivePromise());
-            }
+        ChannelFuture lastContentFuture = ctx.write(response);
 
-            if (!keepAlive) lastContentFuture.addListener(ChannelFutureListener.CLOSE);
+        if (!onlyHead) if (ctx.pipeline().get(SslHandler.class) == null) {
+            ctx.write(new DefaultFileRegion(randomAccessFile.getChannel(), 0, length), ctx.newProgressivePromise());
+            lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+        } else {
+            lastContentFuture = ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(randomAccessFile, 0, length, 8192)), ctx.newProgressivePromise());
         }
+
+        if (!keepAlive) lastContentFuture.addListener(ChannelFutureListener.CLOSE);
     }
 
     /**
@@ -198,7 +201,7 @@ public final class HttpUtils {
      * @return if the {@link File} has been edited since the specified {@link Instant}
      */
     public static boolean checkModified(final Instant instant, final File file) {
-        return instant.toEpochMilli() != file.lastModified();
+        return instant.getEpochSecond() != file.lastModified() / 1000;
     }
 
     /**
@@ -209,7 +212,7 @@ public final class HttpUtils {
      * @param newUri  the new uri to witch the client should be redirected
      */
     public static void sendRedirect(final ChannelHandlerContext ctx, final HttpRequest request, final String newUri) {
-        final HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.MOVED_PERMANENTLY);
+        final HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.TEMPORARY_REDIRECT);
         response.headers().set(HttpHeaderNames.LOCATION, newUri);
         sendAndCleanupConnection(ctx, request, response, null);
     }
@@ -247,9 +250,7 @@ public final class HttpUtils {
      */
     public static void sendStatus(final ChannelHandlerContext ctx, final HttpRequest request, final HttpResponseStatus status, final boolean body) {
         final HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, status);
-        if (body) {
-            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=" + StandardCharsets.UTF_8.toString());
-        }
+        if (body) setContentTypeHeader(request, "text/plain; charset=" + StandardCharsets.UTF_8.toString());
         sendAndCleanupConnection(ctx, request, response, body ? new DefaultHttpContent(Unpooled.copiedBuffer(status.toString() + "\r\n", CharsetUtil.UTF_8)) : null);
     }
 
