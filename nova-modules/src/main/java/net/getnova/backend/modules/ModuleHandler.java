@@ -18,6 +18,9 @@ public class ModuleHandler {
     @Getter
     private Set<ModuleData> modules;
 
+    /**
+     * Creates a new module handler.
+     */
     public ModuleHandler() {
         this.moduleFolder = new File("modules");
     }
@@ -26,6 +29,9 @@ public class ModuleHandler {
         if (!this.moduleFolder.exists()) this.moduleFolder.mkdirs();
     }
 
+    /**
+     * Loads all modules.
+     */
     public void loadModules() {
         this.checkFolder();
         try {
@@ -35,6 +41,11 @@ public class ModuleHandler {
         }
     }
 
+    /**
+     * Returns all services witch are needed by all registered modules.
+     *
+     * @return all services witch are needed by all registered modules
+     */
     public Set<Class<?>> getModuleServices() {
         return this.modules == null ? Collections.emptySet() : this.modules.stream().flatMap(module -> module.getServices().stream()).collect(Collectors.toUnmodifiableSet());
     }

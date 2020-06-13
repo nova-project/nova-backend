@@ -75,6 +75,26 @@ public final class HttpUtils {
     }
 
     /**
+     * Formats milliseconds to a Http Date. ({@link DateTimeFormatter#RFC_1123_DATE_TIME})
+     *
+     * @param milliseconds the time witch should be formatted
+     * @return the formatted date
+     */
+    public static String formatDate(final long milliseconds) {
+        return formatDate(Instant.ofEpochMilli(milliseconds).atZone(HTTP_TIME_ZONE));
+    }
+
+    /**
+     * Formats a {@link ZonedDateTime} to a Http Date. ({@link DateTimeFormatter#RFC_1123_DATE_TIME})
+     *
+     * @param dateTime the {@link ZonedDateTime} witch should be formatted
+     * @return the formatted date
+     */
+    public static String formatDate(final ZonedDateTime dateTime) {
+        return dateTime.format(HTTP_DATE_FORMAT);
+    }
+
+    /**
      * Checks if a file is accessible or exists.
      *
      * @param file the {@link File} witch should be checked
@@ -131,7 +151,7 @@ public final class HttpUtils {
      * @param response the {@link HttpResponse} to which the date header should be added
      */
     public static void setDateHeader(final HttpResponse response) {
-        response.headers().set(HttpHeaderNames.DATE, HTTP_DATE_FORMAT.format(ZonedDateTime.now(ZoneOffset.UTC)));
+        response.headers().set(HttpHeaderNames.DATE, formatDate(ZonedDateTime.now(HTTP_TIME_ZONE)));
     }
 
     /**
@@ -143,11 +163,11 @@ public final class HttpUtils {
      * @param fileToCache the {@link File} from from which the cache data should be extracted
      */
     public static void setDateAndCacheHeaders(final HttpResponse response, final File fileToCache) {
-        final ZonedDateTime time = ZonedDateTime.now(ZoneOffset.UTC);
-        response.headers().set(HttpHeaderNames.DATE, HTTP_DATE_FORMAT.format(time));
-        response.headers().set(HttpHeaderNames.EXPIRES, HTTP_DATE_FORMAT.format(time.plus(HTTP_CACHE_SECONDS, ChronoUnit.SECONDS)));
+        final ZonedDateTime time = ZonedDateTime.now(HTTP_TIME_ZONE);
+        response.headers().set(HttpHeaderNames.DATE, formatDate(time));
+        response.headers().set(HttpHeaderNames.EXPIRES, formatDate(time.plus(HTTP_CACHE_SECONDS, ChronoUnit.SECONDS)));
         response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, max-age=" + HTTP_CACHE_SECONDS);
-        response.headers().set(HttpHeaderNames.LAST_MODIFIED, HTTP_DATE_FORMAT.format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(fileToCache.lastModified()), HTTP_TIME_ZONE)));
+        response.headers().set(HttpHeaderNames.LAST_MODIFIED, formatDate(fileToCache.lastModified()));
     }
 
     /**

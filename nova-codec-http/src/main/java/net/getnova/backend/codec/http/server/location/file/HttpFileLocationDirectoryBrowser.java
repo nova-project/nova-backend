@@ -7,15 +7,14 @@ import net.getnova.backend.codec.http.HttpUtils;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 final class HttpFileLocationDirectoryBrowser {
 
-    private static final byte[] head = "<!doctype html><html><head><meta charset=\"utf-8\"><style type=\"text/css\">a{color:#0088CC;text-decoration:none}tr:nth-child(odd){background-color:#fafafa}tr td:nth-child(2){width:150px;color:#cc8800;text-align:right}tr td:nth-child(3){width:250px;color:#0000cc;text-align:center}</style></head>".getBytes(StandardCharsets.UTF_8);
-    private static final byte[] footer = "</body></html>".getBytes(StandardCharsets.UTF_8);
+    private static final byte[] HEAD = ("<!doctype html><html><head><meta charset=\"utf-8\"><style type=\"text/css\">a{color:#0088CC;text-decoration:none}"
+            + "tr:nth-child(odd){background-color:#fafafa}tr td:nth-child(2){width:150px;color:#cc8800;text-align:right}tr td:nth-child(3){width:250px;color:#0000cc;"
+            + "text-align:center}</style></head><body><h3>Current Location: ").getBytes(StandardCharsets.UTF_8);
+    private static final byte[] FOOTER = "</tbody></table></body></html>".getBytes(StandardCharsets.UTF_8);
 
     private HttpFileLocationDirectoryBrowser() {
         throw new UnsupportedOperationException();
@@ -23,13 +22,13 @@ final class HttpFileLocationDirectoryBrowser {
 
     static ByteBuf create(final String baseDir, final String uri, final File file) {
         final ByteBuf byteBuf = Unpooled.buffer();
-        byteBuf.writeBytes(head);
+        byteBuf.writeBytes(HEAD);
 
         String parentName = baseDir.equals(file.getAbsolutePath()) ? null : file.getParent().substring(baseDir.length()).replace(File.separatorChar, '/');
         if (parentName != null && parentName.isEmpty()) parentName = "/";
 
         final StringBuilder builder = new StringBuilder()
-                .append("<h3>Current Location: ").append(uri).append("</h3>");
+                .append(uri).append("</h3>");
         if (parentName != null)
             builder.append("<a href=\"").append(parentName).append("\">Patent folder: ").append(parentName).append("</a>")
                     .append("<br><br>");
@@ -62,16 +61,14 @@ final class HttpFileLocationDirectoryBrowser {
 
                 builder.append("<tr>")
                         .append("<td><a href=\"").append(name).append("\">").append(name).append("</a></td>")
-                        .append("<td>").append(folder ? "" : readableFileSize(currentFile.length()))
-                        .append("<td>").append(folder ? "" : Instant.ofEpochMilli(currentFile.lastModified()).atZone(ZoneOffset.UTC).format(DateTimeFormatter.RFC_1123_DATE_TIME))
+                        .append("<td>").append(folder ? "" : readableFileSize(currentFile.length())).append("</td>")
+                        .append("<td>").append(folder ? "" : HttpUtils.formatDate(currentFile.lastModified())).append("</td>")
                         .append("</tr>");
             }
         }
 
-        builder.append("</tbody></table>");
-
         byteBuf.writeCharSequence(builder.toString(), StandardCharsets.UTF_8);
-        byteBuf.writeBytes(footer);
+        byteBuf.writeBytes(FOOTER);
         return byteBuf;
     }
 
