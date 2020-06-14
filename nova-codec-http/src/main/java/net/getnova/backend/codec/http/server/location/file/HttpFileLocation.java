@@ -42,13 +42,13 @@ class HttpFileLocation extends HttpLocation<HttpMessage> {
             return;
         }
 
-        this.file = new File(this.baseDir + request.uri());
+        this.file = new File(this.baseDir + request.uri()).getAbsoluteFile();
 
         final boolean head = request.method().equals(HttpMethod.HEAD);
         if (request.method().equals(HttpMethod.GET) || head) {
             this.finish = true;
 
-            if (!HttpUtils.fileExist(this.file)) {
+            if (!HttpUtils.fileExist(this.baseDir, this.file)) {
                 HttpUtils.sendStatus(ctx, request, HttpResponseStatus.NOT_FOUND, !head);
                 return;
             }

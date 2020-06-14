@@ -24,7 +24,7 @@ final class HttpFileLocationDirectoryBrowser {
         final ByteBuf byteBuf = Unpooled.buffer();
         byteBuf.writeBytes(HEAD);
 
-        String parentName = baseDir.equals(file.getAbsolutePath()) ? null : file.getParent().substring(baseDir.length()).replace(File.separatorChar, '/');
+        String parentName = baseDir.equals(file.getPath()) ? null : file.getParent().substring(baseDir.length()).replace(File.separatorChar, '/');
         if (parentName != null && parentName.isEmpty()) parentName = "/";
 
         final StringBuilder builder = new StringBuilder()
@@ -55,7 +55,7 @@ final class HttpFileLocationDirectoryBrowser {
             String name;
 
             for (final File currentFile : files) {
-                if (!HttpUtils.fileExist(currentFile)) continue;
+                if (!HttpUtils.fileExist(baseDir, currentFile)) continue;
 
                 folder = currentFile.isDirectory();
                 name = currentFile.getName();

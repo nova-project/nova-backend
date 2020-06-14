@@ -100,11 +100,12 @@ public final class HttpUtils {
     /**
      * Checks if a file is accessible or exists.
      *
-     * @param file the {@link File} witch should be checked
+     * @param baseDir the Directory were the file shuld be located (This <b>MUST</b> be an absolute path!)
+     * @param file    the {@link File} witch should be checked
      * @return if the file is accessible or exists
      */
-    public static boolean fileExist(final File file) {
-        return file.exists() && file.canRead() && !file.isHidden();
+    public static boolean fileExist(final String baseDir, final File file) {
+        return file.exists() && file.canRead() && !file.isHidden() && file.getPath().startsWith(baseDir);
     }
 
     /**
