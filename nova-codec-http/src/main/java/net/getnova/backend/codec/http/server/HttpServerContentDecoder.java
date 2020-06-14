@@ -53,7 +53,7 @@ class HttpServerContentDecoder extends MessageToMessageDecoder<HttpRequest> {
         if (location == null) {
             HttpUtils.sendStatus(ctx, msg, HttpResponseStatus.NOT_FOUND);
             return;
-        } else if (!location.getKey().equals("/") && !path.startsWith(location.getKey() + '/')) {
+        } else if (!location.getKey().equals("/") && path.endsWith(location.getKey())) {
             HttpUtils.sendRedirect(ctx, msg, uri.resolve(uri.getRawPath() + '/').toASCIIString());
             return;
         }
@@ -74,7 +74,7 @@ class HttpServerContentDecoder extends MessageToMessageDecoder<HttpRequest> {
     }
 
     private void configurePipeline(final ChannelPipeline pipeline, final HttpLocation<?> location) {
-        for (final ChannelHandler handler : location.getHandlers()) pipeline.addLast(handler);
+        for (final ChannelHandler parentHandler : location.getParentHandlers()) pipeline.addLast(parentHandler);
         pipeline.addLast(location);
         pipeline.remove(this);
     }

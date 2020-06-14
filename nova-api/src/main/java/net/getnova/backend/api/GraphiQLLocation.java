@@ -9,6 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultHttpContent;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -39,19 +40,23 @@ public class GraphiQLLocation extends HttpLocation<FullHttpRequest> {
     }
 
     private void sendPlayground(final ChannelHandlerContext ctx, final FullHttpRequest msg) throws IOException {
-        HttpUtils.sendAndCleanupConnection(ctx, msg,
-                new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK),
+        final DefaultHttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+        HttpUtils.setContentTypeHeader(response, HttpHeaderValues.TEXT_HTML);
+        HttpUtils.sendAndCleanupConnection(ctx, msg, response,
                 new DefaultHttpContent(Unpooled.copiedBuffer(GraphiQLLocation.class.getResourceAsStream("/www/index.html").readAllBytes())));
     }
 
     private void executeGraphQL(final ChannelHandlerContext ctx, final FullHttpRequest msg) {
         final JsonObject request = JsonUtils.fromJson(JsonParser.parseString(msg.content().toString(StandardCharsets.UTF_8)), JsonObject.class);
 
-        final JsonElement response = ApiExecutor.execute(this.graphQL, request);
+        final JsonElement responseJson = ApiExecutor.execute(this.graphQL, request);
+
+        final DefaultHttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+        HttpUtils.setContentTypeHeader(response, HttpHeaderValues.APPLICATION_JSON);
 
         HttpUtils.sendAndCleanupConnection(ctx, msg,
-                new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK),
-                new DefaultHttpContent(Unpooled.copiedBuffer(response.toString().getBytes(StandardCharsets.UTF_8)))
+                response,
+                new DefaultHttpContent(Unpooled.copiedBuffer(responseJson.toString(), StandardCharsets.UTF_8))
         );
     }
 }

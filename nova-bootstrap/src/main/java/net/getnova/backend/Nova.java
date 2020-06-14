@@ -85,7 +85,6 @@ public final class Nova {
                 log.error("Unable to enable service " + service + ".", e);
             }
         }
-        this.serviceHandler.addService(ApiService.class);
     }
 
     /**
@@ -99,6 +98,7 @@ public final class Nova {
 
         /* Adding all services which are required to run the minimal size of the backend. */
         this.registerServices();
+        this.serviceHandler.addService(ApiService.class);
 
         /* Registration of all module services. */
         this.moduleHandler.getModuleServices().forEach(this.serviceHandler::addService);
