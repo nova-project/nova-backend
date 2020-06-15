@@ -7,6 +7,7 @@ import graphql.ExecutionResult;
 import graphql.GraphQL;
 import net.getnova.backend.json.JsonUtils;
 
+import java.util.Collections;
 import java.util.Map;
 
 final class ApiExecutor {
@@ -21,15 +22,15 @@ final class ApiExecutor {
                 JsonUtils.fromJson(request.get("operationName"), String.class),
                 JsonUtils.fromJson(request.get("variables"), Map.class)
         );
-
+//        ((Map) ((List) ((Map) execute(graphQL, input).toSpecification().get("data")).get("users")).get(0)).values().forEach(value -> System.out.println(value.getClass()));
         return JsonUtils.toJson(execute(graphQL, input).toSpecification());
     }
 
     private static ExecutionInput createInput(final String query, final String operationName, final Map<String, Object> variables) {
         return ExecutionInput.newExecutionInput()
-                .query(query)
+                .query(query == null ? "" : query)
                 .operationName(operationName)
-                .variables(variables)
+                .variables(variables == null ? Collections.emptyMap() : variables)
                 .build();
     }
 

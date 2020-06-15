@@ -11,5 +11,5 @@ import java.util.UUID;
 public class IdField {
 
     @ApiField(name = "id", description = "The id is a **unique** id (`uuid`) which is used for internal identification of elements or records.")
-    private UUID uuid;
+    private UUID id;
 }
