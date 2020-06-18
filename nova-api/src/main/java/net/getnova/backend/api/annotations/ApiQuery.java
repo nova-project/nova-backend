@@ -6,10 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface ApiType {
+@Target(ElementType.METHOD)
+public @interface ApiQuery {
 
     String name();
 
     String[] description();
+
+    boolean nullable() default false;
+
+    String[] deprecationReason() default {};
 }

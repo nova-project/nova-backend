@@ -14,4 +14,6 @@ public @interface ApiField {
     String[] description();
 
     boolean nullable() default false;
+
+    String deprecationReason() default "";
 }

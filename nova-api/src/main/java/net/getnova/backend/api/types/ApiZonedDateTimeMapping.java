@@ -6,6 +6,8 @@ import graphql.schema.CoercingParseValueException;
 import graphql.schema.CoercingSerializeException;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 public class ApiZonedDateTimeMapping extends ApiTypeMapping implements Coercing<ZonedDateTime, Long> {
@@ -18,7 +20,7 @@ public class ApiZonedDateTimeMapping extends ApiTypeMapping implements Coercing<
         return input instanceof Number || input instanceof String;
     }
 
-    private static String typeName(Object input) {
+    private static String typeName(final Object input) {
         if (input == null) {
             return "null";
         }
@@ -51,21 +53,24 @@ public class ApiZonedDateTimeMapping extends ApiTypeMapping implements Coercing<
     @Override
     public Long serialize(final Object dataFetcherResult) throws CoercingSerializeException {
         final Long result = convertImpl(dataFetcherResult);
-        if (result == null) {
-            throw new CoercingSerializeException(
-                    "Expected type 'Int' but was '" + typeName(dataFetcherResult) + "'."
-            );
-        }
+        if (result == null)
+            throw new CoercingSerializeException("Unable to convert type " + typeName(dataFetcherResult) + " into a " + typeName(Long.class) + ".");
         return result;
     }
 
     @Override
     public ZonedDateTime parseValue(final Object input) throws CoercingParseValueException {
-        return null;
+        final Long ms = convertImpl(input);
+        if (ms == null)
+            throw new CoercingSerializeException("Unable to convert type " + typeName(input) + " into a " + typeName(ZonedDateTime.class) + ".");
+        return Instant.ofEpochMilli(ms).atZone(ZoneOffset.UTC);
     }
 
     @Override
     public ZonedDateTime parseLiteral(final Object input) throws CoercingParseLiteralException {
-        return null;
+        final Long ms = convertImpl(input);
+        if (ms == null)
+            throw new CoercingSerializeException("Unable to convert type " + typeName(input) + " into a " + typeName(ZonedDateTime.class) + ".");
+        return Instant.ofEpochMilli(ms).atZone(ZoneOffset.UTC);
     }
 }

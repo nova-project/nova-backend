@@ -62,6 +62,11 @@ class HttpServerContentDecoder extends MessageToMessageDecoder<HttpRequest> {
         out.add(msg);
     }
 
+    @Override
+    public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) throws Exception {
+        log.error("Error while processing channel \"" + ctx.channel().toString() + "\".", cause);
+    }
+
     private Map.Entry<String, HttpLocation<?>> getLocation(final String path) {
         for (Map.Entry<String, HttpLocationProvider<?>> locationProvider : this.locationProviders.entrySet()) {
             if (path.startsWith(locationProvider.getKey())) {
@@ -74,8 +79,8 @@ class HttpServerContentDecoder extends MessageToMessageDecoder<HttpRequest> {
     }
 
     private void configurePipeline(final ChannelPipeline pipeline, final HttpLocation<?> location) {
+        while (!pipeline.last().getClass().equals(HttpServerContentDecoder.class)) pipeline.removeLast();
         for (final ChannelHandler parentHandler : location.getParentHandlers()) pipeline.addLast(parentHandler);
         pipeline.addLast(location);
-        pipeline.remove(this);
     }
 }

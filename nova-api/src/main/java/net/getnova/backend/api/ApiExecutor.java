@@ -10,19 +10,18 @@ import net.getnova.backend.json.JsonUtils;
 import java.util.Collections;
 import java.util.Map;
 
-final class ApiExecutor {
+public final class ApiExecutor {
 
     private ApiExecutor() {
         throw new UnsupportedOperationException();
     }
 
-    static JsonElement execute(final GraphQL graphQL, final JsonObject request) {
+    public static JsonElement execute(final GraphQL graphQL, final JsonObject request) {
         final ExecutionInput input = createInput(
                 JsonUtils.fromJson(request.get("query"), String.class),
                 JsonUtils.fromJson(request.get("operationName"), String.class),
                 JsonUtils.fromJson(request.get("variables"), Map.class)
         );
-//        ((Map) ((List) ((Map) execute(graphQL, input).toSpecification().get("data")).get("users")).get(0)).values().forEach(value -> System.out.println(value.getClass()));
         return JsonUtils.toJson(execute(graphQL, input).toSpecification());
     }
 

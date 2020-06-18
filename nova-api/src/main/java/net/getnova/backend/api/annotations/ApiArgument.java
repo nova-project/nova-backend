@@ -6,10 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface ApiType {
+@Target(ElementType.PARAMETER)
+public @interface ApiArgument {
 
     String name();
 
     String[] description();
+
+    boolean nullable() default false;
 }
