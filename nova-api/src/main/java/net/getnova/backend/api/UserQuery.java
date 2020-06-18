@@ -5,15 +5,13 @@ import net.getnova.backend.api.annotations.ApiMutation;
 import net.getnova.backend.api.annotations.ApiQuery;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 public class UserQuery {
 
     @ApiQuery(name = "users", description = "Return a list with all users.")
-    private List<User> getUsers(
-            @ApiArgument(name = "enabled", description = "if this parameter is enabled.", nullable = true) final boolean enabled
+    private User getUsers(
+            @ApiArgument(name = "enabled", description = "if this parameter is enabled.") final boolean enabled
     ) {
         final User user = new User();
         user.setId(UUID.randomUUID());
@@ -21,7 +19,7 @@ public class UserQuery {
         user.setCreated(ZonedDateTime.now());
         user.setLast(ZonedDateTime.now());
 
-        return enabled ? List.of(user) : Collections.emptyList();
+        return enabled ? user : null;
     }
 
     @ApiMutation(name = "addUser", description = "adds a new user")

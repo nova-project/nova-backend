@@ -2,13 +2,14 @@ package net.getnova.backend.api.types;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-public class ApiTypeMappingHandler {
+public final class ApiTypeMappingHandler {
+
+    public static ApiTypeMappingHandler INSTANCE = new ApiTypeMappingHandler();
 
     private final Set<ApiTypeMapping> types;
 
-    public ApiTypeMappingHandler() {
+    private ApiTypeMappingHandler() {
         this.types = new LinkedHashSet<>();
         this.registerTypes();
     }
@@ -37,9 +38,5 @@ public class ApiTypeMappingHandler {
             }
         }
         return null;
-    }
-
-    public Set<ApiTypeMapping> getAdditionalTypes() {
-        return this.types.stream().filter(ApiTypeMapping::isAdditional).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

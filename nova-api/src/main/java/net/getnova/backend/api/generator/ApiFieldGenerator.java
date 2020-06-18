@@ -1,12 +1,13 @@
 package net.getnova.backend.api.generator;
 
-import graphql.Scalars;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLNonNull;
-import graphql.schema.GraphQLOutputType;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.api.annotations.ApiField;
 import net.getnova.backend.api.data.FieldData;
+import net.getnova.backend.api.types.ApiStringTypeMapping;
+import net.getnova.backend.api.types.ApiTypeMapping;
+import net.getnova.backend.api.types.ApiTypeMappingHandler;
 
 import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
@@ -20,12 +21,17 @@ final class ApiFieldGenerator {
     }
 
     static GraphQLFieldDefinition generateGraphQLField(final FieldData argumentData) {
-        final GraphQLOutputType type = Scalars.GraphQLString;
+
+        ApiTypeMapping type = ApiTypeMappingHandler.INSTANCE.getType(argumentData.getType());
+        if (type == null) {
+            log.error("Unable to find graphql type mapping for {}.", argumentData.getType().getName());
+            type = new ApiStringTypeMapping();
+        }
 
         return GraphQLFieldDefinition.newFieldDefinition()
                 .name(argumentData.getName())
                 .description(argumentData.getDescription())
-                .type(argumentData.isNullable() ? type : GraphQLNonNull.nonNull(type)) // TODO: Type
+                .type(argumentData.isNullable() ? type.getGraphQlScalar() : GraphQLNonNull.nonNull(type.getGraphQlScalar()))
                 .build();
     }
 
