@@ -1,4 +1,4 @@
-package net.getnova.backend.api.types;
+package net.getnova.backend.api.type;
 
 import graphql.Scalars;
 

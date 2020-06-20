@@ -24,8 +24,6 @@ public class ApiMutationDataFetcher<T> implements DataFetcher<T> {
             i++;
         }
 
-        System.out.println(parameters);
-
         final Method method = this.mutationData.getMethod();
         method.setAccessible(true);
         final T value = this.mutationData.getType().cast(method.invoke(this.mutationData.getInstance(), parameters));

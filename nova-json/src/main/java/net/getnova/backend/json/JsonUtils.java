@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.json.types.InstantTypeAdapter;
@@ -33,7 +34,7 @@ public final class JsonUtils {
         throw new UnsupportedOperationException();
     }
 
-    public static <T> T fromJson(final JsonElement jsonElement, final Class<T> type) throws JsonTypeMappingException {
+    public static <T> T fromJson(final JsonElement jsonElement, final Class<T> type) throws JsonSyntaxException, JsonTypeMappingException {
         try {
             return gson.fromJson(jsonElement, type);
         } catch (Exception e) {

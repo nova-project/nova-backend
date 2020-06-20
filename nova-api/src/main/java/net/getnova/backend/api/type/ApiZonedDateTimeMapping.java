@@ -1,4 +1,4 @@
-package net.getnova.backend.api.types;
+package net.getnova.backend.api.type;
 
 import graphql.schema.Coercing;
 import graphql.schema.CoercingParseLiteralException;
@@ -16,10 +16,6 @@ public class ApiZonedDateTimeMapping extends ApiTypeMapping implements Coercing<
         super("Timestamp", "a timestamp", ZonedDateTime.class);
     }
 
-    private static boolean isNumberIsh(final Object input) {
-        return input instanceof Number || input instanceof String;
-    }
-
     private static String typeName(final Object input) {
         if (input == null) {
             return "null";
@@ -33,7 +29,7 @@ public class ApiZonedDateTimeMapping extends ApiTypeMapping implements Coercing<
             return ((ZonedDateTime) input).toInstant().toEpochMilli();
         } else if (input instanceof Long) {
             return (Long) input;
-        } else if (isNumberIsh(input)) {
+        } else if (input instanceof Number || input instanceof String) {
             BigDecimal value;
             try {
                 value = new BigDecimal(input.toString());

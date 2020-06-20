@@ -3,6 +3,7 @@ package net.getnova.backend.api.netty;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import graphql.GraphQL;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -66,9 +67,18 @@ final class ApiLocation extends HttpLocation<HttpObject> {
     }
 
     private void executeGraphQL(final ChannelHandlerContext ctx) {
-        final JsonObject request = JsonUtils.fromJson(JsonParser.parseString(this.content.toString()), JsonObject.class);
+        JsonElement requestJson;
+        try {
+            requestJson = JsonParser.parseString(this.content.toString());
+        } catch (JsonSyntaxException e) {
+            HttpUtils.sendStatus(ctx, this.request, HttpResponseStatus.BAD_REQUEST);
+            return;
+        }
 
-        final JsonElement responseJson = ApiExecutor.execute(this.graphQL, request);
+        final JsonElement responseJson = ApiExecutor.execute(
+                this.graphQL,
+                JsonUtils.fromJson(requestJson, JsonObject.class)
+        );
 
         final DefaultHttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
         HttpUtils.setContentTypeHeader(response, HttpHeaderValues.APPLICATION_JSON);

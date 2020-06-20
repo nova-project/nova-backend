@@ -1,11 +1,11 @@
-package net.getnova.backend.api.types;
+package net.getnova.backend.api.type;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 public final class ApiTypeMappingHandler {
 
-    public static ApiTypeMappingHandler INSTANCE = new ApiTypeMappingHandler();
+    public static final ApiTypeMappingHandler INSTANCE = new ApiTypeMappingHandler();
 
     private final Set<ApiTypeMapping> types;
 

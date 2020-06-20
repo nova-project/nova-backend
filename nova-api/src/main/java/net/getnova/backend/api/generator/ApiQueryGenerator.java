@@ -8,9 +8,9 @@ import net.getnova.backend.api.annotations.ApiQuery;
 import net.getnova.backend.api.data.ArgumentData;
 import net.getnova.backend.api.data.QueryData;
 import net.getnova.backend.api.execution.ApiQueryDataFetcher;
-import net.getnova.backend.api.types.ApiStringTypeMapping;
-import net.getnova.backend.api.types.ApiTypeMapping;
-import net.getnova.backend.api.types.ApiTypeMappingHandler;
+import net.getnova.backend.api.type.ApiStringTypeMapping;
+import net.getnova.backend.api.type.ApiTypeMapping;
+import net.getnova.backend.api.type.ApiTypeMappingHandler;
 
 import java.lang.reflect.Method;
 import java.util.LinkedHashSet;

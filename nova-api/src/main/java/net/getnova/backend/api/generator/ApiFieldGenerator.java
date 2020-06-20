@@ -5,9 +5,9 @@ import graphql.schema.GraphQLNonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.api.annotations.ApiField;
 import net.getnova.backend.api.data.FieldData;
-import net.getnova.backend.api.types.ApiStringTypeMapping;
-import net.getnova.backend.api.types.ApiTypeMapping;
-import net.getnova.backend.api.types.ApiTypeMappingHandler;
+import net.getnova.backend.api.type.ApiStringTypeMapping;
+import net.getnova.backend.api.type.ApiTypeMapping;
+import net.getnova.backend.api.type.ApiTypeMappingHandler;
 
 import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
