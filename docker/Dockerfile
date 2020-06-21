@@ -9,7 +9,7 @@ RUN apk add --update --no-cache git \
 
 FROM adoptopenjdk/openjdk14:alpine-jre
 
-WORKDIR /nova-backend
-COPY --from=builder /nova-backend/nova-bootstrap/build/install/nova-bootstrap/ .
+WORKDIR /data
+COPY --from=builder /nova-backend/nova-bootstrap/build/install/nova-bootstrap/ /nova-backend/
 
-ENTRYPOINT ["./bin/nova-bootstrap"]
+ENTRYPOINT ["/nova-backend/bin/nova-bootstrap"]
