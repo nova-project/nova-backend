@@ -1,6 +1,7 @@
 package net.getnova.backend.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.BufferedWriter;
@@ -12,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -19,8 +21,19 @@ import java.util.Set;
 @Slf4j
 final class ConfigUtils {
 
-    private static final String SPACING = "    ";
-    private static final Yaml YAML = new Yaml();
+    private static final DumperOptions.LineBreak LINE_SEPARATOR = DumperOptions.LineBreak.UNIX;
+    private static final String LINE_SEPARATOR_STRING = LINE_SEPARATOR.getString();
+    private static final Yaml YAML;
+
+    static {
+        final DumperOptions dumperOptions = new DumperOptions();
+        dumperOptions.setLineBreak(LINE_SEPARATOR);
+        dumperOptions.setIndent(2);
+        dumperOptions.setPrettyFlow(true);
+        dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        dumperOptions.setWidth(180);
+        YAML = new Yaml(dumperOptions);
+    }
 
     private ConfigUtils() {
         throw new UnsupportedOperationException();
@@ -69,26 +82,21 @@ final class ConfigUtils {
 
     static void save(final File configFile, final Map<String, Set<ConfigValueData>> configs) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(configFile)))) {
+            final Map<String, Object> values = new LinkedHashMap<>();
 
+            boolean lowLevel;
+            Map<String, Object> currentMap;
             for (final Map.Entry<String, Set<ConfigValueData>> configEntry : configs.entrySet()) {
-                final boolean lowLevel = configEntry.getKey() == null || configEntry.getKey().isBlank();
-                final String spacing = lowLevel ? "" : SPACING;
+                lowLevel = configEntry.getKey() == null || configEntry.getKey().isEmpty() || configEntry.getKey().isBlank();
+                currentMap = lowLevel ? values : new LinkedHashMap<>();
 
-                if (!lowLevel) {
-                    writer.write(configEntry.getKey() + ":");
-                    writer.newLine();
-                }
+                for (final ConfigValueData value : configEntry.getValue())
+                    currentMap.put(value.getId(), getValue(value.getConfig(), value.getField()));
 
-                for (final ConfigValueData value : configEntry.getValue()) {
-                    for (final String line : value.getComment()) {
-                        writer.write(spacing + "# " + line);
-                        writer.newLine();
-                    }
-                    writer.write(spacing + value.getId() + ": " + getValue(value.getConfig(), value.getField()));
-                    writer.newLine();
-                    writer.newLine();
-                }
+                if (!lowLevel) values.put(configEntry.getKey(), currentMap);
             }
+
+            writer.write(YAML.dump(values));
         }
     }
 

@@ -30,7 +30,7 @@ public class HttpServerService {
      */
     @Inject
     public HttpServerService(final ConfigService configService, final InjectionHandler injectionHandler) {
-        this.config = configService.addConfig("httpServer", new HttpServerConfig());
+        this.config = configService.addConfig("http-server", new HttpServerConfig());
         this.codec = new HttpServerCodec(injectionHandler);
     }
 
