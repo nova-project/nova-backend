@@ -2,6 +2,7 @@ package net.getnova.backend;
 
 import com.google.inject.Stage;
 import lombok.extern.slf4j.Slf4j;
+import net.getnova.backend.api.ApiService;
 import net.getnova.backend.config.ConfigService;
 import net.getnova.backend.handler.InitHandler;
 import net.getnova.backend.handler.PostInitHandler;
@@ -17,7 +18,7 @@ import net.getnova.backend.service.ServiceHandler;
  * This is the main class, of the nova backend.
  */
 @Slf4j
-public final class Nova {
+public final class NovaImpl implements Nova {
 
     private final NovaCli cli;
 
@@ -40,7 +41,7 @@ public final class Nova {
      * @param args the program arguments
      * @see Bootstrap#main(String[])
      */
-    Nova(final String[] args) {
+    NovaImpl(final String[] args) {
         this.cli = new NovaCli(args);
         if (this.cli.isHelp()) return;
 
@@ -97,6 +98,7 @@ public final class Nova {
 
         /* Adding all services which are required to run the minimal size of the backend. */
         this.registerServices();
+        this.serviceHandler.addService(ApiService.class);
 
         /* Registration of all module services. */
         this.moduleHandler.getModuleServices().forEach(this.serviceHandler::addService);
@@ -124,6 +126,7 @@ public final class Nova {
     /**
      * This method triggers the shutdown progress of the backend.
      */
+    @Override
     public void shutdown() {
         log.info("Stopping backend...");
         this.stopHandler.execute();
@@ -135,6 +138,7 @@ public final class Nova {
      *
      * @return the current state of the backend
      */
+    @Override
     public boolean isDebug() {
         return this.config.isDebug();
     }

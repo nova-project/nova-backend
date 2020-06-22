@@ -8,6 +8,7 @@ application {
 
 dependencies {
     implementation 'commons-cli:commons-cli:1.4'
+    implementation project(':nova-bootstrap-api')
     implementation project(':nova-injection')
     implementation project(':nova-service')
     implementation project(':nova-config')

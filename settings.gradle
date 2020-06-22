@@ -11,4 +11,5 @@ include 'nova-codec-http'
 include 'nova-modules'
 include 'nova-api'
 include 'nova-json'
+include 'nova-bootstrap-api'
 

@@ -25,6 +25,6 @@ public final class Bootstrap {
      * @param args the program arguments.
      */
     public static void main(final String[] args) {
-        new Nova(args);
+        new NovaImpl(args);
     }
 }
