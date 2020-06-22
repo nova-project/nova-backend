@@ -1,15 +1,31 @@
-FROM adoptopenjdk/openjdk14:alpine-slim AS builder
+FROM gradle:jdk14 AS builder
 
-WORKDIR /nova-backend
-COPY . /nova-backend
+COPY --chown=gradle:gradle . /home/gradle/src
+WORKDIR /home/gradle/src
 
-RUN apk add --update --no-cache git \
-  && chmod +x ./gradlew \
-  && ./gradlew installDist
+RUN apt-get update \
+  && apt-get install git -y \
+  && chmod -R +x /opt/java
 
-FROM adoptopenjdk/openjdk14:alpine-jre
+USER gradle
+
+RUN gradle :nova-bootstrap:installDist --stacktrace
+
+FROM adoptopenjdk:14-jre-hotspot
+
+ENV NOVA_HOME /opt/nova-backend
+RUN set -o errexit -o nounset \
+    && echo "Adding nova user and group" \
+    && groupadd --system --gid 1000 nova \
+    && useradd --system --gid nova --uid 1000 --shell /bin/bash --create-home nova \
+    && mkdir -p /data \
+    && chown --recursive nova:nova /data \
+    && chown --recursive nova:nova /home/nova
 
 WORKDIR /data
-COPY --from=builder /nova-backend/nova-bootstrap/build/install/nova-bootstrap/ /nova-backend/
+COPY --from=builder /home/gradle/src/nova-bootstrap/build/install/nova-bootstrap/ ${NOVA_HOME}/
 
-ENTRYPOINT ["/nova-backend/bin/nova-bootstrap"]
+RUN ln --symbolic "${NOVA_HOME}/bin/nova-bootstrap" /usr/bin/nova
+USER nova
+
+ENTRYPOINT ["nova"]
