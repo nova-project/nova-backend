@@ -17,18 +17,22 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 final class ConfigUtils {
 
     private static final DumperOptions.LineBreak LINE_SEPARATOR = DumperOptions.LineBreak.UNIX;
     private static final String LINE_SEPARATOR_STRING = LINE_SEPARATOR.getString();
+    private static final int INDENT = 2;
+    private static final String INDENT_STRING = " ".repeat(INDENT);
     private static final Yaml YAML;
 
     static {
         final DumperOptions dumperOptions = new DumperOptions();
         dumperOptions.setLineBreak(LINE_SEPARATOR);
-        dumperOptions.setIndent(2);
+        dumperOptions.setIndent(INDENT);
         dumperOptions.setPrettyFlow(true);
         dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         dumperOptions.setWidth(180);
@@ -96,7 +100,41 @@ final class ConfigUtils {
                 if (!lowLevel) values.put(configEntry.getKey(), currentMap);
             }
 
-            writer.write(YAML.dump(values));
+            /* Inject Config Comments */
+            Map<Object, ConfigValueData> currentValues = null;
+            String strippedLine;
+            String[] tmp;
+            boolean indent = false;
+            for (final String line : YAML.dump(values).split(LINE_SEPARATOR_STRING)) {
+                strippedLine = line.strip();
+                if (strippedLine.startsWith("-") || strippedLine.startsWith("#") || !line.contains(":") || strippedLine.isEmpty()) {
+                    writer.write(line + LINE_SEPARATOR_STRING);
+                    continue;
+                }
+
+                tmp = strippedLine.split(":", 2);
+                if (tmp.length < 1) {
+                    writer.write(line + LINE_SEPARATOR_STRING);
+                    continue;
+                }
+
+                if (strippedLine.endsWith(":")) {
+                    currentValues = configs.get(strippedLine.substring(0, strippedLine.length() - 1))
+                            .stream()
+                            .collect(Collectors.toMap(ConfigValueData::getId, Function.identity()));
+                    writer.write(line + LINE_SEPARATOR_STRING);
+                    indent = true;
+                } else {
+                    if (!(strippedLine.endsWith(":") || line.startsWith(" "))) {
+                        currentValues = configs.get("")
+                                .stream()
+                                .collect(Collectors.toMap(ConfigValueData::getId, Function.identity()));
+                        indent = false;
+                    }
+                    writer.write((indent ? INDENT_STRING : "") + "# " + String.join(LINE_SEPARATOR_STRING + "# ", currentValues.get(tmp[0]).getComment()) + LINE_SEPARATOR_STRING);
+                    writer.write(line + LINE_SEPARATOR_STRING + LINE_SEPARATOR_STRING);
+                }
+            }
         }
     }
 
