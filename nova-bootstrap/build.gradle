@@ -13,5 +13,4 @@ dependencies {
     implementation project(':nova-service')
     implementation project(':nova-config')
     implementation project(':nova-modules')
-    implementation project(':nova-api')
 }
