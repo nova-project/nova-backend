@@ -1,21 +1,22 @@
-FROM gradle:jdk14 AS builder
+FROM adoptopenjdk:14-jre-hotspot AS builder
+
+RUN set -o errexit -o nounset \
+    && groupadd --system --gid 1000 gradle \
+    && useradd --system --gid gradle --uid 1000 --shell /bin/bash --create-home gradle \
+    && chown --recursive gradle:gradle /home/gradle \
+    && apt-get update \
+    && apt-get install git -y
 
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 
-RUN apt-get update \
-  && apt-get install git -y \
-  && chmod -R +x /opt/java
-
 USER gradle
-
-RUN gradle :nova-bootstrap:installDist --stacktrace
+RUN chmod +x ./gradlew && ./gradlew installDist --stacktrace --no-daemon
 
 FROM adoptopenjdk:14-jre-hotspot
 
 ENV NOVA_HOME /opt/nova-backend
 RUN set -o errexit -o nounset \
-    && echo "Adding nova user and group" \
     && groupadd --system --gid 1000 nova \
     && useradd --system --gid nova --uid 1000 --shell /bin/bash --create-home nova \
     && mkdir -p /data \

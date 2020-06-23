@@ -35,7 +35,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run checks with Gradle
-        run: ./gradlew check
+        run: ./gradlew check --no-daemon
 
   push:
     #    needs: check
