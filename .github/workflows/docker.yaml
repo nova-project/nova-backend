@@ -38,7 +38,7 @@ jobs:
         run: ./gradlew check --no-daemon
 
   push:
-    #    needs: check
+    needs: check
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
 
