@@ -61,7 +61,8 @@
         <module name="JavadocMethod"/>
         <module name="JavadocType"/>
         <module name="JavadocStyle"/>
-        <module name="MissingJavadocMethod"/>
+        <!--        TEMPORALY -->
+        <!--        <module name="MissingJavadocMethod"/>-->
 
         <!-- Checks for Naming Conventions.                  -->
         <!-- See https://checkstyle.org/config_naming.html -->

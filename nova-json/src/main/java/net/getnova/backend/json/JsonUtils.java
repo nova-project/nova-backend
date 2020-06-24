@@ -20,7 +20,7 @@ import java.util.function.Function;
 public final class JsonUtils {
 
     @Getter
-    private static final Gson gson = new GsonBuilder()
+    private static final Gson GSON = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
             .serializeNulls()
             .serializeSpecialFloatingPointValues()
@@ -36,7 +36,7 @@ public final class JsonUtils {
 
     public static <T> T fromJson(final JsonElement jsonElement, final Class<T> type) throws JsonSyntaxException, JsonTypeMappingException {
         try {
-            return gson.fromJson(jsonElement, type);
+            return GSON.fromJson(jsonElement, type);
         } catch (Exception e) {
             throw new JsonTypeMappingException("Error while converting a \"" + JsonElement.class.getName() + "\" into a \"" + type.getName() + "\".", e);
         }
@@ -44,7 +44,7 @@ public final class JsonUtils {
 
     public static JsonElement toJson(final Object object) throws JsonTypeMappingException {
         try {
-            return gson.toJsonTree(object);
+            return GSON.toJsonTree(object);
         } catch (Exception e) {
             throw new JsonTypeMappingException("Error while converting a \"" + object.getClass().getName() + "\" into a \"" + JsonElement.class.getName() + "\".", e);
         }

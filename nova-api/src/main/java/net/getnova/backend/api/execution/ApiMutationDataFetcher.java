@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 
 @RequiredArgsConstructor
 @EqualsAndHashCode
-public class ApiMutationDataFetcher<T> implements DataFetcher<T> {
+public final class ApiMutationDataFetcher<T> implements DataFetcher<T> {
 
     private final MutationData<T> mutationData;
 

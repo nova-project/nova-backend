@@ -10,7 +10,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-public class ApiZonedDateTimeMapping extends ApiTypeMapping implements Coercing<ZonedDateTime, Long> {
+public final class ApiZonedDateTimeMapping extends ApiTypeMapping implements Coercing<ZonedDateTime, Long> {
 
     public ApiZonedDateTimeMapping() {
         super("Timestamp", "a timestamp", ZonedDateTime.class);

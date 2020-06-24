@@ -24,7 +24,7 @@ import java.util.Set;
 @Slf4j
 @Service(value = "api", depends = {HttpServerService.class})
 @Singleton
-public class ApiService {
+public final class ApiService {
 
     private final Set<Class<?>> types;
     private final Set<Object> queries;

@@ -8,7 +8,7 @@ import graphql.schema.CoercingSerializeException;
 
 import java.util.Base64;
 
-public class ApiByteArrayMapping extends ApiTypeMapping implements Coercing<byte[], String> {
+public final class ApiByteArrayMapping extends ApiTypeMapping implements Coercing<byte[], String> {
 
     public ApiByteArrayMapping() {
         super("Base64", "Binary data formatted as base64.", byte[].class);

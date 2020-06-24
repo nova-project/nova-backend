@@ -131,7 +131,10 @@ final class ConfigUtils {
                                 .collect(Collectors.toMap(ConfigValueData::getId, Function.identity()));
                         indent = false;
                     }
-                    writer.write((indent ? INDENT_STRING : "") + "# " + String.join(LINE_SEPARATOR_STRING + (indent ? INDENT_STRING + "# " : "# "), currentValues.get(tmp[0]).getComment()) + LINE_SEPARATOR_STRING);
+                    writer.write((indent ? INDENT_STRING : "") + "# "
+                            + String.join(LINE_SEPARATOR_STRING + (indent ? INDENT_STRING + "# " : "# "),
+                            currentValues.get(tmp[0]).getComment())
+                            + LINE_SEPARATOR_STRING);
                     writer.write(line + LINE_SEPARATOR_STRING + LINE_SEPARATOR_STRING);
                 }
             }

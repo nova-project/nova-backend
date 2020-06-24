@@ -30,7 +30,7 @@ public abstract class ApiTypeMapping {
         this.types = new LinkedHashSet<>(Arrays.asList(types));
     }
 
-    public GraphQLList getListType() {
+    public final GraphQLList getListType() {
         if (this.listType == null) this.listType = GraphQLList.list(this.getGraphQlScalar());
         return this.listType;
     }

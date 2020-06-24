@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 
 @RequiredArgsConstructor
 @EqualsAndHashCode
-public class ApiQueryDataFetcher<T> implements DataFetcher<T> {
+public final class ApiQueryDataFetcher<T> implements DataFetcher<T> {
 
     private final QueryData<T> typeData;
 
