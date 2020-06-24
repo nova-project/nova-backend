@@ -1,4 +1,4 @@
-FROM adoptopenjdk:14-jre-hotspot AS builder
+FROM adoptopenjdk:14-jdk-hotspot AS builder
 
 ARG GRADLE_USER=gradle
 ARG GRADLE_GROUP=gradle
