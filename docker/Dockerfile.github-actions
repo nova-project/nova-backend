@@ -1,0 +1,25 @@
+FROM adoptopenjdk:14-jre-hotspot
+
+ARG NOVA_USER=nova
+ARG NOVA_GROUP=nova
+
+ENV NOVA_HOME /opt/nova-backend
+ENV DATA_DIR /data
+
+RUN set -o errexit -o nounset \
+    && groupadd --system --gid 1000 ${NOVA_GROUP} \
+    && useradd --system --gid ${NOVA_GROUP} --uid 1000 --shell /bin/bash --create-home ${NOVA_USER} \
+    && mkdir -p ${DATA_DIR} \
+    && chown --recursive ${NOVA_USER}:${NOVA_GROUP} ${DATA_DIR} \
+    && chown --recursive ${NOVA_USER}:${NOVA_GROUP} /home/${NOVA_USER}
+
+WORKDIR ${DATA_DIR}
+COPY --chown=nova:nova ./nova-backend/ ${NOVA_HOME}/
+
+RUN ln --symbolic ${NOVA_HOME}/bin/nova-bootstrap /usr/bin/nova \
+  && chmod +x /usr/bin/nova
+USER ${NOVA_USER}
+VOLUME ${DATA_DIR}
+
+# TODO: add -e / --env
+ENTRYPOINT ["nova"]

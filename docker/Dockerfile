@@ -32,9 +32,12 @@ RUN set -o errexit -o nounset \
     && chown --recursive ${NOVA_USER}:${NOVA_GROUP} /home/${NOVA_USER}
 
 WORKDIR ${DATA_DIR}
-COPY --from=builder /home/gradle/src/nova-bootstrap/build/install/nova-bootstrap/ ${NOVA_HOME}/
+COPY --from=builder --chown=nova:nova ./nova-bootstrap/build/install/nova-bootstrap/ ${NOVA_HOME}/
 
-RUN ln --symbolic ${NOVA_HOME}/bin/nova-bootstrap /usr/bin/nova
+RUN ln --symbolic ${NOVA_HOME}/bin/nova-bootstrap /usr/bin/nova \
+  && chmod +x /usr/bin/nova
 USER ${NOVA_USER}
+VOLUME ${DATA_DIR}
 
+# TODO: add -e / --env
 ENTRYPOINT ["nova"]

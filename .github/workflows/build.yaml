@@ -2,6 +2,10 @@ name: Build
 
 on:
   push:
+    tags-ignore:
+      - '*'
+    branches-ignore:
+      - master
     paths-ignore: ['**.md']
 
 jobs:
