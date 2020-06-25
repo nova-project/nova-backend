@@ -25,16 +25,27 @@ public class ModuleHandler {
         this.moduleFolder = new File("modules");
     }
 
-    private void checkFolder() {
-        if (!this.moduleFolder.exists()) this.moduleFolder.mkdirs();
+    private boolean checkFolder() {
+        if (!this.moduleFolder.exists()) {
+            if (!moduleFolder.canWrite()) {
+                log.error("Missing permissions to create modules folder \"{}\".", moduleFolder.getAbsolutePath());
+                return false;
+            }
+            this.moduleFolder.mkdirs();
+            return true;
+        }
+        if (!this.moduleFolder.canRead()) {
+            log.error("Missing permissions to read modules folder \"{}\".", moduleFolder.getAbsolutePath());
+            return false;
+        }
+        return true;
     }
 
     /**
      * Loads all modules.
      */
     public void loadModules() {
-        this.checkFolder();
-        try {
+        if (this.checkFolder()) try {
             this.modules = ModuleLoader.loadModules(this.moduleFolder);
         } catch (IOException e) {
             log.error("Unable to load modules.", e);

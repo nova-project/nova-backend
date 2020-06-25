@@ -52,27 +52,27 @@ public class ConfigService {
                     final File parentFile = this.configFile.getParentFile();
                     if (!parentFile.exists()) {
                         if (!parentFile.canWrite()) {
-                            log.error("Missing permissions to create parent folder of the config file. Using default config values.");
+                            log.error("Missing permissions to create parent folder \"{}\" of the config file. Using default config values.", parentFile.getAbsolutePath());
                         } else parentFile.mkdirs();
                     }
 
                     if (!this.configFile.canWrite()) {
-                        log.error("Missing permissions to create config file. Using default config values.");
+                        log.error("Missing permissions to create config file \"{}\". Using default config values.", this.configFile.getAbsolutePath());
                     } else if (this.configFile.createNewFile()) {
                         log.info("Created configuration file {}.", this.configFile.getName());
                     }
                 }
                 if (this.configFile.exists()) {
                     if (!this.configFile.canRead()) {
-                        log.error("Missing permissions to read config file. Using default config values.");
+                        log.error("Missing permissions to read config file \"{}\". Using default config values.", this.configFile.getAbsolutePath());
                     } else ConfigUtils.loadFromFile(this.configFile, this.configs);
 
                     if (!this.configFile.canWrite()) {
-                        log.error("Missing permissions to write config file. The possibly still missing config values cannot be added.");
+                        log.error("Missing permissions to write config file \"{}\". The possibly still missing config values cannot be added.", this.configFile.getAbsolutePath());
                     } else ConfigUtils.save(this.configFile, this.configs);
                 }
             } catch (IOException e) {
-                log.error("Unable to create, read from or write to config file.", e);
+                log.error("Unable to create, read from or write to config file\"" + this.configFile.getAbsolutePath() + "\".", e);
             }
         }
     }
