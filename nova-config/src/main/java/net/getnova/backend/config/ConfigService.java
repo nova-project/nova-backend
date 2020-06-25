@@ -50,13 +50,27 @@ public class ConfigService {
             try {
                 if (!this.configFile.exists()) {
                     final File parentFile = this.configFile.getParentFile();
-                    if (parentFile.exists()) parentFile.mkdirs();
-                    if (this.configFile.createNewFile()) {
+                    if (!parentFile.exists()) {
+                        if (!parentFile.canWrite()) {
+                            log.error("Missing permissions to create parent folder of the config file. Using default config values.");
+                        } else parentFile.mkdirs();
+                    }
+
+                    if (!this.configFile.canWrite()) {
+                        log.error("Missing permissions to create config file. Using default config values.");
+                    } else if (this.configFile.createNewFile()) {
                         log.info("Created configuration file {}.", this.configFile.getName());
                     }
                 }
-                ConfigUtils.loadFromFile(this.configFile, this.configs);
-                ConfigUtils.save(this.configFile, this.configs);
+                if (this.configFile.exists()) {
+                    if (!this.configFile.canRead()) {
+                        log.error("Missing permissions to read config file. Using default config values.");
+                    } else ConfigUtils.loadFromFile(this.configFile, this.configs);
+
+                    if (!this.configFile.canWrite()) {
+                        log.error("Missing permissions to write config file. The possibly still missing config values cannot be added.");
+                    } else ConfigUtils.save(this.configFile, this.configs);
+                }
             } catch (IOException e) {
                 log.error("Unable to create, read from or write to config file.", e);
             }
