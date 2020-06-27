@@ -32,7 +32,7 @@ final class ServiceParser {
 
         final Service service = clazz.getAnnotation(Service.class);
 
-        return new ServiceData(service.value(), service.depends(),
+        return new ServiceData(service.id(), service.depends(),
                 injectionHandler.getInjector().getInstance(clazz), // Dont create every time a new instance
                 getMethod(clazz, PreInitService.class, PreInitServiceEvent.class),
                 getMethod(clazz, InitService.class, InitServiceEvent.class),

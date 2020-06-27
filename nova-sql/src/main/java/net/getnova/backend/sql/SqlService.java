@@ -17,7 +17,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 @Slf4j
-@Service(value = "sql", depends = {ConfigService.class})
+@Service(id = "sql", depends = {ConfigService.class})
 @Singleton
 public class SqlService {
 

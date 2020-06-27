@@ -17,7 +17,7 @@ import java.util.Set;
  * <b>The config service <i>MUST</i> be initialized before all other services.</b>
  */
 @Slf4j
-@Service("config")
+@Service(id = "config")
 @Singleton
 public class ConfigService {
 

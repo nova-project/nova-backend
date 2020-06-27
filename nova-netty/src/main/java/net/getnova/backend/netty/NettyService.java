@@ -9,7 +9,7 @@ import net.getnova.backend.service.event.StopServiceEvent;
 
 import javax.inject.Singleton;
 
-@Service("netty")
+@Service(id = "netty")
 @Singleton
 public class NettyService {
 

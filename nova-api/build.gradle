@@ -4,6 +4,4 @@ dependencies {
     implementation project(':nova-sql')
     implementation project(':nova-json')
     implementation project(':nova-codec-http')
-
-    implementation 'com.graphql-java:graphql-java:15.0'
 }

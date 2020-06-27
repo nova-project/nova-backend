@@ -15,7 +15,7 @@ public @interface Service {
      *
      * @return the <i>unique</i> id of the service
      */
-    String value();
+    String id();
 
     /**
      * This is a array with all depends services.

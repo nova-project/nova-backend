@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.net.InetSocketAddress;
 
-@Service(value = "http-server", depends = {ConfigService.class, ServerService.class})
+@Service(id = "http-server", depends = {ConfigService.class, ServerService.class})
 @Singleton
 public class HttpServerService {
 
