@@ -5,11 +5,27 @@
             <PatternLayout
                     pattern="[%style{%d{yyyy-MM-dd HH:mm:ss}}{cyan}] [%style{%highlight{%5p}{FATAL=red, ERROR=red, WARN=yellow, INFO=blue, DEBUG=reset, TRACE=reset}}{Bright}] [%style{%15.15t}{cyan}] %style{%-40.40c{1.}}{cyan} : %style{%highlight{%m%n%ex}{FATAL=red, ERROR=red, WARN=yellow, INFO=blue, DEBUG=reset, TRACE=reset}}{Bright}"/>
         </Console>
+        <RollingFile
+                name="RollingFile"
+                fileName="logs/nova-backend.log"
+                filePattern="logs/nova-backend.%d{dd-MMM}.log.gz"
+                ignoreExceptions="false">
+            <PatternLayout>
+                <Pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%5p] [%15.15t] %-40.40c{1.} : %m%n%ex</Pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
         <!-- <Sentry name="Sentry"/> -->
     </Appenders>
     <Loggers>
         <Root level="info" additivity="false">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
             <!-- <AppenderRef ref="Sentry" level="WARN"/> -->
         </Root>
         <Logger name="org.hibernate" level="warn"/>
