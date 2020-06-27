@@ -10,6 +10,7 @@ targetCompatibility = JavaVersion.VERSION_14
 
 dependencies {
     if (project.name != 'nova-logging') implementation project(':nova-logging')
+    implementation 'org.jetbrains:annotations:19.0.0'
 }
 
 java {

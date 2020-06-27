@@ -13,7 +13,7 @@ import javax.inject.Singleton;
 import java.util.LinkedList;
 import java.util.List;
 
-@Service(id = "server", depends = {NettyService.class})
+@Service(id = "server", depends = {InjectionHandler.class, NettyService.class})
 @Singleton
 public class ServerService {
 
