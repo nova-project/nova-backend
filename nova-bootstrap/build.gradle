@@ -8,9 +8,10 @@ application {
 
 dependencies {
     implementation 'commons-cli:commons-cli:1.4'
-    implementation project(':nova-bootstrap-api')
-    implementation project(':nova-injection')
-    implementation project(':nova-service')
-    implementation project(':nova-config')
-    implementation project(':nova-modules')
+
+    rootProject.allprojects {
+        if (project.name.toLowerCase() != 'nova-bootstrap' && !project.name.toLowerCase().contains('test')) {
+            implementation project
+        }
+    }
 }
