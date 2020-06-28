@@ -14,7 +14,7 @@ public class NovaConfig {
             id = "loglevel",
             comment = {"Available LogLevel's: OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE & ALL"}
     )
-    private String loglevel = NovaLogLevel.INFO.toString();
+    private String loglevel = NovaLogLevel.WARN.toString();
 
     @ConfigValue(
             id = "debug",
