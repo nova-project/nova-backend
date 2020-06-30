@@ -10,6 +10,7 @@ import net.getnova.backend.handler.StartHandler;
 import net.getnova.backend.handler.StopHandler;
 import net.getnova.backend.injection.InjectionHandler;
 import net.getnova.backend.logging.NovaLogConfigurer;
+import net.getnova.backend.logging.NovaLogLevel;
 import net.getnova.backend.modules.ModuleHandler;
 import net.getnova.backend.service.ServiceHandler;
 
@@ -110,6 +111,7 @@ public final class NovaImpl implements Nova {
 
         this.preInitHandler.execute();
         if (this.config.isDebug()) log.info("Running in debug mode...");
+        NovaLogConfigurer.setLoglevel(NovaLogLevel.getByName(this.config.getLoglevel()));
         this.initHandler.execute();
         this.postInitHandler.execute();
         log.info("Initialized backend...");

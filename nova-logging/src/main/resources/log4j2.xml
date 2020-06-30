@@ -28,8 +28,5 @@
             <AppenderRef ref="RollingFile"/>
             <!-- <AppenderRef ref="Sentry" level="WARN"/> -->
         </Root>
-        <Logger name="org.hibernate" level="warn"/>
-        <Logger name="SysOut" level="trace"/>
-        <Logger name="SysErr" level="error"/>
     </Loggers>
 </Configuration>

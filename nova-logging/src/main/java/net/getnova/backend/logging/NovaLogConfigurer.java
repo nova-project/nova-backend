@@ -1,5 +1,6 @@
 package net.getnova.backend.logging;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 
@@ -10,6 +11,7 @@ import java.io.PrintStream;
  *
  * @see NovaLogLevel
  */
+@Slf4j
 public final class NovaLogConfigurer {
 
     private NovaLogConfigurer() {
@@ -20,7 +22,7 @@ public final class NovaLogConfigurer {
      * Configure redirects for {@link System#out} and {@link System#err} to the logger.
      */
     public static void redirectSysLog() {
-        System.setOut(new PrintStream(new NovaLogOutputStream("SysOut", NovaLogLevel.TRACE)));
+        System.setOut(new PrintStream(new NovaLogOutputStream("SysOut", NovaLogLevel.INFO)));
         System.setErr(new PrintStream(new NovaLogOutputStream("SysErr", NovaLogLevel.ERROR)));
     }
 
@@ -36,5 +38,6 @@ public final class NovaLogConfigurer {
                 .getLoggerConfig(LogManager.ROOT_LOGGER_NAME)
                 .setLevel(level.getLevel());
         ctx.updateLoggers();
+        log.info("Using Loglevel {}.", level.name());
     }
 }
