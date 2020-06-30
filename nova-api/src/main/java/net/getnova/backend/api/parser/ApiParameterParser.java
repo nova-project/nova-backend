@@ -3,6 +3,8 @@ package net.getnova.backend.api.parser;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.api.annotations.ApiParameter;
 import net.getnova.backend.api.data.ApiParameterData;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -16,7 +18,8 @@ final class ApiParameterParser {
         throw new UnsupportedOperationException();
     }
 
-    static Set<ApiParameterData> parseParameters(final Class<?> clazz, final Method method) {
+    @Nullable
+    static Set<ApiParameterData> parseParameters(@NotNull final Class<?> clazz, @NotNull final Method method) {
         final Set<ApiParameterData> parameterData = new LinkedHashSet<>();
         for (final Parameter parameter : method.getParameters()) {
 
@@ -31,7 +34,8 @@ final class ApiParameterParser {
         return parameterData;
     }
 
-    private static ApiParameterData parseParameter(final Parameter parameter) {
+    @Nullable
+    private static ApiParameterData parseParameter(@NotNull final Parameter parameter) {
         if (!parameter.isAnnotationPresent(ApiParameter.class)) return null;
         final ApiParameter parameterAnnotation = parameter.getAnnotation(ApiParameter.class);
 

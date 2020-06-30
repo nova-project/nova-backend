@@ -6,6 +6,7 @@ import net.getnova.backend.api.data.ApiRequest;
 import net.getnova.backend.api.data.ApiResponse;
 import net.getnova.backend.api.data.ApiResponseCode;
 import net.getnova.backend.api.exception.ApiParameterException;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -16,7 +17,8 @@ final class ApiEndpointExecutor {
         throw new UnsupportedOperationException();
     }
 
-    static ApiResponse execute(final ApiEndpointData endpoint, final ApiRequest request) {
+    @NotNull
+    static ApiResponse execute(@NotNull final ApiEndpointData endpoint, @NotNull final ApiRequest request) {
         Object[] parameters;
 
         try {

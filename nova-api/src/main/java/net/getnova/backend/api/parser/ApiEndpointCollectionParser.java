@@ -3,6 +3,8 @@ package net.getnova.backend.api.parser;
 import net.getnova.backend.api.annotations.ApiEndpointCollection;
 import net.getnova.backend.api.data.ApiEndpointCollectionData;
 import net.getnova.backend.api.data.ApiEndpointData;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,18 +18,20 @@ public final class ApiEndpointCollectionParser {
         throw new UnsupportedOperationException();
     }
 
-    public static Set<ApiEndpointCollectionData> parseCollections(final Set<Object> instances) {
+    @NotNull
+    public static Set<ApiEndpointCollectionData> parseCollections(@NotNull final Set<Object> instances) {
         return instances.stream()
                 .map(ApiEndpointCollectionParser::parseCollection)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toUnmodifiableSet());
     }
 
-    public static Map<String, ApiEndpointData> getEndpoints(final Set<ApiEndpointCollectionData> collections) {
+    @NotNull
+    public static Map<String, ApiEndpointData> getEndpoints(@NotNull final Set<ApiEndpointCollectionData> collections) {
         final Map<String, ApiEndpointData> endpoints = new HashMap<>();
 
         String collectionName;
-        for (ApiEndpointCollectionData collection : collections) {
+        for (final ApiEndpointCollectionData collection : collections) {
             collectionName = collection.getName().toLowerCase();
             for (final Map.Entry<String, ApiEndpointData> entry : collection.getEndpoints().entrySet())
                 endpoints.put(collectionName + "/" + entry.getKey().toLowerCase(), entry.getValue());
@@ -36,7 +40,8 @@ public final class ApiEndpointCollectionParser {
         return endpoints;
     }
 
-    private static ApiEndpointCollectionData parseCollection(final Object instance) {
+    @Nullable
+    private static ApiEndpointCollectionData parseCollection(@NotNull final Object instance) {
         final Class<?> clazz = instance.getClass();
         if (!clazz.isAnnotationPresent(ApiEndpointCollection.class)) return null;
 

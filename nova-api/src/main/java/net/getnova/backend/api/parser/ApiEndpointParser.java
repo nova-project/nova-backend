@@ -3,6 +3,8 @@ package net.getnova.backend.api.parser;
 import net.getnova.backend.api.annotations.ApiEndpoint;
 import net.getnova.backend.api.data.ApiEndpointData;
 import net.getnova.backend.api.data.ApiParameterData;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -19,14 +21,16 @@ final class ApiEndpointParser {
         throw new UnsupportedOperationException();
     }
 
-    static Map<String, ApiEndpointData> parseEndpoints(final Object object, final Class<?> clazz) {
+    @NotNull
+    static Map<String, ApiEndpointData> parseEndpoints(@NotNull final Object object, @NotNull final Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredMethods())
                 .map(method -> parseEndpoint(object, clazz, method))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toUnmodifiableMap(ApiEndpointData::getName, Function.identity()));
     }
 
-    private static ApiEndpointData parseEndpoint(final Object instance, final Class<?> clazz, final Method method) {
+    @Nullable
+    private static ApiEndpointData parseEndpoint(@NotNull final Object instance, @NotNull final Class<?> clazz, @NotNull final Method method) {
         final boolean hasAccess = method.canAccess(instance);
         if (!hasAccess) method.setAccessible(true);
 

@@ -2,6 +2,7 @@ package net.getnova.backend.api.executor;
 
 import com.google.gson.JsonElement;
 import net.getnova.backend.api.exception.ApiParameterException;
+import org.jetbrains.annotations.NotNull;
 
 final class ApiParameterExecutor {
 
@@ -9,7 +10,8 @@ final class ApiParameterExecutor {
         throw new UnsupportedOperationException();
     }
 
-    static Object[] parseParameters(final JsonElement parameters) throws ApiParameterException {
+    @NotNull
+    static Object[] parseParameters(@NotNull final JsonElement parameters) throws ApiParameterException {
         return null;
     }
 }

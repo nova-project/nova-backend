@@ -2,6 +2,8 @@ package net.getnova.backend.api.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Data
 @AllArgsConstructor
@@ -12,27 +14,27 @@ public class ApiResponse {
     private final String message;
     private final Object data;
 
-    public ApiResponse(final ApiResponseCode responseCode) {
+    public ApiResponse(@NotNull final ApiResponseCode responseCode) {
         this((byte[]) null, responseCode);
     }
 
-    public ApiResponse(final byte[] tag, final ApiResponseCode responseCode) {
+    public ApiResponse(@Nullable final byte[] tag, @NotNull final ApiResponseCode responseCode) {
         this(tag, responseCode, null, null);
     }
 
-    public ApiResponse(final ApiResponseCode responseCode, final String message) {
+    public ApiResponse(@NotNull final ApiResponseCode responseCode, @Nullable final String message) {
         this(null, responseCode, message);
     }
 
-    public ApiResponse(final byte[] tag, final ApiResponseCode responseCode, final String message) {
+    public ApiResponse(@Nullable final byte[] tag, @NotNull final ApiResponseCode responseCode, @Nullable final String message) {
         this(tag, responseCode, message, null);
     }
 
-    public ApiResponse(final ApiResponseCode responseCode, final Object data) {
+    public ApiResponse(@NotNull final ApiResponseCode responseCode, @Nullable final Object data) {
         this(null, responseCode, data);
     }
 
-    public ApiResponse(final byte[] tag, final ApiResponseCode responseCode, final Object data) {
+    public ApiResponse(@Nullable final byte[] tag, @NotNull final ApiResponseCode responseCode, @Nullable final Object data) {
         this(tag, responseCode, null, data);
     }
 }
