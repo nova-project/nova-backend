@@ -10,7 +10,7 @@ dependencies {
     implementation 'commons-cli:commons-cli:1.4'
 
     rootProject.allprojects {
-        if (project.name.toLowerCase() != 'nova-bootstrap' && !project.name.toLowerCase().contains('test')) {
+        if (project.name.toLowerCase() != 'nova-bootstrap' && project != rootProject && !project.name.toLowerCase().contains('test')) {
             implementation project
         }
     }
