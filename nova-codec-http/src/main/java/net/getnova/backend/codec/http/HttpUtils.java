@@ -31,8 +31,8 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.regex.Pattern;
@@ -84,16 +84,16 @@ public final class HttpUtils {
      * @return the formatted date
      */
     public static String formatDate(final long milliseconds) {
-        return formatDate(Instant.ofEpochMilli(milliseconds).atZone(HTTP_TIME_ZONE));
+        return formatDate(Instant.ofEpochMilli(milliseconds).atOffset(HTTP_TIME_ZONE));
     }
 
     /**
-     * Formats a {@link ZonedDateTime} to a Http Date. ({@link DateTimeFormatter#RFC_1123_DATE_TIME})
+     * Formats a {@link OffsetDateTime} to a Http Date. ({@link DateTimeFormatter#RFC_1123_DATE_TIME})
      *
-     * @param dateTime the {@link ZonedDateTime} witch should be formatted
+     * @param dateTime the {@link OffsetDateTime} witch should be formatted
      * @return the formatted date
      */
-    public static String formatDate(final ZonedDateTime dateTime) {
+    public static String formatDate(final OffsetDateTime dateTime) {
         return dateTime.format(HTTP_DATE_FORMAT);
     }
 
@@ -121,7 +121,7 @@ public final class HttpUtils {
         final String ifModifiedSince = request.headers().get(HttpHeaderNames.IF_MODIFIED_SINCE);
         if (ifModifiedSince != null
                 && !ifModifiedSince.isEmpty()
-                && checkModified(ZonedDateTime.parse(ifModifiedSince, HTTP_DATE_FORMAT).toInstant(), file)) {
+                && checkModified(OffsetDateTime.parse(ifModifiedSince, HTTP_DATE_FORMAT).toInstant(), file)) {
             sendNotModified(ctx, request);
             return;
         }
@@ -155,7 +155,7 @@ public final class HttpUtils {
      * @param response the {@link HttpResponse} to which the date header should be added
      */
     public static void setDateHeader(final HttpResponse response) {
-        response.headers().set(HttpHeaderNames.DATE, formatDate(ZonedDateTime.now(HTTP_TIME_ZONE)));
+        response.headers().set(HttpHeaderNames.DATE, formatDate(OffsetDateTime.now(HTTP_TIME_ZONE)));
     }
 
     /**
@@ -167,7 +167,7 @@ public final class HttpUtils {
      * @param fileToCache the {@link File} from from which the cache data should be extracted
      */
     public static void setDateAndCacheHeaders(final HttpResponse response, final File fileToCache) {
-        final ZonedDateTime time = ZonedDateTime.now(HTTP_TIME_ZONE);
+        final OffsetDateTime time = OffsetDateTime.now(HTTP_TIME_ZONE);
         response.headers().set(HttpHeaderNames.DATE, formatDate(time));
         response.headers().set(HttpHeaderNames.EXPIRES, formatDate(time.plus(HTTP_CACHE_SECONDS, ChronoUnit.SECONDS)));
         response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, max-age=" + HTTP_CACHE_SECONDS);

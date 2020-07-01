@@ -9,10 +9,10 @@ import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.json.types.InstantTypeAdapter;
-import net.getnova.backend.json.types.ZonedDateTimeAdapter;
+import net.getnova.backend.json.types.OffsetDateTimeAdapter;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.function.Function;
 
@@ -27,7 +27,7 @@ public final class JsonUtils {
             .setExclusionStrategies(new JsonExclusionStrategy())
             .registerTypeHierarchyAdapter(JsonSerializable.class, new JsonSerializableSerializer())
             .registerTypeHierarchyAdapter(Instant.class, new InstantTypeAdapter())
-            .registerTypeHierarchyAdapter(ZonedDateTime.class, new ZonedDateTimeAdapter())
+            .registerTypeHierarchyAdapter(OffsetDateTime.class, new OffsetDateTimeAdapter())
             .create();
 
     private JsonUtils() {
