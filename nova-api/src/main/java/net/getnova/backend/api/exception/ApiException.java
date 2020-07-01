@@ -1,15 +1,17 @@
 package net.getnova.backend.api.exception;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 
 
 public class ApiException extends IOException {
 
-    public ApiException(final String message) {
+    public ApiException(@NotNull final String message) {
         super(message);
     }
 
-    public ApiException(final String message, final Throwable cause) {
+    public ApiException(@NotNull final String message, @NotNull final Throwable cause) {
         super(message, cause);
     }
 }

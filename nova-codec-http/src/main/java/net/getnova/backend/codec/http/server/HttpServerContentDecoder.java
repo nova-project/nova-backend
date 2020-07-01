@@ -58,6 +58,8 @@ class HttpServerContentDecoder extends MessageToMessageDecoder<HttpRequest> {
             return;
         }
 
+        msg.setUri(msg.uri().substring(location.getKey().length() + 1));
+
         this.configurePipeline(ctx.pipeline(), location.getValue());
         out.add(msg);
     }

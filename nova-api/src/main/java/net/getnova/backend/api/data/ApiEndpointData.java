@@ -8,7 +8,7 @@ import java.util.Set;
 @Data
 public class ApiEndpointData {
 
-    private final String name;
+    private final String id;
     private final String description;
     private final Set<ApiParameterData> parameters;
     private final boolean enabled;

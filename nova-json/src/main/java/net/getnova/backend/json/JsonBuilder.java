@@ -3,6 +3,7 @@ package net.getnova.backend.json;
 import com.google.gson.JsonObject;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Callable;
 
@@ -175,7 +176,7 @@ public final class JsonBuilder implements JsonSerializable {
      */
     @Override
     @Deprecated
-    public JsonObject serialize() {
+    public @NotNull JsonObject serialize() {
         return this.build();
     }
 

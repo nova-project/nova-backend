@@ -25,7 +25,7 @@ final class ApiParameterParser {
 
             final ApiParameterData currentParameterData = parseParameter(parameter);
             if (currentParameterData == null) {
-                log.error("Parameter {}.{}.{} is missing annotation {}.",
+                log.error("Parameter {}.{}.{} missing Annotation {}.",
                         clazz.getName(), method.getName(), parameter.getName(), ApiParameter.class.getName());
                 return null;
             } else parameterData.add(currentParameterData);
@@ -39,7 +39,7 @@ final class ApiParameterParser {
         if (!parameter.isAnnotationPresent(ApiParameter.class)) return null;
         final ApiParameter parameterAnnotation = parameter.getAnnotation(ApiParameter.class);
 
-        return new ApiParameterData(parameterAnnotation.name(),
+        return new ApiParameterData(parameterAnnotation.id(),
                 parameterAnnotation.required(),
                 parameterAnnotation.type(),
                 String.join("\n", parameterAnnotation.description()),

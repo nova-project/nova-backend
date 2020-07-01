@@ -15,5 +15,5 @@ class HttpServerConfig {
     private String host = "0.0.0.0";
 
     @ConfigValue(id = "port", comment = "The port of the server.")
-    private int port = 80;
+    private int port = 6060;
 }

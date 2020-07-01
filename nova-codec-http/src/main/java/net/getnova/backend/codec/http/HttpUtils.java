@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URI;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
@@ -192,6 +193,17 @@ public final class HttpUtils {
      */
     public static void setContentTypeHeader(final HttpMessage message, final CharSequence contentType) {
         message.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
+    }
+
+    /**
+     * Adds the HTTP {@code Content-Type} header to a {@link HttpMessage}.
+     *
+     * @param message     the {@link HttpMessage} to which the content type header should be added
+     * @param contentType the content type as a {@link CharSequence} which should be used
+     * @param charset     the {@link Charset} of the content type
+     */
+    public static void setContentTypeHeader(final HttpMessage message, final CharSequence contentType, final Charset charset) {
+        message.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType + "; charset=" + charset.toString());
     }
 
     /**

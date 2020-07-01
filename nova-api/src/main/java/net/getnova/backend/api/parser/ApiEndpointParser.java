@@ -1,8 +1,10 @@
 package net.getnova.backend.api.parser;
 
+import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.api.annotations.ApiEndpoint;
 import net.getnova.backend.api.data.ApiEndpointData;
 import net.getnova.backend.api.data.ApiParameterData;
+import net.getnova.backend.api.data.ApiResponse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,6 +17,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 final class ApiEndpointParser {
 
     private ApiEndpointParser() {
@@ -26,7 +29,7 @@ final class ApiEndpointParser {
         return Arrays.stream(clazz.getDeclaredMethods())
                 .map(method -> parseEndpoint(object, clazz, method))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toUnmodifiableMap(ApiEndpointData::getName, Function.identity()));
+                .collect(Collectors.toUnmodifiableMap(ApiEndpointData::getId, Function.identity()));
     }
 
     @Nullable
@@ -39,10 +42,16 @@ final class ApiEndpointParser {
             return null;
         }
 
+        if (!method.getReturnType().equals(ApiResponse.class)) {
+            log.error("Endpoint {}.{} cannot be parsed because it does not have the return type {}.", clazz.getName(), method.getName(), ApiResponse.class.getName());
+            if (!hasAccess) method.setAccessible(false);
+            return null;
+        }
+
         final ApiEndpoint endpointAnnotation = method.getAnnotation(ApiEndpoint.class);
         final Set<ApiParameterData> parameters = ApiParameterParser.parseParameters(clazz, method);
 
-        return new ApiEndpointData(endpointAnnotation.name(),
+        return new ApiEndpointData(endpointAnnotation.id(),
                 String.join("\n", endpointAnnotation.description()),
                 parameters == null ? Collections.emptySet() : parameters,
                 parameters != null,

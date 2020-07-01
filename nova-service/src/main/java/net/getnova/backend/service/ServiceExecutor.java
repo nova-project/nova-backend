@@ -87,6 +87,7 @@ final class ServiceExecutor {
                 true);
     }
 
+    @SuppressWarnings("checkstyle:WhitespaceAfter")
     private static void executeStep(final ServiceHandler serviceHandler,
                                     final Collection<ServiceData> services,
                                     final Function<ServiceData, Boolean> skipService,
@@ -129,9 +130,13 @@ final class ServiceExecutor {
         final List<ServiceData> dependServices = new LinkedList<>();
 
         services.iterator().forEachRemaining(service -> {
-            for (final Class<?> depend : service.getDepends()) {
-                if (!serviceHandler.hasService(depend)) serviceHandler.addService(depend);
-                dependServices.add(serviceHandler.getServiceData(depend));
+            try {
+                for (final Class<?> depend : service.getDepends()) {
+                    if (!serviceHandler.hasService(depend)) serviceHandler.addService(depend);
+                    dependServices.add(serviceHandler.getServiceData(depend));
+                }
+            } catch (NullPointerException e) {
+                log.error("It is not possible to initialize the service, maybe a non-existent service is requested.", e);
             }
         });
 

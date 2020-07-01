@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 public @interface ApiEndpoint {
 
     @NotNull
-    String name();
+    String id();
 
     @NotNull
     String[] description();

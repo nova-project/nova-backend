@@ -8,11 +8,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 public @interface ApiEndpointCollection {
 
     @NotNull
-    String name();
+    String id();
 
     @NotNull
     String[] description();

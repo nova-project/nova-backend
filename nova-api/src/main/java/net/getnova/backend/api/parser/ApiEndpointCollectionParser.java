@@ -32,7 +32,7 @@ public final class ApiEndpointCollectionParser {
 
         String collectionName;
         for (final ApiEndpointCollectionData collection : collections) {
-            collectionName = collection.getName().toLowerCase();
+            collectionName = collection.getId().toLowerCase();
             for (final Map.Entry<String, ApiEndpointData> entry : collection.getEndpoints().entrySet())
                 endpoints.put(collectionName + "/" + entry.getKey().toLowerCase(), entry.getValue());
         }
@@ -46,7 +46,7 @@ public final class ApiEndpointCollectionParser {
         if (!clazz.isAnnotationPresent(ApiEndpointCollection.class)) return null;
 
         final ApiEndpointCollection endpointCollectionAnnotation = clazz.getAnnotation(ApiEndpointCollection.class);
-        return new ApiEndpointCollectionData(endpointCollectionAnnotation.name(),
+        return new ApiEndpointCollectionData(endpointCollectionAnnotation.id(),
                 String.join("\n", endpointCollectionAnnotation.description()),
                 ApiEndpointParser.parseEndpoints(instance, clazz));
     }

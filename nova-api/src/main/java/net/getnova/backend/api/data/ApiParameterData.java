@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter(AccessLevel.NONE)
 public class ApiParameterData {
 
-    private final String name;
+    private final String id;
     private final boolean required;
     private final ApiParameterType type;
     private final String description;

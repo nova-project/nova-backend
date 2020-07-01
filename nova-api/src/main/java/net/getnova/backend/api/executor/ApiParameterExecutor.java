@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.getnova.backend.api.data.ApiContext;
 import net.getnova.backend.api.data.ApiParameterData;
+import net.getnova.backend.api.exception.ApiInternalParameterException;
 import net.getnova.backend.api.exception.ApiParameterException;
 import net.getnova.backend.json.JsonTypeMappingException;
 import net.getnova.backend.json.JsonUtils;
@@ -25,12 +26,12 @@ final class ApiParameterExecutor {
         String name;
         int i = 0;
         for (final ApiParameterData parameter : parameters) {
-            name = parameter.getName();
+            name = parameter.getId();
             if (json.has(name)) {
                 values[i] = getParameter(context, parameter, json.get(name));
                 i++;
             } else {
-                throw new ApiParameterException("Parameter \"" + name + "\" wasn't found.");
+                throw new ApiParameterException("The parameter \"" + name + "\" was not found.");
             }
         }
 
@@ -44,8 +45,8 @@ final class ApiParameterExecutor {
                 try {
                     yield JsonUtils.fromJson(json, parameter.getClassType());
                 } catch (JsonTypeMappingException e) {
-                    throw new ApiParameterException("Unable to parse parameter \"" + parameter.getName()
-                            + "\" in endpoint \"" + context.getRequest().getEndpoint() + "\":" + e.getMessage(), e);
+                    throw new ApiInternalParameterException("Unable to parse parameter \"" + parameter.getId()
+                            + "\" in endpoint \"" + context.getRequest().getEndpoint() + "\": " + e.getMessage(), e);
                 }
             }
             case ENDPOINT -> context.getRequest().getEndpoint();

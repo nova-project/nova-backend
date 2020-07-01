@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 public @interface ApiParameter {
 
     @NotNull
-    String name();
+    String id();
 
     boolean required() default true;
 
