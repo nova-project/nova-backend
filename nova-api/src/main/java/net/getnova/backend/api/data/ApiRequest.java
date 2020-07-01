@@ -8,7 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class ApiRequest {
 
-    private final JsonObject data;
     private final String endpoint;
-    private byte[] tag;
+    private final JsonObject data;
+    private String tag;
 }

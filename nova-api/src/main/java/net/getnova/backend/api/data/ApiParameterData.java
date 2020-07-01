@@ -10,6 +10,7 @@ public class ApiParameterData {
 
     private final String name;
     private final boolean required;
+    private final ApiParameterType type;
     private final String description;
     private final Class<?> classType;
 }

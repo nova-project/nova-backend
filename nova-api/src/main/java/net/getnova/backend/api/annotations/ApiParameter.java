@@ -1,5 +1,6 @@
 package net.getnova.backend.api.annotations;
 
+import net.getnova.backend.api.data.ApiParameterType;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.ElementType;
@@ -15,6 +16,8 @@ public @interface ApiParameter {
     String name();
 
     boolean required() default true;
+
+    ApiParameterType type() default ApiParameterType.NORMAL;
 
     @NotNull
     String[] description();

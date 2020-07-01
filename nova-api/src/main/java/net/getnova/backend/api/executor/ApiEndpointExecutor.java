@@ -1,8 +1,8 @@
 package net.getnova.backend.api.executor;
 
 import lombok.extern.slf4j.Slf4j;
+import net.getnova.backend.api.data.ApiContext;
 import net.getnova.backend.api.data.ApiEndpointData;
-import net.getnova.backend.api.data.ApiRequest;
 import net.getnova.backend.api.data.ApiResponse;
 import net.getnova.backend.api.data.ApiResponseCode;
 import net.getnova.backend.api.exception.ApiParameterException;
@@ -18,11 +18,11 @@ final class ApiEndpointExecutor {
     }
 
     @NotNull
-    static ApiResponse execute(@NotNull final ApiEndpointData endpoint, @NotNull final ApiRequest request) {
+    static ApiResponse execute(@NotNull final ApiContext context, @NotNull final ApiEndpointData endpoint) {
         Object[] parameters;
 
         try {
-            parameters = ApiParameterExecutor.parseParameters(request.getData());
+            parameters = ApiParameterExecutor.parseParameters(context, endpoint.getParameters());
         } catch (ApiParameterException e) {
             return new ApiResponse(ApiResponseCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -38,4 +38,3 @@ final class ApiEndpointExecutor {
         }
     }
 }
-
