@@ -2,7 +2,6 @@ package net.getnova.backend;
 
 import com.google.inject.Stage;
 import lombok.extern.slf4j.Slf4j;
-import net.getnova.backend.api.handler.rest.RestApiService;
 import net.getnova.backend.config.ConfigService;
 import net.getnova.backend.handler.InitHandler;
 import net.getnova.backend.handler.PostInitHandler;
@@ -101,7 +100,6 @@ public final class NovaImpl implements Nova {
 
         /* Adding all services which are required to run the minimal size of the backend. */
         this.registerServices();
-        this.serviceHandler.addService(RestApiService.class);
 
         /* Registration of all module services. */
         this.moduleHandler.getModuleServices().forEach(this.serviceHandler::addService);

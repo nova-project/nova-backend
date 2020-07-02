@@ -1,7 +1,7 @@
 dependencies {
     implementation project(':nova-injection')
     implementation project(':nova-service')
-    implementation project(':nova-sql')
     implementation project(':nova-json')
     implementation project(':nova-codec-http')
+    implementation project(':nova-config')
 }

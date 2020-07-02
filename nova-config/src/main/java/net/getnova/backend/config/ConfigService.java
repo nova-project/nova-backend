@@ -8,9 +8,9 @@ import net.getnova.backend.service.event.PreInitServiceEvent;
 import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * This is the config service which hales all configs, for other services, modules or the main config.
@@ -30,7 +30,7 @@ public class ConfigService {
      */
     public ConfigService() {
         this.environment = false;
-        this.configs = new HashMap<>();
+        this.configs = new TreeMap<>();
         this.configFile = new File("config.yaml").getAbsoluteFile();
     }
 

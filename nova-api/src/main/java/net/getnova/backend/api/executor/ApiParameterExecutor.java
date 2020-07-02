@@ -1,6 +1,5 @@
 package net.getnova.backend.api.executor;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.getnova.backend.api.data.ApiContext;
 import net.getnova.backend.api.data.ApiParameterData;
@@ -21,37 +20,39 @@ final class ApiParameterExecutor {
     @NotNull
     static Object[] parseParameters(@NotNull final ApiContext context, @NotNull final Collection<ApiParameterData> parameters) throws ApiParameterException {
         final Object[] values = new Object[parameters.size()];
-        final JsonObject json = context.getRequest().getData();
 
-        String name;
         int i = 0;
         for (final ApiParameterData parameter : parameters) {
-            name = parameter.getId();
-            if (json.has(name)) {
-                values[i] = getParameter(context, parameter, json.get(name));
-                i++;
-            } else {
-                throw new ApiParameterException("The parameter \"" + name + "\" was not found.");
-            }
+            values[i] = getParameter(context, parameter);
+            i++;
         }
 
         return values;
     }
 
     @NotNull
-    private static Object getParameter(@NotNull final ApiContext context, @NotNull final ApiParameterData parameter, @NotNull final JsonElement json) throws ApiParameterException {
-        return switch (parameter.getType()) {
-            case NORMAL -> {
+    private static Object getParameter(@NotNull final ApiContext context, @NotNull final ApiParameterData parameter) throws ApiParameterException {
+        switch (parameter.getType()) {
+            case NORMAL:
+                final JsonObject data = context.getRequest().getData();
+                final String id = parameter.getId();
+                if (!data.has(id)) {
+                    throw new ApiParameterException("The parameter \"" + id + "\" was not found.");
+                }
                 try {
-                    yield JsonUtils.fromJson(json, parameter.getClassType());
+                    return JsonUtils.fromJson(data.get(id), parameter.getClassType());
                 } catch (JsonTypeMappingException e) {
-                    throw new ApiInternalParameterException("Unable to parse parameter \"" + parameter.getId()
+                    throw new ApiInternalParameterException("Unable to parse parameter \"" + id
                             + "\" in endpoint \"" + context.getRequest().getEndpoint() + "\": " + e.getMessage(), e);
                 }
-            }
-            case ENDPOINT -> context.getRequest().getEndpoint();
-            case TAG -> context.getRequest().getTag();
-            case DATA -> context.getRequest().getData();
-        };
+            case ENDPOINT:
+                return context.getRequest().getEndpoint();
+            case TAG:
+                return context.getRequest().getTag();
+            case DATA:
+                return context.getRequest().getData();
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 }

@@ -1,4 +1,4 @@
-package net.getnova.backend.api.handler.rest;
+package net.getnova.backend.api.handler.websocket;
 
 import net.getnova.backend.api.data.ApiEndpointData;
 import net.getnova.backend.api.parser.ApiEndpointCollectionParser;
@@ -16,12 +16,12 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-@Service(id = "rest-api", depends = {ConfigService.class, HttpServerService.class})
+@Service(id = "websocket-api", depends = {ConfigService.class, HttpServerService.class})
 @Singleton
-public final class RestApiService {
+public final class WebsocketApiService {
 
     private final Set<Object> collections;
-    private final RestApiConfig config;
+    private final WebsocketApiConfig config;
 
     @Inject
     private HttpServerService httpServerService;
@@ -30,15 +30,15 @@ public final class RestApiService {
     private InjectionHandler injectionHandler;
 
     @Inject
-    public RestApiService(final ConfigService configService) {
+    public WebsocketApiService(final ConfigService configService) {
         this.collections = new LinkedHashSet<>();
-        this.config = configService.addConfig("rest-api", new RestApiConfig());
+        this.config = configService.addConfig("websocket-api", new WebsocketApiConfig());
     }
 
     @PostInitService
     private void postInit(@NotNull final PostInitServiceEvent event) {
         final Map<String, ApiEndpointData> endpoints = ApiEndpointCollectionParser.getEndpoints(ApiEndpointCollectionParser.parseCollections(this.collections));
-        this.httpServerService.addLocationProvider(this.config.getPath(), new RestApiLocationProvider(endpoints));
+        this.httpServerService.addLocationProvider(this.config.getPath(), new WebsocketApiLocationProvider(endpoints));
     }
 
     @NotNull
