@@ -51,12 +51,12 @@ public class ConfigService {
                 if (!this.configFile.exists()) {
                     final File parentFile = this.configFile.getParentFile();
                     if (!parentFile.exists()) {
-                        if (!parentFile.canWrite()) {
+                        if (!parentFile.getParentFile().canWrite()) {
                             log.error("Missing permissions to create parent folder \"{}\" of the config file. Using default config values.", parentFile.getAbsolutePath());
                         } else parentFile.mkdirs();
                     }
 
-                    if (!this.configFile.canWrite()) {
+                    if (!parentFile.canWrite()) {
                         log.error("Missing permissions to create config file \"{}\". Using default config values.", this.configFile.getAbsolutePath());
                     } else if (this.configFile.createNewFile()) {
                         log.info("Created configuration file {}.", this.configFile.getName());

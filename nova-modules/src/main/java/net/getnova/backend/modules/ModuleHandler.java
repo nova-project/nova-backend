@@ -22,19 +22,21 @@ public class ModuleHandler {
      * Creates a new module handler.
      */
     public ModuleHandler() {
-        this.moduleFolder = new File("modules");
+        this.moduleFolder = new File("modules").getAbsoluteFile();
     }
 
     private boolean checkFolder() {
         if (!this.moduleFolder.exists()) {
-            if (!moduleFolder.canWrite()) {
+            if (!moduleFolder.getParentFile().canWrite()) {
                 log.error("Missing permissions to create modules folder \"{}\".", moduleFolder.getAbsolutePath());
                 return false;
             }
-            this.moduleFolder.mkdirs();
+            if (this.moduleFolder.mkdirs()) {
+                log.info("Created module folder {}.", this.moduleFolder.getName());
+            }
             return true;
         }
-        if (!this.moduleFolder.canRead()) {
+        if (!this.moduleFolder.getParentFile().canRead()) {
             log.error("Missing permissions to read modules folder \"{}\".", moduleFolder.getAbsolutePath());
             return false;
         }
