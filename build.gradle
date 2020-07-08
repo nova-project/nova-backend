@@ -12,9 +12,12 @@ repositories {
     mavenCentral()
 }
 
+version version.toString().startsWith('v') ? version.toString().substring(1) : version
+version version.toString() == 'master-SNAPSHOT' ? 'edge' : version
+
 allprojects {
     group 'net.getnova.backend'
-    version version.toString().startsWith('v') ? version.toString().substring(1) : version
+    version rootProject.version
 }
 
 subprojects {
