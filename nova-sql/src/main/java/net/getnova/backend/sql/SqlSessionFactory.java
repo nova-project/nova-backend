@@ -1,6 +1,7 @@
 package net.getnova.backend.sql;
 
 import lombok.extern.slf4j.Slf4j;
+import net.getnova.backend.sql.model.TableModel;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

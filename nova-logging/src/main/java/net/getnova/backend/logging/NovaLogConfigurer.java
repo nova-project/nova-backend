@@ -38,6 +38,6 @@ public final class NovaLogConfigurer {
                 .getLoggerConfig(LogManager.ROOT_LOGGER_NAME)
                 .setLevel(level.getLevel());
         ctx.updateLoggers();
-        log.info("Using Loglevel {}.", level.name());
+        log.info("Logging with {}...", level.name());
     }
 }

@@ -11,7 +11,7 @@ import net.getnova.backend.logging.NovaLogLevel;
 public class NovaConfig {
 
     @ConfigValue(
-            id = "loglevel",
+            id = "log-level",
             comment = {"Available LogLevel's: OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE & ALL"}
     )
     private String loglevel = NovaLogLevel.WARN.toString();

@@ -61,7 +61,7 @@ public final class RestApiLocation extends HttpLocation<FullHttpRequest> {
         }
 
         if (apiResponse == null) {
-            apiResponse = ApiExecutor.execute(this.endpoints, new ApiRequest(new URI(msg.uri()).getPath().substring(1), json, null));
+            apiResponse = ApiExecutor.execute(this.endpoints, new ApiRequest(new URI(msg.uri()).getPath().substring(1), json == null ? new JsonObject() : json, null));
         }
 
         if (apiResponse != null) {

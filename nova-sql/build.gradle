@@ -1,8 +1,13 @@
 dependencies {
     implementation project(':nova-service')
     implementation project(':nova-config')
+    implementation project(':nova-json')
+    implementation project(':nova-bootstrap-api')
+
     api 'org.hibernate:hibernate-core:5.4.18.Final'
     api 'org.hibernate.validator:hibernate-validator:6.1.5.Final'
     implementation 'org.hibernate:hibernate-hikaricp:5.4.18.Final'
+
     implementation 'org.postgresql:postgresql:42.2.14'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:2.6.1'
 }

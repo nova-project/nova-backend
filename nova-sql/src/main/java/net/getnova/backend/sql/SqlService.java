@@ -1,14 +1,17 @@
 package net.getnova.backend.sql;
 
 import lombok.extern.slf4j.Slf4j;
+import net.getnova.backend.Nova;
 import net.getnova.backend.config.ConfigService;
+import net.getnova.backend.injection.InjectionHandler;
 import net.getnova.backend.service.Service;
-import net.getnova.backend.service.event.InitService;
-import net.getnova.backend.service.event.InitServiceEvent;
+import net.getnova.backend.service.event.PreInitService;
+import net.getnova.backend.service.event.PreInitServiceEvent;
 import net.getnova.backend.service.event.StartService;
 import net.getnova.backend.service.event.StartServiceEvent;
 import net.getnova.backend.service.event.StopService;
 import net.getnova.backend.service.event.StopServiceEvent;
+import net.getnova.backend.sql.model.TableModel;
 import org.hibernate.Session;
 
 import javax.inject.Inject;
@@ -19,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @Service(id = "sql", depends = {ConfigService.class})
 @Singleton
-public class SqlService {
+public final class SqlService {
 
     private static final Charset SQL_CHARSET = StandardCharsets.UTF_8;
 
@@ -29,6 +32,12 @@ public class SqlService {
     private boolean error = false;
     private SqlSessionFactory sessionFactory;
 
+    @Inject
+    private InjectionHandler injectionHandler;
+
+    @Inject
+    private Nova nova;
+
     /**
      * Creates a new {@link SqlService}.
      *
@@ -36,13 +45,14 @@ public class SqlService {
      *                      it is injected by the dependency injection.
      */
     @Inject
+
     public SqlService(final ConfigService configService) {
         this.properties = new SqlProperties(SQL_CHARSET);
         this.config = configService.addConfig("sql", new SqlConfig());
     }
 
-    @InitService
-    private void init(final InitServiceEvent event) {
+    @PreInitService
+    private void preInit(final PreInitServiceEvent event) {
         SqlServerType serverType = null;
         try {
             serverType = SqlServerType.valueOf(this.config.getServerType().toUpperCase());
@@ -83,5 +93,13 @@ public class SqlService {
      */
     public Session openSession() {
         return this.sessionFactory.openSession();
+    }
+
+    public void addEntity(final Class<? extends TableModel> entity) {
+        try {
+            this.sessionFactory.addEntity(entity);
+        } catch (SqlException e) {
+            log.error("Unable to register entity " + entity.getName() + ".", e);
+        }
     }
 }

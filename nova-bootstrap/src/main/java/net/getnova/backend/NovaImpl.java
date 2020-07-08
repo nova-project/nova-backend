@@ -52,7 +52,8 @@ public final class NovaImpl implements Nova {
         log.info("| |\\  | (_) \\ V / (_| |  | |_) | (_| | (__|   <  __/ | | | (_| |");
         log.info("|_| \\_|\\___/ \\_/ \\__,_|  |____/ \\__,_|\\___|_|\\_\\___|_| |_|\\__,_|");
         final String version = NovaImpl.class.getPackage().getImplementationVersion();
-        log.info("Nova Version: " + (version == null ? "development" : version) + ", Java Runtime: " + System.getProperty("java.version"));
+        log.info("Nova Version: " + (version == null ? "development" : version) + ", Java Runtime: " + System.getProperty("java.version")
+                + " by " + System.getProperty("java.vendor"));
 
         NovaLogConfigurer.redirectSysLog();
 
@@ -96,6 +97,7 @@ public final class NovaImpl implements Nova {
         log.info("Initializing backend...");
 
         /* Load all modules. */
+        log.info("Loading modules...");
         this.moduleHandler.loadModules();
 
         /* Adding all services which are required to run the minimal size of the backend. */

@@ -55,7 +55,8 @@ public final class WebsocketApiLocation extends HttpLocation<WebSocketFrame> {
 
             if (tag == null) apiResponse = new ApiResponse(ApiResponseStatus.BAD_REQUEST, "MISSING_TAG");
             else if (endpoint == null) apiResponse = new ApiResponse(ApiResponseStatus.BAD_REQUEST, "MISSING_ENDPOINT");
-            else apiResponse = ApiExecutor.execute(this.endpoints, new ApiRequest(endpoint, data, tag));
+            else
+                apiResponse = ApiExecutor.execute(this.endpoints, new ApiRequest(endpoint, data == null ? new JsonObject() : data, tag));
         }
 
         if (apiResponse != null) {

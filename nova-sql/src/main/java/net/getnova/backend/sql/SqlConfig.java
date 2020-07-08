@@ -12,8 +12,8 @@ class SqlConfig {
     @ConfigValue(id = "location", comment = "Defines the location of the database server.")
     private String location = "//localhost:5432";
 
-    @ConfigValue(id = "serverType", comment = "Defines the type of the sql server.")
-    private String serverType = SqlServerType.POSTGRES_10.name();
+    @ConfigValue(id = "server-type", comment = "Defines the type of the sql server.")
+    private String serverType = SqlServerType.POSTGRES.name();
 
     @ConfigValue(id = "database", comment = "Defines the database name which should be used.")
     private String database = "nova";
