@@ -43,3 +43,9 @@ Then you can open it with you IDE and start contributing.
 * [Gradle](https://gradle.org/) - The build tool
 * [JUnit](https://junit.org/) - The test tool
 
+## License
+
+| Licenses                                                                                                              |
+|-----------------------------------------------------------------------------------------------------------------------|
+| From 08.08.2020 [AGPL v3](LICENSE)                                                                                    |
+| Upto 07.08.2020 [MIT](https://github.com/getnova/nova-backend/blob/9988969fdfdf69540b3cb54a04cd70b21457f1fc/LICENSE)  |
