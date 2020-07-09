@@ -1,4 +1,4 @@
 dependencies {
     implementation project(':nova-service')
-    api 'io.netty:netty-all:4.1.50.Final'
+    api 'io.netty:netty-all:4.1.51.Final'
 }
