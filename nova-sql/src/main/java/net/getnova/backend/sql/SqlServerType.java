@@ -7,16 +7,14 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.MariaDB103Dialect;
 import org.hibernate.dialect.PostgreSQL10Dialect;
 
-import java.sql.Driver;
-
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum SqlServerType {
 
-    POSTGRES("postgresql", org.postgresql.Driver.class, PostgreSQL10Dialect.class),
-    MARIADB("mariadb", org.mariadb.jdbc.Driver.class, MariaDB103Dialect.class);
+    POSTGRES("postgresql", "org.postgresql.Driver", PostgreSQL10Dialect.class),
+    MARIADB("mariadb", "org.mariadb.jdbc.Driver", MariaDB103Dialect.class);
 
     private final String urlPrefix;
-    private final Class<? extends Driver> driver;
+    private final String driver;
     private final Class<? extends Dialect> dialect;
 }

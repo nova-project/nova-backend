@@ -16,7 +16,7 @@ class SqlProperties extends Properties {
 
     void setServer(final SqlServerType server, final String location, final String database) {
         this.put(Environment.URL, "jdbc:" + server.getUrlPrefix() + ":" + location + "/" + database + "");
-        this.put(Environment.DRIVER, server.getDriver().getName());
+        this.put(Environment.DRIVER, server.getDriver());
         this.put(Environment.DIALECT, server.getDialect().getName());
     }
 

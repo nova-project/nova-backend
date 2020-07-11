@@ -4,6 +4,10 @@ publishing {
     repositories {
         maven {
             url 'https://repo.rubidium.ml/repository/snapshots/'
+            credentials {
+                username ''
+                password ''
+            }
         }
     }
 
