@@ -12,6 +12,9 @@ class SqlProperties extends Properties {
         this.put(Environment.AUTOCOMMIT, "false");
         this.put(Environment.HBM2DDL_AUTO, "update");
         this.put(Environment.HBM2DDL_CHARSET_NAME, charset.toString());
+        this.put(Environment.CONNECTION_PREFIX + ".CharSet", charset.toString());
+        this.put(Environment.CONNECTION_PREFIX + ".characterEncoding", charset.toString());
+        this.put(Environment.CONNECTION_PREFIX + ".useUnicode", "true");
     }
 
     void setServer(final SqlServerType server, final String location, final String database) {

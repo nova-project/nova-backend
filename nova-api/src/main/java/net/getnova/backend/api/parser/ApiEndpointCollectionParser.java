@@ -32,9 +32,9 @@ public final class ApiEndpointCollectionParser {
 
         String collectionName;
         for (final ApiEndpointCollectionData collection : collections) {
-            collectionName = collection.getId().toLowerCase();
+            collectionName = collection.getId();
             for (final Map.Entry<String, ApiEndpointData> entry : collection.getEndpoints().entrySet())
-                endpoints.put(collectionName + "/" + entry.getKey().toLowerCase(), entry.getValue());
+                endpoints.put(collectionName + "/" + entry.getKey(), entry.getValue());
         }
 
         return endpoints;

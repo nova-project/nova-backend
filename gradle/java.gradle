@@ -2,7 +2,7 @@ apply plugin: 'java'
 if (project.name != 'nova-bootstrap') apply plugin: 'java-library'
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 sourceCompatibility = JavaVersion.VERSION_14

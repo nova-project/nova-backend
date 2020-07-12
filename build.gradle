@@ -9,7 +9,7 @@ plugins {
 }
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 version version.toString().startsWith('v') ? version.toString().substring(1) : version
