@@ -45,7 +45,6 @@ public final class SqlService {
      *                      it is injected by the dependency injection.
      */
     @Inject
-
     public SqlService(final ConfigService configService) {
         this.properties = new SqlProperties(SQL_CHARSET);
         this.config = configService.addConfig("sql", new SqlConfig());

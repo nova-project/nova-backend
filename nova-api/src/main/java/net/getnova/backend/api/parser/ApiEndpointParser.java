@@ -34,8 +34,16 @@ final class ApiEndpointParser {
 
     @Nullable
     private static ApiEndpointData parseEndpoint(@NotNull final Object instance, @NotNull final Class<?> clazz, @NotNull final Method method) {
-        final boolean hasAccess = method.canAccess(instance);
-        if (!hasAccess) method.setAccessible(true);
+        final boolean hasAccess;
+        try {
+            hasAccess = method.canAccess(instance);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+
+        if (!hasAccess) if (!method.trySetAccessible()) {
+            return null;
+        }
 
         if (!method.isAnnotationPresent(ApiEndpoint.class)) {
             if (!hasAccess) method.setAccessible(false);

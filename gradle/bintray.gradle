@@ -1,0 +1,43 @@
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = project.group as String
+            artifactId = project.name as String
+            version = project.version as String
+
+            from components.java
+        }
+    }
+}
+
+bintray {
+    user 'marcelcoding'
+    key 'abec58f393775305d031c368647264a0436702fc'
+
+    publications = ['maven']
+
+    publish true
+    override true
+
+    pkg {
+        userOrg = 'getnova'
+        repo = 'nova-backend'
+        name = project.name
+        websiteUrl = 'https://github.com/getnova/nova-backend'
+        issueTrackerUrl = 'https://github.com/getnova/nova-backend/issues'
+        vcsUrl = 'https://github.com/getnova/nova-backend.git'
+        licenses = ['AGPL-V3']
+        publicDownloadNumbers = true
+
+        githubRepo = 'getnova/nova-backend'
+        githubReleaseNotesFile = 'README.md'
+
+        version {
+            name = project.version as String
+            released = new Date()
+        }
+    }
+}

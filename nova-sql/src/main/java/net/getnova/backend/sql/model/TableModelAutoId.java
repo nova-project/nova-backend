@@ -1,6 +1,8 @@
 package net.getnova.backend.sql.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -12,6 +14,8 @@ import java.util.UUID;
 
 @Data
 @MappedSuperclass
+@NoArgsConstructor
+@AllArgsConstructor
 public abstract class TableModelAutoId extends TableModel {
 
     @Id
