@@ -15,11 +15,11 @@ import org.jetbrains.annotations.Nullable;
 @EqualsAndHashCode
 public final class ApiResponse implements JsonSerializable {
 
-    @Setter
-    private String tag;
     private final ApiResponseStatus responseCode;
     private final String message;
     private final JsonElement data;
+    @Setter
+    private String tag;
 
     public ApiResponse(@NotNull final ApiResponseStatus responseCode) {
         this(responseCode, null, null);
@@ -42,11 +42,18 @@ public final class ApiResponse implements JsonSerializable {
     @NotNull
     @Override
     public JsonElement serialize() {
-        final JsonBuilder info = JsonBuilder.create("tag", this.getTag())
+        return this.serialize(false);
+    }
+
+    @NotNull
+    public JsonElement serialize(final boolean small) {
+        final JsonBuilder info = small
+                ? JsonBuilder.create("message", this.message)
+                : JsonBuilder.create("tag", this.getTag())
                 .add("status", this.getResponseCode())
                 .add("message", this.message != null, this::getMessage);
 
-        return JsonBuilder.create("info", info)
+        return JsonBuilder.create("info", small && this.message != null, () -> info)
                 .add("data", !(this.data instanceof JsonNull), this::getData)
                 .build();
     }

@@ -35,13 +35,11 @@ public enum ApiResponseStatus implements JsonSerializable {
     // Self made 9xx
 
     private final int code;
-    private final String name;
     private final String displayName;
     private final boolean error;
 
     ApiResponseStatus(@NotNull final HttpResponseStatus status, final boolean error) {
         this.code = status.code();
-        this.name = status.reasonPhrase().toUpperCase().replace(' ', '_');
         this.displayName = status.reasonPhrase();
         this.error = error;
     }
@@ -50,7 +48,7 @@ public enum ApiResponseStatus implements JsonSerializable {
     @Override
     public JsonElement serialize() {
         return JsonBuilder.create("code", this.code)
-                .add("name", this.name)
+                .add("name", this.name())
                 .add("error", this.error)
                 .build();
     }

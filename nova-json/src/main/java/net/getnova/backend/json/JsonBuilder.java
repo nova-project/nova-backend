@@ -174,9 +174,10 @@ public final class JsonBuilder implements JsonSerializable {
      * @see JsonBuilder#build()
      * @deprecated use {@link JsonBuilder#build()}
      */
+    @NotNull
     @Override
     @Deprecated
-    public @NotNull JsonObject serialize() {
+    public JsonObject serialize() {
         return this.build();
     }
 

@@ -3,7 +3,10 @@ package net.getnova.backend.codec.http.server;
 import io.netty.channel.ChannelHandler;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import net.getnova.backend.netty.NettyChannelHandler;
+
+import java.net.URI;
 
 /**
  * A {@link HttpLocation} is a path on a web space.
@@ -12,10 +15,14 @@ import net.getnova.backend.netty.NettyChannelHandler;
  *
  * @param <T> the type of the message type which is received from the client.
  */
-@Getter(AccessLevel.PACKAGE)
+@Setter
 public abstract class HttpLocation<T> extends NettyChannelHandler<T> {
 
+    @Getter(AccessLevel.PACKAGE)
     private final ChannelHandler[] parentHandlers;
+
+    @Getter(AccessLevel.PROTECTED)
+    private URI originalUri;
 
     /**
      * Creates a new path mapping.

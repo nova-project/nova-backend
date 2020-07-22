@@ -1,8 +1,8 @@
 package net.getnova.backend.codec.http.server.location.file;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultHttpContent;
 import io.netty.handler.codec.http.DefaultHttpResponse;
+import io.netty.handler.codec.http.DefaultLastHttpContent;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpMessage;
@@ -10,13 +10,12 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
 import lombok.RequiredArgsConstructor;
 import net.getnova.backend.codec.http.HttpUtils;
 import net.getnova.backend.codec.http.server.HttpLocation;
 
 import java.io.File;
-import java.io.IOException;
+import java.net.URI;
 
 @RequiredArgsConstructor
 class HttpFileLocation extends HttpLocation<HttpMessage> {
@@ -33,7 +32,7 @@ class HttpFileLocation extends HttpLocation<HttpMessage> {
         else if (msg instanceof HttpContent && !this.finish) this.handleContent(ctx, (HttpContent) msg);
     }
 
-    private void handleRequest(final ChannelHandlerContext ctx, final HttpRequest request) throws IOException {
+    private void handleRequest(final ChannelHandlerContext ctx, final HttpRequest request) throws Exception {
         this.request = request;
 
         if (!request.decoderResult().isSuccess()) {
@@ -42,7 +41,7 @@ class HttpFileLocation extends HttpLocation<HttpMessage> {
             return;
         }
 
-        this.file = new File(this.baseDir + request.uri()).getAbsoluteFile();
+        this.file = new File(this.baseDir + new URI(request.uri()).getPath()).getAbsoluteFile();
 
         final boolean head = request.method().equals(HttpMethod.HEAD);
         if (request.method().equals(HttpMethod.GET) || head) {
@@ -70,8 +69,8 @@ class HttpFileLocation extends HttpLocation<HttpMessage> {
     }
 
     private void sendDirectory(final ChannelHandlerContext ctx, final String uri, final File file, final boolean onlyHead) {
-        final HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+        final HttpResponse response = new DefaultHttpResponse(this.request.protocolVersion(), HttpResponseStatus.OK);
         HttpUtils.setContentTypeHeader(response, HttpHeaderValues.TEXT_HTML);
-        HttpUtils.sendAndCleanupConnection(ctx, request, response, onlyHead ? null : new DefaultHttpContent(HttpFileLocationDirectoryBrowser.create(this.baseDir, uri, file)));
+        HttpUtils.sendAndCleanupConnection(ctx, response, onlyHead ? null : new DefaultLastHttpContent(HttpFileLocationDirectoryBrowser.create(this.baseDir, uri, file)));
     }
 }

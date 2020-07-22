@@ -5,15 +5,14 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultHttpContent;
 import io.netty.handler.codec.http.DefaultHttpResponse;
+import io.netty.handler.codec.http.DefaultLastHttpContent;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
 import lombok.EqualsAndHashCode;
 import net.getnova.backend.api.data.ApiEndpointData;
 import net.getnova.backend.api.data.ApiRequest;
@@ -49,11 +48,13 @@ public final class RestApiLocation extends HttpLocation<FullHttpRequest> {
             return;
         }
 
+        final String content = msg.content().toString(CHARSET);
+
         JsonObject json = null;
         ApiResponse apiResponse = null;
 
         try {
-            json = JsonUtils.fromJson(JsonParser.parseString(msg.content().toString(CHARSET)), JsonObject.class);
+            json = content.isEmpty() ? new JsonObject() : JsonUtils.fromJson(JsonParser.parseString(content), JsonObject.class);
         } catch (JsonSyntaxException e) {
             apiResponse = new ApiResponse(ApiResponseStatus.BAD_REQUEST, "JSON_SYNTAX");
         } catch (JsonTypeMappingException e) {
@@ -67,14 +68,14 @@ public final class RestApiLocation extends HttpLocation<FullHttpRequest> {
         }
 
         if (apiResponse != null) {
-            final HttpResponse httpResponse = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(
+            final HttpResponse httpResponse = new DefaultHttpResponse(msg.protocolVersion(), HttpResponseStatus.valueOf(
                     apiResponse.getResponseCode().getCode(),
                     apiResponse.getResponseCode().getDisplayName()
             ));
             HttpUtils.setContentTypeHeader(httpResponse, HttpHeaderValues.APPLICATION_JSON, CHARSET);
 
-            HttpUtils.sendAndCleanupConnection(ctx, msg, httpResponse,
-                    new DefaultHttpContent(Unpooled.copiedBuffer(apiResponse.serialize().toString(), CHARSET)));
+            HttpUtils.sendAndCleanupConnection(ctx, httpResponse,
+                    new DefaultLastHttpContent(Unpooled.copiedBuffer(apiResponse.serialize().toString(), CHARSET)));
         }
     }
 }

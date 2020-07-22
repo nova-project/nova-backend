@@ -2,6 +2,9 @@ package net.getnova.backend.codec.http.server;
 
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.HttpServerKeepAliveHandler;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import lombok.RequiredArgsConstructor;
 import net.getnova.backend.injection.InjectionHandler;
@@ -17,8 +20,10 @@ class HttpServerCodecInitializer implements CodecInitializer {
 
     @Override
     public void configure(final ChannelPipeline pipeline) {
-        pipeline.addLast("http-server-codec", new HttpServerCodec())
+        pipeline.addLast(new LoggingHandler(LogLevel.INFO))
+                .addLast("http-server-codec", new HttpServerCodec())
+                .addLast("keep-alive-handler", new HttpServerKeepAliveHandler())
                 .addLast("chunked-write-handler", new ChunkedWriteHandler())
-                .addLast("http-server-content-decoder", new HttpServerContentDecoder(this.injectionHandler, this.locationProviders));
+                .addLast("content-decoder", new HttpServerContentDecoder(this.injectionHandler, this.locationProviders));
     }
 }
