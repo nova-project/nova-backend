@@ -1,4 +1,4 @@
-package net.getnova.backend.sql.reposetory;
+package net.getnova.backend.sql.repository;
 
 import java.util.List;
 import java.util.stream.Stream;

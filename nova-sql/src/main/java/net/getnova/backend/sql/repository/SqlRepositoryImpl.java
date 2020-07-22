@@ -1,4 +1,4 @@
-package net.getnova.backend.sql.reposetory;
+package net.getnova.backend.sql.repository;
 
 import net.getnova.backend.sql.SqlService;
 import org.hibernate.Session;
