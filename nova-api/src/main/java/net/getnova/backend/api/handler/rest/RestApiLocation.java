@@ -14,6 +14,7 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
+import lombok.EqualsAndHashCode;
 import net.getnova.backend.api.data.ApiEndpointData;
 import net.getnova.backend.api.data.ApiRequest;
 import net.getnova.backend.api.data.ApiResponse;
@@ -30,6 +31,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+@EqualsAndHashCode
 public final class RestApiLocation extends HttpLocation<FullHttpRequest> {
 
     private static final Charset CHARSET = StandardCharsets.UTF_8;
