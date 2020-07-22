@@ -31,7 +31,7 @@ public class NettyService {
      * @return the current bos group.
      * @see EventLoopGroup
      */
-    public EventLoopGroup getBosGroup() {
+    public EventLoopGroup getBossGroup() {
         return this.eventLoopGroupHandler.getBossGroup();
     }
 

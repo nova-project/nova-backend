@@ -44,7 +44,7 @@ public abstract class Server implements AutoCloseable {
                 this.channel = new ServerBootstrap()
                         .option(ChannelOption.SO_BACKLOG, 1024)
                         .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-                        .group(this.nettyService.getBosGroup(), this.nettyService.getWorkerGroup())
+                        .group(this.nettyService.getBossGroup(), this.nettyService.getWorkerGroup())
                         .channel(this.getServerChannelType(EPOLL))
                         .childHandler(new NettyInitializer(this.sslContext, this.codecHandler.getInitializers()))
                         .bind(this.address)
