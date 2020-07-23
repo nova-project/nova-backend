@@ -69,6 +69,17 @@ public final class JsonBuilder implements JsonSerializable {
     }
 
     /**
+     * Creates a {@link JsonBuilder} without any data.
+     *
+     * @param object the data, represented in a {@link JsonObject}
+     * @return the JsonBuilder
+     * @see JsonBuilder#create(String, Object)
+     */
+    public static JsonBuilder create(final Object object) {
+        return new JsonBuilder(JsonUtils.fromJson(JsonUtils.toJson(object), JsonObject.class));
+    }
+
+    /**
      * Creates a {@link JsonBuilder} with one Key, Value pair.
      *
      * @param key   the key of the pair
