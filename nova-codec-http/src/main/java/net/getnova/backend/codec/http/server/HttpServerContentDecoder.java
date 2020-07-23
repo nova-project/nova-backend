@@ -73,7 +73,7 @@ class HttpServerContentDecoder extends MessageToMessageDecoder<HttpRequest> {
     }
 
     private Map.Entry<String, HttpLocation<?>> getLocation(final String path) {
-        for (Map.Entry<String, HttpLocationProvider<?>> locationProvider : this.locationProviders.entrySet()) {
+        for (final Map.Entry<String, HttpLocationProvider<?>> locationProvider : this.locationProviders.entrySet()) {
             if (path.startsWith(locationProvider.getKey())) {
                 final HttpLocation<?> location = locationProvider.getValue().getLocation();
                 this.injectionHandler.getInjector().injectMembers(location);
