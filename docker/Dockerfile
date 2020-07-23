@@ -18,6 +18,7 @@ RUN chmod +x ./gradlew && ./gradlew installDist --stacktrace --no-daemon
 
 FROM adoptopenjdk:14-jre-hotspot
 
+ARG GRADLE_USER=gradle
 ARG NOVA_USER=nova
 ARG NOVA_GROUP=nova
 
@@ -32,7 +33,7 @@ RUN set -o errexit -o nounset \
     && chown --recursive ${NOVA_USER}:${NOVA_GROUP} /home/${NOVA_USER}
 
 WORKDIR ${DATA_DIR}
-COPY --from=builder --chown=nova:nova ./nova-bootstrap/build/install/nova-bootstrap/ ${NOVA_HOME}/
+COPY --from=builder --chown=nova:nova /home/${GRADLE_USER}/src/nova-bootstrap/build/install/nova-bootstrap/ ${NOVA_HOME}/
 
 RUN ln --symbolic ${NOVA_HOME}/bin/nova-bootstrap /usr/bin/nova \
   && chmod +x /usr/bin/nova
