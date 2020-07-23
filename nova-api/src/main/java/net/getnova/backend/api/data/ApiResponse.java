@@ -48,12 +48,13 @@ public final class ApiResponse implements JsonSerializable {
     @NotNull
     public JsonElement serialize(final boolean small) {
         final JsonBuilder info = small
-                ? JsonBuilder.create("message", this.message)
+                ? JsonBuilder.create("error", this.responseCode.isError())
+                .add("message", this.message != null, () -> this.message)
                 : JsonBuilder.create("tag", this.getTag())
                 .add("status", this.getResponseCode())
                 .add("message", this.message != null, this::getMessage);
 
-        return JsonBuilder.create("info", small && this.message != null, () -> info)
+        return JsonBuilder.create("info", info)
                 .add("data", !(this.data instanceof JsonNull), this::getData)
                 .build();
     }
