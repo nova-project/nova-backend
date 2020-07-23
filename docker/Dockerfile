@@ -8,7 +8,7 @@ RUN set -o errexit -o nounset \
     && useradd --system --gid ${GRADLE_GROUP} --uid 1000 --shell /bin/bash --create-home ${GRADLE_USER} \
     && chown --recursive ${GRADLE_USER}:${GRADLE_GROUP} /home/${GRADLE_USER} \
     && apt-get update \
-    && apt-get install git -y
+    && apt-get install git -y --no-install-recommends
 
 COPY --chown=gradle:gradle . /home/${GRADLE_USER}/src
 WORKDIR /home/${GRADLE_USER}/src
