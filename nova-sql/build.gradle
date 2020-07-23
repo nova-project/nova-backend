@@ -9,6 +9,6 @@ dependencies {
     runtimeOnly 'org.hibernate:hibernate-hikaricp:5.4.18.Final'
 
     runtimeOnly 'org.postgresql:postgresql:42.2.14'
-    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:2.6.1'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:2.6.2'
     runtimeOnly 'com.h2database:h2:1.4.200'
 }
