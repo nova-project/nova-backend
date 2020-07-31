@@ -4,9 +4,9 @@ dependencies {
     implementation project(':nova-json')
     implementation project(':nova-bootstrap-api')
 
-    api 'org.hibernate:hibernate-core:5.4.18.Final'
+    api 'org.hibernate:hibernate-core:5.4.19.Final'
     api 'org.hibernate.validator:hibernate-validator:6.1.5.Final'
-    runtimeOnly 'org.hibernate:hibernate-hikaricp:5.4.18.Final'
+    runtimeOnly 'org.hibernate:hibernate-hikaricp:5.4.19.Final'
 
     runtimeOnly 'org.postgresql:postgresql:42.2.14'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:2.6.2'
