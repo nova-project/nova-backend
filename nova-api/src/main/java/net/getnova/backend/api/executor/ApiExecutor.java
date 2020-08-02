@@ -19,7 +19,8 @@ public final class ApiExecutor {
     @Nullable
     public static ApiResponse execute(@NotNull final Map<String, ApiEndpointData> endpoints, @NotNull final ApiRequest request) {
         final ApiEndpointData endpoint = endpoints.get(request.getEndpoint());
-        return endpoint == null ? new ApiResponse(ApiResponseStatus.NOT_FOUND, "ENDPOINT")
+        return endpoint == null
+                ? new ApiResponse(ApiResponseStatus.NOT_FOUND, "ENDPOINT")
                 : ApiEndpointExecutor.execute(new ApiContext(request), endpoint);
     }
 }

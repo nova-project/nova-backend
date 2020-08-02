@@ -17,6 +17,7 @@ public @interface ApiParameter {
 
     boolean required() default true;
 
+    @NotNull
     ApiParameterType type() default ApiParameterType.NORMAL;
 
     @NotNull

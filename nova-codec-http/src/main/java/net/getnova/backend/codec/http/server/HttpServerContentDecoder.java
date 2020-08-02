@@ -54,7 +54,7 @@ class HttpServerContentDecoder extends MessageToMessageDecoder<HttpRequest> {
             HttpUtils.sendStatus(ctx, msg, HttpResponseStatus.NOT_FOUND);
             return;
         } else if (!location.getKey().equals("/") && path.endsWith(location.getKey())) {
-            HttpUtils.sendRedirect(ctx, msg, uri.resolve(uri.getRawPath() + '/').toASCIIString());
+            HttpUtils.sendRedirect(ctx, msg, uri.resolve(uri.getRawPath() + '/'));
             return;
         }
 

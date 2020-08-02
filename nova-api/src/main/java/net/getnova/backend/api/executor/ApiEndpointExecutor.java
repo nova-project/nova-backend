@@ -39,7 +39,7 @@ final class ApiEndpointExecutor {
         } catch (IllegalArgumentException e) {
             log.error("Endpoint " + endpoint.getClazz().getName() + "." + endpoint.getMethod().getName() + " does not has the right parameters.", e);
         } catch (InvocationTargetException e) {
-            log.error("A exception was thrown in endpoint " + endpoint.getClazz().getName() + "." + endpoint.getMethod().getName() + ".", e.getTargetException());
+            log.error("An exception was thrown in endpoint " + endpoint.getClazz().getName() + "." + endpoint.getMethod().getName() + ".", e.getTargetException());
         } catch (Exception e) {
             log.error("Unable to execute endpoint " + endpoint.getClazz().getName() + "." + endpoint.getMethod().getName() + ".", e);
         }

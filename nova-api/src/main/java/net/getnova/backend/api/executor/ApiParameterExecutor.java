@@ -1,6 +1,7 @@
 package net.getnova.backend.api.executor;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import net.getnova.backend.api.data.ApiContext;
 import net.getnova.backend.api.data.ApiParameterData;
 import net.getnova.backend.api.exception.ApiInternalParameterException;
@@ -8,6 +9,7 @@ import net.getnova.backend.api.exception.ApiParameterException;
 import net.getnova.backend.json.JsonTypeMappingException;
 import net.getnova.backend.json.JsonUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -30,19 +32,19 @@ final class ApiParameterExecutor {
         return values;
     }
 
-    @NotNull
+    @Nullable
     private static Object getParameter(@NotNull final ApiContext context, @NotNull final ApiParameterData parameter) throws ApiParameterException {
         switch (parameter.getType()) {
             case NORMAL:
-                final JsonObject data = context.getRequest().getData();
-                final String id = parameter.getId();
-                if (!data.has(id)) {
-                    throw new ApiParameterException("The parameter \"" + id + "\" was not found.");
+                final JsonElement jsonValue = context.getRequest().getData().get(parameter.getId());
+                if (parameter.isRequired() && (jsonValue == null || jsonValue instanceof JsonNull)) {
+                    throw new ApiParameterException("The parameter \"" + parameter.getId() + "\" was not found.");
                 }
+
                 try {
-                    return JsonUtils.fromJson(data.get(id), parameter.getClassType());
+                    return JsonUtils.fromJson(jsonValue, parameter.getClassType());
                 } catch (JsonTypeMappingException e) {
-                    throw new ApiInternalParameterException("Unable to parse parameter \"" + id
+                    throw new ApiInternalParameterException("Unable to parse parameter \"" + parameter.getId()
                             + "\" in endpoint \"" + context.getRequest().getEndpoint() + "\": " + e.getMessage(), e);
                 }
             case ENDPOINT:

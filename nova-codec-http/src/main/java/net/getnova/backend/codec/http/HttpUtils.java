@@ -1,8 +1,6 @@
 package net.getnova.backend.codec.http;
 
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.DefaultFileRegion;
 import io.netty.handler.codec.http.DefaultHttpResponse;
@@ -27,6 +25,7 @@ import java.io.RandomAccessFile;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -38,8 +37,18 @@ import java.util.regex.Pattern;
 @Slf4j
 public final class HttpUtils {
 
+    /**
+     * @see DateTimeFormatter#RFC_1123_DATE_TIME
+     */
     public static final DateTimeFormatter HTTP_DATE_FORMAT = DateTimeFormatter.RFC_1123_DATE_TIME;
+    /**
+     * @see ZoneOffset#UTC
+     */
     public static final ZoneOffset HTTP_TIME_ZONE = ZoneOffset.UTC;
+    /**
+     * @see StandardCharsets#UTF_8
+     */
+    public static final Charset CHARSET = StandardCharsets.UTF_8;
     private static final Pattern INSECURE_URI = Pattern.compile(".*[<>&\"].*");
     private static final long HTTP_CACHE_SECONDS = Duration.ofDays(30).toSeconds();
     private static final MimetypesFileTypeMap MIMETYPES_FILE_TYPE_MAP = new MimetypesFileTypeMap();
@@ -96,25 +105,28 @@ public final class HttpUtils {
     /**
      * Checks if a file is accessible or exists.
      *
-     * @param baseDir the Directory were the file should be located (This <b>MUST</b> be an absolute path!)
+     * @param baseDir the Directory, represent as a {@link Path}, were the file should be located
      * @param file    the {@link File} witch should be checked
      * @return if the file is accessible or exists
      */
-    public static boolean fileExist(final String baseDir, final File file) {
-        return file.exists() && file.canRead() && !file.isHidden() && file.getPath().startsWith(baseDir);
+    public static boolean fileExist(final File baseDir, final File file) { // TODO: add warning if files are not absolute
+        return file.exists()
+                && file.canRead()
+                && !file.isHidden()
+                && (file.isAbsolute() ? file.getPath() : file.getAbsolutePath()).startsWith(baseDir.isAbsolute() ? baseDir.getPath() : baseDir.getAbsolutePath());
     }
 
     /**
      * Writes a {@link File} to a {@link ChannelHandlerContext}.
      *
-     * @param ctx      the {@link ChannelHandlerContext} to which the message should be send
-     * @param request  the request from the {@link ChannelHandlerContext} (Client)
-     * @param file     the {@link File} which should be send to the {@link ChannelHandlerContext} (Client)
-     * @param onlyHead only send the {@link HttpResponse} with a the {@link LastHttpContent#EMPTY_LAST_CONTENT}.
-     *                 This is needed at {@link io.netty.handler.codec.http.HttpMethod#HEAD}.
+     * @param ctx     the {@link ChannelHandlerContext} to which the message should be send
+     * @param request the request from the {@link ChannelHandlerContext} (Client)
+     * @param file    the {@link File} which should be send to the {@link ChannelHandlerContext} (Client)
+     * @param body    if the body should also be send
+     *                This is needed at {@link io.netty.handler.codec.http.HttpMethod#HEAD}.
      * @throws IOException if there is an error while reading the file
      */
-    public static void sendFile(final ChannelHandlerContext ctx, final HttpRequest request, final File file, final boolean onlyHead) throws IOException {
+    public static void sendFile(final ChannelHandlerContext ctx, final HttpRequest request, final File file, final boolean body) throws IOException {
         final String ifModifiedSince = request.headers().get(HttpHeaderNames.IF_MODIFIED_SINCE);
         if (ifModifiedSince != null
                 && !ifModifiedSince.isEmpty()
@@ -125,24 +137,23 @@ public final class HttpUtils {
 
         final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
         final long length = randomAccessFile.length();
-        final boolean keepAlive = HttpUtil.isKeepAlive(request);
 
         final HttpResponse response = new DefaultHttpResponse(request.protocolVersion(), HttpResponseStatus.OK);
         HttpUtil.setContentLength(response, length);
+        HttpUtil.setTransferEncodingChunked(response, true);
         setContentTypeHeader(response, file);
         setDateAndCacheHeaders(response, file);
-        HttpUtil.setKeepAlive(response, keepAlive);
 
-        ChannelFuture lastContentFuture = ctx.write(response);
+        ctx.write(response);
 
-        if (!onlyHead) if (ctx.pipeline().get(SslHandler.class) == null) {
-            ctx.write(new DefaultFileRegion(randomAccessFile.getChannel(), 0, length), ctx.newProgressivePromise());
-            lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-        } else {
-            lastContentFuture = ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(randomAccessFile, 0, length, 8192)), ctx.newProgressivePromise());
-        }
-
-        if (!keepAlive) lastContentFuture.addListener(ChannelFutureListener.CLOSE);
+        if (body) {
+            if (ctx.pipeline().get(SslHandler.class) == null) {
+                ctx.write(new DefaultFileRegion(randomAccessFile.getChannel(), 0, length), ctx.newProgressivePromise());
+                ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+            } else {
+                ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(randomAccessFile, 0, length, 8192)), ctx.newProgressivePromise());
+            }
+        } else ctx.write(LastHttpContent.EMPTY_LAST_CONTENT);
     }
 
     /**
@@ -218,11 +229,11 @@ public final class HttpUtils {
      *
      * @param ctx     the {@link ChannelHandlerContext} to which the redirect should be send
      * @param request the {@link HttpRequest} from the {@link ChannelHandlerContext}
-     * @param newUri  the new uri to witch the client should be redirected
+     * @param newUri  the new {@link URI} to witch the client should be redirected
      */
-    public static void sendRedirect(final ChannelHandlerContext ctx, final HttpRequest request, final String newUri) {
+    public static void sendRedirect(final ChannelHandlerContext ctx, final HttpRequest request, final URI newUri) {
         final HttpResponse response = new DefaultHttpResponse(request.protocolVersion(), HttpResponseStatus.TEMPORARY_REDIRECT);
-        response.headers().set(HttpHeaderNames.LOCATION, newUri);
+        response.headers().set(HttpHeaderNames.LOCATION, newUri.getRawPath());
         sendAndCleanupConnection(ctx, response, null);
     }
 
@@ -271,6 +282,7 @@ public final class HttpUtils {
      * @param content  the content which should be send to the {@link ChannelHandlerContext} (Client)
      */
     public static void sendAndCleanupConnection(final ChannelHandlerContext ctx, final HttpResponse response, final LastHttpContent content) {
+        // FIXME: Add also correct content length if HttpMethod#HEAD is selected!
         HttpUtil.setContentLength(response, content == null ? 0 : content.content().readableBytes());
 
         ctx.write(response);

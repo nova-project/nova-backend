@@ -9,25 +9,21 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
-import lombok.EqualsAndHashCode;
 import net.getnova.backend.api.data.ApiEndpointData;
 import net.getnova.backend.api.data.ApiRequest;
 import net.getnova.backend.api.data.ApiResponse;
 import net.getnova.backend.api.data.ApiResponseStatus;
 import net.getnova.backend.api.executor.ApiExecutor;
+import net.getnova.backend.codec.http.HttpUtils;
 import net.getnova.backend.codec.http.server.HttpLocation;
 import net.getnova.backend.json.JsonTypeMappingException;
 import net.getnova.backend.json.JsonUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-@EqualsAndHashCode
 public final class WebsocketApiLocation extends HttpLocation<WebSocketFrame> {
 
-    private static final Charset CHARSET = StandardCharsets.UTF_8;
     private final Map<String, ApiEndpointData> endpoints;
 
     public WebsocketApiLocation(@NotNull final Map<String, ApiEndpointData> endpoints) {
@@ -41,7 +37,7 @@ public final class WebsocketApiLocation extends HttpLocation<WebSocketFrame> {
         ApiResponse apiResponse = null;
 
         try {
-            json = JsonUtils.fromJson(JsonParser.parseString(msg.content().toString(CHARSET)), JsonObject.class);
+            json = JsonUtils.fromJson(JsonParser.parseString(msg.content().toString(HttpUtils.CHARSET)), JsonObject.class);
         } catch (JsonSyntaxException e) {
             apiResponse = new ApiResponse(ApiResponseStatus.BAD_REQUEST, "JSON_SYNTAX");
         } catch (JsonTypeMappingException e) {
@@ -64,7 +60,7 @@ public final class WebsocketApiLocation extends HttpLocation<WebSocketFrame> {
         }
 
         if (apiResponse != null) {
-            ctx.write(new TextWebSocketFrame(Unpooled.copiedBuffer(apiResponse.serialize().toString(), CHARSET)));
+            ctx.write(new TextWebSocketFrame(Unpooled.copiedBuffer(apiResponse.serialize().toString(), HttpUtils.CHARSET)));
         }
     }
 }

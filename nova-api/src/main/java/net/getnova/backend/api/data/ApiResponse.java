@@ -15,10 +15,14 @@ import org.jetbrains.annotations.Nullable;
 @EqualsAndHashCode
 public final class ApiResponse implements JsonSerializable {
 
+    @NotNull
     private final ApiResponseStatus responseCode;
+    @Nullable
     private final String message;
+    @Nullable
     private final JsonElement data;
     @Setter
+    @Nullable
     private String tag;
 
     public ApiResponse(@NotNull final ApiResponseStatus responseCode) {

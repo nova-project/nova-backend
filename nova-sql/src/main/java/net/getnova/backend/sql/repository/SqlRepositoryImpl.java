@@ -55,6 +55,26 @@ public class SqlRepositoryImpl<T, K> implements SqlRepository<T, K> {
     public final T save(final T entity) {
         try (Session session = this.sqlService.openSession()) {
             final Transaction transaction = session.beginTransaction();
+            session.save(entity);
+            transaction.commit();
+            return entity;
+        }
+    }
+
+    @Override
+    public final T update(final T entity) {
+        try (Session session = this.sqlService.openSession()) {
+            final Transaction transaction = session.beginTransaction();
+            session.update(entity);
+            transaction.commit();
+            return entity;
+        }
+    }
+
+    @Override
+    public final T saveOrUpdate(final T entity) {
+        try (Session session = this.sqlService.openSession()) {
+            final Transaction transaction = session.beginTransaction();
             session.saveOrUpdate(entity);
             transaction.commit();
             return entity;

@@ -13,6 +13,10 @@ public interface SqlRepository<T, K> {
 
     T save(T entity);
 
+    T update(T entity);
+
+    T saveOrUpdate(T entity);
+
     /**
      * Deletes the entity with the specified primary key.
      *

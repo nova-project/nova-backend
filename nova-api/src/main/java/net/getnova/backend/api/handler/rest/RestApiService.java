@@ -1,5 +1,7 @@
 package net.getnova.backend.api.handler.rest;
 
+import lombok.Getter;
+import net.getnova.backend.api.data.ApiEndpointCollectionData;
 import net.getnova.backend.api.data.ApiEndpointData;
 import net.getnova.backend.api.parser.ApiEndpointCollectionParser;
 import net.getnova.backend.codec.http.server.HttpServerService;
@@ -22,6 +24,8 @@ public final class RestApiService {
 
     private final Set<Object> collections;
     private final RestApiConfig config;
+    @Getter
+    private Set<ApiEndpointCollectionData> collectionsData;
 
     @Inject
     private HttpServerService httpServerService;
@@ -37,7 +41,8 @@ public final class RestApiService {
 
     @PostInitService
     private void postInit(@NotNull final PostInitServiceEvent event) {
-        final Map<String, ApiEndpointData> endpoints = ApiEndpointCollectionParser.getEndpoints(ApiEndpointCollectionParser.parseCollections(this.collections));
+        this.collectionsData = ApiEndpointCollectionParser.parseCollections(this.collections);
+        final Map<String, ApiEndpointData> endpoints = ApiEndpointCollectionParser.getEndpoints(this.collectionsData);
         this.httpServerService.addLocationProvider(this.config.getPath(), new RestApiLocationProvider(endpoints));
     }
 

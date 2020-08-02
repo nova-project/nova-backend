@@ -9,6 +9,6 @@ import net.getnova.backend.config.ConfigValue;
 @Setter(AccessLevel.NONE)
 public final class RestApiConfig {
 
-    @ConfigValue(id = "path", comment = "The path of in the url, were the rest api is listening.")
+    @ConfigValue(id = "path", comment = "The path of in the url, were the rest api is available.")
     private String path = "api";
 }
