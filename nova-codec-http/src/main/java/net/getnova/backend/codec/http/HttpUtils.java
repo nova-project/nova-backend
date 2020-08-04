@@ -25,7 +25,6 @@ import java.io.RandomAccessFile;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -105,15 +104,18 @@ public final class HttpUtils {
     /**
      * Checks if a file is accessible or exists.
      *
-     * @param baseDir the Directory, represent as a {@link Path}, were the file should be located
+     * @param baseDir the Directory, represent as a {@link File}, were the file should be located
      * @param file    the {@link File} witch should be checked
      * @return if the file is accessible or exists
      */
-    public static boolean fileExist(final File baseDir, final File file) { // TODO: add warning if files are not absolute
+    public static boolean fileExist(final File baseDir, final File file) {
+        if (!baseDir.isAbsolute() || !file.isAbsolute())
+            throw new IllegalArgumentException("baseDir or file is not absolute");
+
         return file.exists()
                 && file.canRead()
                 && !file.isHidden()
-                && (file.isAbsolute() ? file.getPath() : file.getAbsolutePath()).startsWith(baseDir.isAbsolute() ? baseDir.getPath() : baseDir.getAbsolutePath());
+                && file.getPath().startsWith(baseDir.getPath());
     }
 
     /**

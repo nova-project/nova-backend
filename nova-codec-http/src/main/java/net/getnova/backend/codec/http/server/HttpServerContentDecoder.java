@@ -58,7 +58,7 @@ class HttpServerContentDecoder extends MessageToMessageDecoder<HttpRequest> {
             return;
         }
 
-        if (!location.getKey().equals("/")) msg.setUri("/" + msg.uri().substring(location.getKey().length() + 1));
+        if (!location.getKey().equals("/")) msg.setUri(msg.uri().substring(location.getKey().length() + 1));
 
         final HttpLocation<?> httpLocation = location.getValue();
         httpLocation.setOriginalUri(uri);
