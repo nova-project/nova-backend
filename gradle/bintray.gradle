@@ -1,57 +1,20 @@
-if (project != rootProject) {
-    apply plugin: 'maven-publish'
-    apply plugin: 'com.jfrog.bintray'
+apply plugin: 'nebula.nebula-bintray'
 
-    publishing {
-        publications {
-            maven(MavenPublication) {
-                groupId = project.group as String
-                artifactId = project.name as String
-                version = project.version as String
+bintray {
+    user = System.getenv('BINTRAY_USERNAME') == null ? 'marcelcoding' : System.getenv('BINTRAY_USERNAME')
+    apiKey = System.getenv('BINTRAY_KEY') == null ? '748e323acb77320273c41c22c4f8ea6ce9f78215' : System.getenv('BINTRAY_KEY')
 
-                pom {
-                    name = project.name
-                    url = 'https://github.com/getnova/nova-backend'
+    pkgName = 'nova-backend'
+    repo = 'maven'
+    userOrg = 'getnova'
 
-                    licenses {
-                        license {
-                            name = "GNU AFFERO GENERAL PUBLIC LICENSE, Version 3"
-                            url = "https://raw.githubusercontent.com/getnova/nova-backend/master/LICENSE"
-                        }
-                    }
-                }
+    licenses = ['AGPL-V3']
+    labels = ['getnova', 'nova-backend']
 
-                from components.java
-            }
-        }
-    }
+    websiteUrl = 'https://github.com/getnova/nova-backend'
+    issueTrackerUrl = 'https://github.com/getnova/nova-backend/issues'
+    vcsUrl = 'https://github.com/getnova/nova-backend.git'
 
-    bintray {
-        user System.getenv('BINTRAY_USERNAME')
-        key System.getenv('BINTRAY_KEY')
-
-        publications = ['maven']
-
-        publish true
-        override true
-
-        pkg {
-            userOrg = 'getnova'
-            repo = 'nova-backend'
-            name = project.name
-            websiteUrl = 'https://github.com/getnova/nova-backend'
-            issueTrackerUrl = 'https://github.com/getnova/nova-backend/issues'
-            vcsUrl = 'https://github.com/getnova/nova-backend.git'
-            licenses = ['AGPL-V3']
-            publicDownloadNumbers = true
-
-            githubRepo = 'getnova/nova-backend'
-            githubReleaseNotesFile = 'README.md'
-
-            version {
-                name = project.version as String
-                released = new Date()
-            }
-        }
-    }
+    syncToMavenCentral = false
+    gppSign = false
 }

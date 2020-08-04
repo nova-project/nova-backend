@@ -1,4 +1,7 @@
+apply plugin: 'java-library'
+
 dependencies {
+    implementation project(':nova-logging')
     implementation project(':nova-service')
     implementation project(':nova-config')
     implementation project(':nova-json')

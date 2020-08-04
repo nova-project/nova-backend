@@ -1,5 +1,5 @@
-apply plugin: 'java'
-if (project.name != 'nova-bootstrap') apply plugin: 'java-library'
+apply plugin: "java"
+apply plugin: "nebula.project"
 
 repositories {
     jcenter()
@@ -9,13 +9,7 @@ sourceCompatibility = JavaVersion.VERSION_14
 targetCompatibility = JavaVersion.VERSION_14
 
 dependencies {
-    if (project.name != 'nova-logging') implementation project(':nova-logging')
     implementation 'org.jetbrains:annotations:19.0.0'
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
 }
 
 jar {
@@ -24,8 +18,6 @@ jar {
                 "Specification-Title"     : project.name,
                 "Specification-Vendor"    : "Nova Project (https://github.com/getnova)",
                 "Specification-Version"   : project.version,
-                "Implementation-Title"    : project.name,
-                "Implementation-Version"  : project.version,
                 "Implementation-Vendor"   : "Nova Project (https://github.com/getnova)",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
@@ -33,5 +25,5 @@ jar {
 }
 
 tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
+    options.encoding = "UTF-8"
 }

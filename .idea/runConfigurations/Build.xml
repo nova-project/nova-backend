@@ -13,7 +13,6 @@
           <option value="installDist" />
         </list>
       </option>
-      <option name="vmOptions" value="--warning-mode all" />
     </ExternalSystemSettings>
     <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
     <method v="2" />

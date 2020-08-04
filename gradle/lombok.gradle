@@ -3,4 +3,3 @@ apply plugin: 'io.freefair.lombok'
 lombok {
     config.put('lombok.equalsandhashcode.callsuper', 'CALL')
 }
-

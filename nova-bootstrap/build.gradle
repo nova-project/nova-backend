@@ -7,6 +7,7 @@ application {
 }
 
 dependencies {
+    implementation project(':nova-logging')
     implementation 'commons-cli:commons-cli:1.4'
 
     rootProject.allprojects {

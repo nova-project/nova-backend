@@ -5,16 +5,18 @@ plugins {
     id 'io.freefair.lombok' version '5.1.0' apply false
     id 'io.freefair.javadoc-utf-8' version '5.1.0'
 //    id 'io.freefair.javadoc-links' version '5.1.0'
-    id 'io.freefair.aggregate-jacoco-report' version '5.1.0'
-    id 'com.jfrog.bintray' version '1.8.5'
+//    id 'io.freefair.aggregate-jacoco-report' version '5.1.0'
+    id 'nebula.project' version '7.0.9' apply false
+    id 'nebula.nebula-bintray' version '8.5.0'
 }
 
 repositories {
     jcenter()
 }
 
+String buildNumber = System.getenv('GITHUB_RUN_NUMBER')
 version version.toString().startsWith('v') ? version.toString().substring(1) : version
-version version.toString() == 'master-SNAPSHOT' ? 'edge' : version
+version version.toString() == 'master-SNAPSHOT' ? "edge${buildNumber == null ? '' : "_${buildNumber}"}" : version
 
 allprojects {
     group 'net.getnova.backend'
@@ -29,14 +31,4 @@ subprojects {
     apply from: "${rootDir}/gradle/javadoc.gradle"
     apply from: "${rootDir}/gradle/jacoco.gradle"
     apply from: "${rootDir}/gradle/bintray.gradle"
-}
-
-task copyJavaDocStyles(type: Copy) {
-    from "$rootDir/gradle/javadoc.css"
-    rename "javadoc.css", "stylesheet.css"
-    into "$buildDir/docs/aggregateJavadoc/"
-}
-
-aggregateJavadoc {
-    finalizedBy copyJavaDocStyles
 }

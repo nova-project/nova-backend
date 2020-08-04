@@ -1,3 +1,6 @@
+apply plugin: 'java-library'
+
 dependencies {
+    implementation project(':nova-logging')
     api project(":nova-injection")
 }
