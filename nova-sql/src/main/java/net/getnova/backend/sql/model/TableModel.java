@@ -17,6 +17,6 @@ public abstract class TableModel {
 
     @JsonTransient
     @Version
-    @Column(name = "version")
+    @Column(name = "version", nullable = false)
     private long version;
 }
