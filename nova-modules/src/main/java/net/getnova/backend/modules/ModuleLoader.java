@@ -1,5 +1,7 @@
 package net.getnova.backend.modules;
 
+import lombok.Data;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -16,19 +18,25 @@ final class ModuleLoader {
         throw new UnsupportedOperationException();
     }
 
-    static Set<ModuleData> loadModules(final File moduleFolder) throws IOException {
+    static Result loadModules(final File moduleFolder) throws IOException {
         if (!moduleFolder.exists()) {
             throw new ModuleException("Module folder \"" + moduleFolder.getAbsolutePath() + "\" not found.");
         }
 
+        final File[] files = moduleFolder.listFiles();
+        final URL[] urls = new URL[files.length];
+
+        for (int i = 0; i < files.length; i++) urls[i] = files[i].toURI().toURL();
+        final ClassLoader loader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
+
         final Set<ModuleData> modules = new LinkedHashSet<>();
-        for (final File file : moduleFolder.listFiles()) modules.add(loadModule(file));
-        return modules;
+        for (final File file : files) modules.add(loadModule(loader, file));
+
+        return new Result(loader, modules);
     }
 
-    private static ModuleData loadModule(final File file) throws IOException {
+    private static ModuleData loadModule(final ClassLoader loader, final File file) throws IOException {
         try (JarFile jarFile = new JarFile(file)) {
-            final URLClassLoader urlClassLoader = URLClassLoader.newInstance(new URL[]{file.toURI().toURL()});
 
             final Manifest manifest = jarFile.getManifest();
             if (manifest == null) {
@@ -43,7 +51,7 @@ final class ModuleLoader {
             final Set<Class<?>> services = new LinkedHashSet<>();
             for (final String serviceName : moduleServices.split(",")) {
                 try {
-                    services.add(urlClassLoader.loadClass(serviceName));
+                    services.add(loader.loadClass(serviceName));
                 } catch (ClassNotFoundException e) {
                     throw new ModuleException("Module service class \"" + serviceName + "\" can not found in jar file \"" + jarFile.getName() + "\".");
                 }
@@ -59,5 +67,12 @@ final class ModuleLoader {
             throw new ModuleException("Missing manifest attribute \"" + name + "\" in jar file \"" + jarFile.getName() + "\".");
         }
         return value;
+    }
+
+    @Data
+    static final class Result {
+
+        private final ClassLoader loader;
+        private final Set<ModuleData> modules;
     }
 }

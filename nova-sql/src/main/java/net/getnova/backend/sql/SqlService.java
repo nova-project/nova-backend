@@ -1,9 +1,7 @@
 package net.getnova.backend.sql;
 
 import lombok.extern.slf4j.Slf4j;
-import net.getnova.backend.Nova;
 import net.getnova.backend.config.ConfigService;
-import net.getnova.backend.injection.InjectionHandler;
 import net.getnova.backend.service.Service;
 import net.getnova.backend.service.event.PreInitService;
 import net.getnova.backend.service.event.PreInitServiceEvent;
@@ -31,12 +29,6 @@ public final class SqlService {
     private boolean validConfig = true;
     private boolean error = false;
     private SqlSessionFactory sessionFactory;
-
-    @Inject
-    private InjectionHandler injectionHandler;
-
-    @Inject
-    private Nova nova;
 
     /**
      * Creates a new {@link SqlService}.

@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 public class ModuleHandler {
 
     private final File moduleFolder;
+
     @Getter
     private Set<ModuleData> modules;
 
@@ -48,7 +49,9 @@ public class ModuleHandler {
      */
     public void loadModules() {
         if (this.checkFolder()) try {
-            this.modules = ModuleLoader.loadModules(this.moduleFolder);
+            final ModuleLoader.Result result = ModuleLoader.loadModules(this.moduleFolder);
+            Thread.currentThread().setContextClassLoader(result.getLoader());
+            this.modules = result.getModules();
         } catch (IOException e) {
             log.error("Unable to load modules.", e);
         }
