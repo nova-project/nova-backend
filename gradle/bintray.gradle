@@ -1,20 +1,25 @@
-apply plugin: 'nebula.nebula-bintray'
+apply plugin: 'com.jfrog.bintray'
 
 bintray {
-    user = System.getenv('BINTRAY_USERNAME') == null ? 'marcelcoding' : System.getenv('BINTRAY_USERNAME')
-    apiKey = System.getenv('BINTRAY_KEY') == null ? '748e323acb77320273c41c22c4f8ea6ce9f78215' : System.getenv('BINTRAY_KEY')
+    user = System.getenv('BINTRAY_USERNAME') == null ? '' : System.getenv('BINTRAY_USERNAME')
+    key = System.getenv('BINTRAY_KEY') == null ? '' : System.getenv('BINTRAY_KEY')
 
-    pkgName = 'nova-backend'
-    repo = 'maven'
-    userOrg = 'getnova'
+    publications = ['nebula']
 
-    licenses = ['AGPL-V3']
-    labels = ['getnova', 'nova-backend']
+    publish = true
+    override = false
 
-    websiteUrl = 'https://github.com/getnova/nova-backend'
-    issueTrackerUrl = 'https://github.com/getnova/nova-backend/issues'
-    vcsUrl = 'https://github.com/getnova/nova-backend.git'
+    pkg {
+        repo = 'maven'
+        userOrg = 'getnova'
+        name = 'nova-backend'
 
-    syncToMavenCentral = false
-    gppSign = false
+        websiteUrl = 'https://github.com/getnova/nova-backend'
+        issueTrackerUrl = 'https://github.com/getnova/nova-backend/issues'
+        vcsUrl = 'https://github.com/getnova/nova-backend.git'
+        githubRepo = 'getnova/nova-backend'
+
+        licenses = ['AGPL-V3']
+        labels = ['getnova', 'nova-backend']
+    }
 }

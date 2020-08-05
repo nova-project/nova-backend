@@ -60,7 +60,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Upload with Gradle
-        run: ./gradlew publishNebulaPublicationToBintrayRepository --no-daemon
+        run: ./gradlew bintrayUpload --no-daemon
         env:
           BINTRAY_USERNAME: ${{ secrets.BINTRAY_USERNAME }}
           BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
