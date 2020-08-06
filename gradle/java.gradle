@@ -1,12 +1,10 @@
 apply plugin: "java"
-apply plugin: "nebula.project"
 
 repositories {
     jcenter()
 }
 
-sourceCompatibility = JavaVersion.VERSION_14
-targetCompatibility = JavaVersion.VERSION_14
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_14
 
 dependencies {
     implementation 'org.jetbrains:annotations:19.0.0'
