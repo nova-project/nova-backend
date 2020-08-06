@@ -4,7 +4,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +16,6 @@ import java.util.Set;
  * @see InjectionHandler#getInjector()
  * @see InjectionBinder
  */
-@Slf4j
 public class InjectionHandler {
 
     private final Set<InjectionBinder> binders;

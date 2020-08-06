@@ -16,7 +16,6 @@ import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedFile;
 import io.netty.util.CharsetUtil;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
@@ -33,7 +32,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.regex.Pattern;
 
-@Slf4j
 public final class HttpUtils {
 
     /**

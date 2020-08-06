@@ -7,7 +7,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.json.types.InstantTypeAdapter;
 import net.getnova.backend.json.types.OffsetDateTimeAdapter;
 
@@ -16,7 +15,6 @@ import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.function.Function;
 
-@Slf4j
 public final class JsonUtils {
 
     @Getter

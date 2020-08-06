@@ -1,6 +1,5 @@
 package net.getnova.backend.sql;
 
-import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.sql.model.TableModel;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -8,7 +7,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
-@Slf4j
 class SqlSessionFactory implements AutoCloseable {
 
     private final Configuration configuration;
