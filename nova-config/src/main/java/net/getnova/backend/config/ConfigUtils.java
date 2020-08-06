@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -77,9 +78,10 @@ final class ConfigUtils {
         final Map<String, String> environment = System.getenv();
 
         configs.forEach((id, values) -> values.forEach(valueData -> {
-            final Object value = id == null || id.isBlank()
-                    ? environment.get(valueData.getId())
-                    : environment.get(id.toUpperCase() + "_" + valueData.getId().toUpperCase());
+            final String path = id == null || id.isBlank()
+                    ? valueData.getId().toUpperCase()
+                    : (id.toUpperCase() + "_" + valueData.getId().toUpperCase());
+            final Object value = environment.get(path.replace('-', '_'));
             if (value != null) setValue(valueData.getConfig(), valueData.getField(), value);
         }));
     }
@@ -143,11 +145,15 @@ final class ConfigUtils {
 
     private static void setValue(final Object object, final Field field, final Object value) {
         field.setAccessible(true);
+        final Class<?> required = getType(field.getType());
+        final Class<?> provided = getType(value.getClass());
         try {
-            // TODO Type converting
-            field.set(object, value);
+            if (required == provided) field.set(object, value);
+            else required.getDeclaredConstructor(provided).newInstance(value);
         } catch (IllegalAccessException e) {
             log.error("Unable to set value for field " + object.getClass().getName() + "." + field.getName() + ".", e);
+        } catch (NoSuchMethodException | InstantiationException | InvocationTargetException e) {
+            log.error("Unable to convert a \"" + provided.getName() + "\" into a \"" + required.getName() + "\".", e);
         }
         field.setAccessible(false);
     }
@@ -162,5 +168,17 @@ final class ConfigUtils {
         }
         field.setAccessible(false);
         return value;
+    }
+
+    private static Class<?> getType(final Class<?> type) {
+        if (boolean.class.equals(type)) return Boolean.class;
+        else if (byte.class.equals(type)) return Byte.class;
+        else if (char.class.equals(type)) return Character.class;
+        else if (double.class.equals(type)) return Double.class;
+        else if (float.class.equals(type)) return Float.class;
+        else if (int.class.equals(type)) return Integer.class;
+        else if (long.class.equals(type)) return Long.class;
+        else if (short.class.equals(type)) return Short.class;
+        else return type;
     }
 }
