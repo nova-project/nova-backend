@@ -10,9 +10,8 @@ plugins {
     id 'com.jfrog.bintray' version '1.8.5' apply false
 }
 
-String buildNumber = System.getenv('GITHUB_RUN_NUMBER')
 version version.toString().startsWith('v') ? version.toString().substring(1) : version
-version version.toString() == 'master-SNAPSHOT' ? "edge${buildNumber == null ? '' : "_${buildNumber}"}" : version
+version version.toString() == 'master-SNAPSHOT' ? "edge" : version
 
 allprojects {
     group 'net.getnova.backend'
