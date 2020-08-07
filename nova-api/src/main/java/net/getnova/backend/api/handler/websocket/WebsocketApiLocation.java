@@ -7,7 +7,6 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import net.getnova.backend.api.data.ApiEndpointData;
 import net.getnova.backend.api.data.ApiRequest;
@@ -22,22 +21,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public final class WebsocketApiLocation extends HttpLocation<WebSocketFrame> {
+public final class WebsocketApiLocation extends HttpLocation<TextWebSocketFrame> {
 
     private final Map<String, ApiEndpointData> endpoints;
 
     public WebsocketApiLocation(@NotNull final Map<String, ApiEndpointData> endpoints) {
-        super(new HttpObjectAggregator(65536), new WebSocketServerProtocolHandler("/"));
+        super(new HttpObjectAggregator(65536), new WebSocketServerProtocolHandler("/"), new WebsocketApiExceptHandler());
         this.endpoints = endpoints;
     }
 
     @Override
-    protected void channelRead0(@NotNull final ChannelHandlerContext ctx, @NotNull final WebSocketFrame msg) throws Exception {
+    protected void channelRead0(@NotNull final ChannelHandlerContext ctx, @NotNull final TextWebSocketFrame msg) throws Exception {
         JsonObject json = null;
         ApiResponse apiResponse = null;
 
         try {
-            json = JsonUtils.fromJson(JsonParser.parseString(msg.content().toString(HttpUtils.CHARSET)), JsonObject.class);
+            json = JsonUtils.fromJson(JsonParser.parseString(msg.text()), JsonObject.class);
         } catch (JsonSyntaxException e) {
             apiResponse = new ApiResponse(ApiResponseStatus.BAD_REQUEST, "JSON_SYNTAX");
         } catch (JsonTypeMappingException e) {

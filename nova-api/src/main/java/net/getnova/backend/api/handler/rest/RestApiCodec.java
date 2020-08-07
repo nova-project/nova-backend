@@ -48,7 +48,7 @@ public final class RestApiCodec extends MessageToMessageCodec<FullHttpRequest, A
         ));
         HttpUtils.setContentTypeHeader(httpResponse, HttpHeaderValues.APPLICATION_JSON, HttpUtils.CHARSET);
 
-        final ByteBuf responseContent = Unpooled.copiedBuffer(msg.serialize().toString(), HttpUtils.CHARSET);
+        final ByteBuf responseContent = Unpooled.copiedBuffer(msg.serialize(true).toString(), HttpUtils.CHARSET);
         HttpUtil.setContentLength(httpResponse, responseContent.readableBytes());
 
         out.add(httpResponse);
