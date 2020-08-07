@@ -38,7 +38,5 @@ COPY --from=builder --chown=nova:nova /home/${GRADLE_USER}/src/nova-bootstrap/bu
 RUN ln --symbolic ${NOVA_HOME}/bin/nova-bootstrap /usr/bin/nova \
   && chmod +x /usr/bin/nova
 USER ${NOVA_USER}
-VOLUME ${DATA_DIR}
 
-# TODO: add -e / --env
-ENTRYPOINT ["nova"]
+ENTRYPOINT ["nova", "--env"]
