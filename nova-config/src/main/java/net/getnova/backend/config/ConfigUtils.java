@@ -78,10 +78,8 @@ final class ConfigUtils {
         final Map<String, String> environment = System.getenv();
 
         configs.forEach((id, values) -> values.forEach(valueData -> {
-            final String path = id == null || id.isBlank()
-                    ? valueData.getId().toUpperCase()
-                    : (id.toUpperCase() + "_" + valueData.getId().toUpperCase());
-            final Object value = environment.get(path.replace('-', '_'));
+            final String path = id == null || id.isBlank() ? valueData.getId() : (id + "_" + valueData.getId());
+            final Object value = environment.get(path.toUpperCase().replace('-', '_'));
             if (value != null) setValue(valueData.getConfig(), valueData.getField(), value);
         }));
     }
@@ -149,7 +147,7 @@ final class ConfigUtils {
         final Class<?> provided = getType(value.getClass());
         try {
             if (required == provided) field.set(object, value);
-            else required.getDeclaredConstructor(provided).newInstance(value);
+            else field.set(object, required.getDeclaredConstructor(provided).newInstance(value));
         } catch (IllegalAccessException e) {
             log.error("Unable to set value for field " + object.getClass().getName() + "." + field.getName() + ".", e);
         } catch (NoSuchMethodException | InstantiationException | InvocationTargetException e) {
