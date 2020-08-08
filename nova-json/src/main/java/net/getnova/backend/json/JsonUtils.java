@@ -7,9 +7,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
+import net.getnova.backend.json.types.DurationTypeAdapter;
 import net.getnova.backend.json.types.InstantTypeAdapter;
 import net.getnova.backend.json.types.OffsetDateTimeAdapter;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Collection;
@@ -26,6 +28,7 @@ public final class JsonUtils {
             .registerTypeHierarchyAdapter(JsonSerializable.class, new JsonSerializableSerializer())
             .registerTypeHierarchyAdapter(Instant.class, new InstantTypeAdapter())
             .registerTypeHierarchyAdapter(OffsetDateTime.class, new OffsetDateTimeAdapter())
+            .registerTypeHierarchyAdapter(Duration.class, new DurationTypeAdapter())
             .create();
 
     private JsonUtils() {
