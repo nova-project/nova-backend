@@ -2,5 +2,5 @@ apply plugin: 'java-library'
 
 dependencies {
     implementation project(':nova-logging')
-    api 'org.jetbrains:annotations:19.0.0'
+    api 'org.jetbrains:annotations:20.0.0'
 }
