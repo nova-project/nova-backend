@@ -11,7 +11,7 @@ dependencies {
     // api 'org.hibernate.validator:hibernate-validator:6.1.5.Final'
     runtimeOnly 'org.hibernate:hibernate-hikaricp:5.4.20.Final'
 
-    runtimeOnly 'org.postgresql:postgresql:42.2.14'
+    runtimeOnly 'org.postgresql:postgresql:42.2.15'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:2.6.2'
     runtimeOnly 'com.h2database:h2:1.4.200'
 }
