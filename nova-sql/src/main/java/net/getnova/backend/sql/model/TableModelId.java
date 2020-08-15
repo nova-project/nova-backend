@@ -17,7 +17,7 @@ import java.util.UUID;
 public abstract class TableModelId extends TableModel {
 
   @Id
-  @Column(name = "id", updatable = false, nullable = false)
   @Type(type = "uuid-char")
+  @Column(name = "id", updatable = false, nullable = false)
   private UUID id;
 }

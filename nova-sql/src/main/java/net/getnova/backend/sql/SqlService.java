@@ -26,8 +26,7 @@ public final class SqlService {
 
   private final SqlProperties properties;
   private final SqlConfig config;
-  private boolean validConfig = true;
-  private boolean error = false;
+  private boolean error;
   private SqlSessionFactory sessionFactory;
 
   /**
@@ -40,6 +39,7 @@ public final class SqlService {
   public SqlService(final ConfigService configService) {
     this.properties = new SqlProperties(SQL_CHARSET);
     this.config = configService.addConfig("sql", new SqlConfig());
+    this.error = false;
   }
 
   @PreInitService
@@ -49,10 +49,10 @@ public final class SqlService {
       serverType = SqlServerType.valueOf(this.config.getServerType().toUpperCase());
     } catch (IllegalArgumentException ignored) {
       log.error("Can't found sql serverType type {}.", this.config.getServerType());
-      this.validConfig = false;
+      this.error = true;
     }
 
-    if (this.validConfig) {
+    if (!this.error) {
       this.properties.setServer(serverType, this.config.getLocation(), this.config.getDatabase());
       this.properties.setUser(this.config.getUsername(), this.config.getPassword());
 
@@ -62,19 +62,17 @@ public final class SqlService {
 
   @StartService
   private void start(final StartServiceEvent event) {
-    if (this.validConfig) {
-      try {
-        this.sessionFactory.build();
-      } catch (SqlException e) {
-        this.error = true;
-        log.error("Unable to connect to the database server.", e);
-      }
+    if (!this.error) try {
+      this.sessionFactory.build();
+    } catch (SqlException e) {
+      this.error = true;
+      log.error("Unable to connect to the database server.", e);
     }
   }
 
   @StopService
   private void stop(final StopServiceEvent event) {
-    if (this.validConfig && !error) this.sessionFactory.close();
+    if (!error) this.sessionFactory.close();
   }
 
   /**
