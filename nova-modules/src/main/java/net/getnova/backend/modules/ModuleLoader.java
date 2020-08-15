@@ -1,17 +1,22 @@
 package net.getnova.backend.modules;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.stream.Collectors;
 
+@Slf4j
 final class ModuleLoader {
 
   private ModuleLoader() {
@@ -29,10 +34,17 @@ final class ModuleLoader {
     for (int i = 0; i < files.length; i++) urls[i] = files[i].toURI().toURL();
     final ClassLoader loader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
 
-    final Set<ModuleData> modules = new LinkedHashSet<>();
-    for (final File file : files) modules.add(loadModule(loader, file));
-
-    return new Result(loader, modules);
+    return new Result(loader, Arrays.stream(files)
+      .map(file -> {
+        try {
+          return loadModule(loader, file);
+        } catch (IOException e) {
+          log.error("Unable to load module.", e);
+          return null;
+        }
+      })
+      .filter(Objects::nonNull)
+      .collect(Collectors.toUnmodifiableSet()));
   }
 
   private static ModuleData loadModule(final ClassLoader loader, final File file) throws IOException {
@@ -71,7 +83,6 @@ final class ModuleLoader {
 
   @Data
   static final class Result {
-
     private final ClassLoader loader;
     private final Set<ModuleData> modules;
   }
