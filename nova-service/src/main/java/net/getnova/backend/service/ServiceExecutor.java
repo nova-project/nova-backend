@@ -10,6 +10,7 @@ import net.getnova.backend.service.event.StopServiceEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -22,72 +23,26 @@ final class ServiceExecutor {
     throw new UnsupportedOperationException();
   }
 
-  static void preInitServices(final ServiceHandler serviceHandler,
-                              final Collection<ServiceData> services,
-                              final PreInitServiceEvent event) throws ServiceException {
-    executeStep(serviceHandler,
-      new LinkedList<>(services),
-      ServiceData::isPreInit,
-      ServiceData::getPreInitMethod,
-      serviceData -> serviceData.setPreInit(true),
-      event,
-      "pre init",
-      false);
+  static void preInitServices(final ServiceHandler serviceHandler, final Collection<ServiceData> services, final PreInitServiceEvent event) throws ServiceException {
+    executeStep(serviceHandler, services, ServiceData::isPreInit, ServiceData::getPreInitMethod, serviceData -> serviceData.setPreInit(true), event, "pre init", false);
   }
 
-  static void initServices(final ServiceHandler serviceHandler,
-                           final Collection<ServiceData> services,
-                           final InitServiceEvent event) throws ServiceException {
-    executeStep(serviceHandler,
-      new LinkedList<>(services),
-      ServiceData::isInit,
-      ServiceData::getInitMethod,
-      serviceData -> serviceData.setInit(true),
-      event,
-      "init",
-      false);
+  static void initServices(final ServiceHandler serviceHandler, final Collection<ServiceData> services, final InitServiceEvent event) throws ServiceException {
+    executeStep(serviceHandler, services, ServiceData::isInit, ServiceData::getInitMethod, serviceData -> serviceData.setInit(true), event, "init", false);
   }
 
-  static void postInitServices(final ServiceHandler serviceHandler,
-                               final Collection<ServiceData> services,
-                               final PostInitServiceEvent event) throws ServiceException {
-    executeStep(serviceHandler,
-      new LinkedList<>(services),
-      ServiceData::isPostInit,
-      ServiceData::getPostInitMethod,
-      serviceData -> serviceData.setPostInit(true),
-      event,
-      "post init",
-      false);
+  static void postInitServices(final ServiceHandler serviceHandler, final Collection<ServiceData> services, final PostInitServiceEvent event) throws ServiceException {
+    executeStep(serviceHandler, services, ServiceData::isPostInit, ServiceData::getPostInitMethod, serviceData -> serviceData.setPostInit(true), event, "post init", false);
   }
 
-  static void startServices(final ServiceHandler serviceHandler,
-                            final Collection<ServiceData> services,
-                            final StartServiceEvent event) throws ServiceException {
-    executeStep(serviceHandler,
-      new LinkedList<>(services),
-      ServiceData::isStarted,
-      ServiceData::getStartMethod,
-      serviceData -> serviceData.setStarted(true),
-      event,
-      "start",
-      false);
+  static void startServices(final ServiceHandler serviceHandler, final Collection<ServiceData> services, final StartServiceEvent event) throws ServiceException {
+    executeStep(serviceHandler, services, ServiceData::isStarted, ServiceData::getStartMethod, serviceData -> serviceData.setStarted(true), event, "start", false);
   }
 
-  static void stopServices(final ServiceHandler serviceHandler,
-                           final Collection<ServiceData> services,
-                           final StopServiceEvent event) throws ServiceException {
-    executeStep(serviceHandler,
-      new LinkedList<>(services),
-      serviceData -> !serviceData.isStarted(),
-      ServiceData::getStopMethod,
-      serviceData -> serviceData.setStarted(false),
-      event,
-      "stop",
-      true);
+  static void stopServices(final ServiceHandler serviceHandler, final Collection<ServiceData> services, final StopServiceEvent event) throws ServiceException {
+    executeStep(serviceHandler, services, serviceData -> !serviceData.isStarted(), ServiceData::getStopMethod, serviceData -> serviceData.setStarted(false), event, "stop", true);
   }
 
-  @SuppressWarnings("checkstyle:WhitespaceAfter")
   private static void executeStep(final ServiceHandler serviceHandler,
                                   final Collection<ServiceData> services,
                                   final Function<ServiceData, Boolean> skipService,
@@ -125,20 +80,20 @@ final class ServiceExecutor {
     }
   }
 
-  private static Collection<ServiceData> getDepends(final ServiceHandler serviceHandler,
-                                                    final Collection<ServiceData> services) {
+  private static Collection<ServiceData> getDepends(final ServiceHandler serviceHandler, final Collection<ServiceData> services) {
     final List<ServiceData> dependServices = new LinkedList<>();
+    final Iterator<ServiceData> iterator = services.iterator();
 
-    services.iterator().forEachRemaining(service -> {
+    while (iterator.hasNext()) {
       try {
-        for (final Class<?> depend : service.getDepends()) {
+        for (final Class<?> depend : iterator.next().getDepends()) {
           if (!serviceHandler.hasService(depend)) serviceHandler.addService(depend);
           dependServices.add(serviceHandler.getServiceData(depend));
         }
       } catch (NullPointerException e) {
         log.error("It is not possible to initialize the service, maybe a non-existent service is requested.", e);
       }
-    });
+    }
 
     return dependServices;
   }

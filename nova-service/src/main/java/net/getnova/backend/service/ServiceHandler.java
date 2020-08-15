@@ -1,6 +1,5 @@
 package net.getnova.backend.service;
 
-import com.google.inject.Binder;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.injection.InjectionHandler;
 import net.getnova.backend.service.event.InitServiceEvent;
@@ -143,18 +142,5 @@ public final class ServiceHandler {
     } catch (ServiceException e) {
       log.error("Unable to stop services.", e);
     }
-  }
-
-  /**
-   * This method create all bindings for all services.
-   *
-   * @param binder the binder for the binding process
-   */
-  public void createBindings(final Binder binder) {
-    this.services.forEach((clazz, data) -> this.bindService(binder, clazz, data));
-  }
-
-  private <T> void bindService(final Binder binder, final Class<T> type, final ServiceData data) {
-    binder.bind(type).toInstance(type.cast(data.getInstance()));
   }
 }

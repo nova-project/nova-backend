@@ -13,6 +13,7 @@ import net.getnova.backend.service.event.StartServiceEvent;
 import net.getnova.backend.service.event.StopService;
 import net.getnova.backend.service.event.StopServiceEvent;
 
+import javax.inject.Singleton;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -30,10 +31,15 @@ final class ServiceParser {
       return null;
     }
 
+    if (!clazz.isAnnotationPresent(Singleton.class)) {
+      log.error("Service class {} is not annotated with {}.", clazz.getName(), Singleton.class.getName());
+      return null;
+    }
+
     final Service service = clazz.getAnnotation(Service.class);
 
     return new ServiceData(service.id(), service.depends(),
-      injectionHandler.getInjector().getInstance(clazz), // Dont create every time a new instance
+      injectionHandler.getInjector().getInstance(clazz),
       getMethod(clazz, PreInitService.class, PreInitServiceEvent.class),
       getMethod(clazz, InitService.class, InitServiceEvent.class),
       getMethod(clazz, PostInitService.class, PostInitServiceEvent.class),
