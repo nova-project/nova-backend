@@ -34,258 +34,258 @@ import java.util.regex.Pattern;
 
 public final class HttpUtils {
 
-    /**
-     * @see DateTimeFormatter#RFC_1123_DATE_TIME
-     */
-    public static final DateTimeFormatter HTTP_DATE_FORMAT = DateTimeFormatter.RFC_1123_DATE_TIME;
-    /**
-     * @see ZoneOffset#UTC
-     */
-    public static final ZoneOffset HTTP_TIME_ZONE = ZoneOffset.UTC;
-    /**
-     * @see StandardCharsets#UTF_8
-     */
-    public static final Charset CHARSET = StandardCharsets.UTF_8;
-    private static final Pattern INSECURE_URI = Pattern.compile(".*[<>&\"].*");
-    private static final long HTTP_CACHE_SECONDS = Duration.ofDays(30).toSeconds();
-    private static final MimetypesFileTypeMap MIMETYPES_FILE_TYPE_MAP = new MimetypesFileTypeMap();
+  /**
+   * @see DateTimeFormatter#RFC_1123_DATE_TIME
+   */
+  public static final DateTimeFormatter HTTP_DATE_FORMAT = DateTimeFormatter.RFC_1123_DATE_TIME;
+  /**
+   * @see ZoneOffset#UTC
+   */
+  public static final ZoneOffset HTTP_TIME_ZONE = ZoneOffset.UTC;
+  /**
+   * @see StandardCharsets#UTF_8
+   */
+  public static final Charset CHARSET = StandardCharsets.UTF_8;
+  private static final Pattern INSECURE_URI = Pattern.compile(".*[<>&\"].*");
+  private static final long HTTP_CACHE_SECONDS = Duration.ofDays(30).toSeconds();
+  private static final MimetypesFileTypeMap MIMETYPES_FILE_TYPE_MAP = new MimetypesFileTypeMap();
 
-    static {
-        MIMETYPES_FILE_TYPE_MAP.addMimeTypes("application/javascript js");
-        MIMETYPES_FILE_TYPE_MAP.addMimeTypes("text/css css");
+  static {
+    MIMETYPES_FILE_TYPE_MAP.addMimeTypes("application/javascript js");
+    MIMETYPES_FILE_TYPE_MAP.addMimeTypes("text/css css");
+  }
+
+  private HttpUtils() {
+    throw new UnsupportedOperationException();
+  }
+
+  /**
+   * Validated and decodes a uri.
+   *
+   * @param uri the uri form the client
+   * @return the decoded uri
+   */
+  public static URI decodeUri(final String uri) {
+    if (uri.isBlank()
+      || uri.charAt(0) != '/'
+      || uri.charAt(0) == '.'
+      || uri.charAt(uri.length() - 1) == '.'
+      || uri.contains("..")
+      || uri.contains("./")
+      || INSECURE_URI.matcher(uri).matches()) {
+      return null;
     }
 
-    private HttpUtils() {
-        throw new UnsupportedOperationException();
+    return URI.create(uri);
+  }
+
+  /**
+   * Formats milliseconds to a Http Date. ({@link DateTimeFormatter#RFC_1123_DATE_TIME})
+   *
+   * @param milliseconds the time witch should be formatted
+   * @return the formatted date
+   */
+  public static String formatDate(final long milliseconds) {
+    return formatDate(Instant.ofEpochMilli(milliseconds).atOffset(HTTP_TIME_ZONE));
+  }
+
+  /**
+   * Formats a {@link OffsetDateTime} to a Http Date. ({@link DateTimeFormatter#RFC_1123_DATE_TIME})
+   *
+   * @param dateTime the {@link OffsetDateTime} witch should be formatted
+   * @return the formatted date
+   */
+  public static String formatDate(final OffsetDateTime dateTime) {
+    return dateTime.format(HTTP_DATE_FORMAT);
+  }
+
+  /**
+   * Checks if a file is accessible or exists.
+   *
+   * @param baseDir the Directory, represent as a {@link File}, were the file should be located
+   * @param file    the {@link File} witch should be checked
+   * @return if the file is accessible or exists
+   */
+  public static boolean fileExist(final File baseDir, final File file) {
+    if (!baseDir.isAbsolute() || !file.isAbsolute())
+      throw new IllegalArgumentException("baseDir or file is not absolute");
+
+    return file.exists()
+      && file.canRead()
+      && !file.isHidden()
+      && file.getPath().startsWith(baseDir.getPath());
+  }
+
+  /**
+   * Writes a {@link File} to a {@link ChannelHandlerContext}.
+   *
+   * @param ctx     the {@link ChannelHandlerContext} to which the message should be send
+   * @param request the request from the {@link ChannelHandlerContext} (Client)
+   * @param file    the {@link File} which should be send to the {@link ChannelHandlerContext} (Client)
+   * @param body    if the body should also be send
+   *                This is needed at {@link io.netty.handler.codec.http.HttpMethod#HEAD}.
+   * @throws IOException if there is an error while reading the file
+   */
+  public static void sendFile(final ChannelHandlerContext ctx, final HttpRequest request, final File file, final boolean body) throws IOException {
+    final String ifModifiedSince = request.headers().get(HttpHeaderNames.IF_MODIFIED_SINCE);
+    if (ifModifiedSince != null
+      && !ifModifiedSince.isEmpty()
+      && checkModified(OffsetDateTime.parse(ifModifiedSince, HTTP_DATE_FORMAT).toInstant(), file)) {
+      sendNotModified(ctx, request);
+      return;
     }
 
-    /**
-     * Validated and decodes a uri.
-     *
-     * @param uri the uri form the client
-     * @return the decoded uri
-     */
-    public static URI decodeUri(final String uri) {
-        if (uri.isBlank()
-                || uri.charAt(0) != '/'
-                || uri.charAt(0) == '.'
-                || uri.charAt(uri.length() - 1) == '.'
-                || uri.contains("..")
-                || uri.contains("./")
-                || INSECURE_URI.matcher(uri).matches()) {
-            return null;
-        }
+    final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+    final long length = randomAccessFile.length();
 
-        return URI.create(uri);
-    }
+    final HttpResponse response = new DefaultHttpResponse(request.protocolVersion(), HttpResponseStatus.OK);
+    HttpUtil.setContentLength(response, length);
+    HttpUtil.setTransferEncodingChunked(response, true);
+    setContentTypeHeader(response, file);
+    setDateAndCacheHeaders(response, file);
 
-    /**
-     * Formats milliseconds to a Http Date. ({@link DateTimeFormatter#RFC_1123_DATE_TIME})
-     *
-     * @param milliseconds the time witch should be formatted
-     * @return the formatted date
-     */
-    public static String formatDate(final long milliseconds) {
-        return formatDate(Instant.ofEpochMilli(milliseconds).atOffset(HTTP_TIME_ZONE));
-    }
+    ctx.write(response);
 
-    /**
-     * Formats a {@link OffsetDateTime} to a Http Date. ({@link DateTimeFormatter#RFC_1123_DATE_TIME})
-     *
-     * @param dateTime the {@link OffsetDateTime} witch should be formatted
-     * @return the formatted date
-     */
-    public static String formatDate(final OffsetDateTime dateTime) {
-        return dateTime.format(HTTP_DATE_FORMAT);
-    }
+    if (body) {
+      if (ctx.pipeline().get(SslHandler.class) == null) {
+        ctx.write(new DefaultFileRegion(randomAccessFile.getChannel(), 0, length), ctx.newProgressivePromise());
+        ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+      } else {
+        ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(randomAccessFile, 0, length, 8192)), ctx.newProgressivePromise());
+      }
+    } else ctx.write(LastHttpContent.EMPTY_LAST_CONTENT);
+  }
 
-    /**
-     * Checks if a file is accessible or exists.
-     *
-     * @param baseDir the Directory, represent as a {@link File}, were the file should be located
-     * @param file    the {@link File} witch should be checked
-     * @return if the file is accessible or exists
-     */
-    public static boolean fileExist(final File baseDir, final File file) {
-        if (!baseDir.isAbsolute() || !file.isAbsolute())
-            throw new IllegalArgumentException("baseDir or file is not absolute");
+  /**
+   * Adds the HTTP {@code Date} header to a {@link HttpResponse}.
+   * The date is formatted in the {@link DateTimeFormatter#RFC_1123_DATE_TIME} format.
+   *
+   * @param response the {@link HttpResponse} to which the date header should be added
+   */
+  public static void setDateHeader(final HttpResponse response) {
+    response.headers().set(HttpHeaderNames.DATE, formatDate(OffsetDateTime.now(HTTP_TIME_ZONE)));
+  }
 
-        return file.exists()
-                && file.canRead()
-                && !file.isHidden()
-                && file.getPath().startsWith(baseDir.getPath());
-    }
+  /**
+   * Adds the HTTP {@code Date} and all required Cache headers ({@code Expires},
+   * {@code Cache-Control}, {@code Last-Modified}) to a {@link HttpResponse}.
+   * The date is formatted in the {@link DateTimeFormatter#RFC_1123_DATE_TIME} format.
+   *
+   * @param response    the {@link HttpResponse} to which the date and cache headers should be added
+   * @param fileToCache the {@link File} from from which the cache data should be extracted
+   */
+  public static void setDateAndCacheHeaders(final HttpResponse response, final File fileToCache) {
+    final OffsetDateTime time = OffsetDateTime.now(HTTP_TIME_ZONE);
+    response.headers().set(HttpHeaderNames.DATE, formatDate(time));
+    response.headers().set(HttpHeaderNames.EXPIRES, formatDate(time.plus(HTTP_CACHE_SECONDS, ChronoUnit.SECONDS)));
+    response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, max-age=" + HTTP_CACHE_SECONDS);
+    response.headers().set(HttpHeaderNames.LAST_MODIFIED, formatDate(fileToCache.lastModified()));
+  }
 
-    /**
-     * Writes a {@link File} to a {@link ChannelHandlerContext}.
-     *
-     * @param ctx     the {@link ChannelHandlerContext} to which the message should be send
-     * @param request the request from the {@link ChannelHandlerContext} (Client)
-     * @param file    the {@link File} which should be send to the {@link ChannelHandlerContext} (Client)
-     * @param body    if the body should also be send
-     *                This is needed at {@link io.netty.handler.codec.http.HttpMethod#HEAD}.
-     * @throws IOException if there is an error while reading the file
-     */
-    public static void sendFile(final ChannelHandlerContext ctx, final HttpRequest request, final File file, final boolean body) throws IOException {
-        final String ifModifiedSince = request.headers().get(HttpHeaderNames.IF_MODIFIED_SINCE);
-        if (ifModifiedSince != null
-                && !ifModifiedSince.isEmpty()
-                && checkModified(OffsetDateTime.parse(ifModifiedSince, HTTP_DATE_FORMAT).toInstant(), file)) {
-            sendNotModified(ctx, request);
-            return;
-        }
+  /**
+   * Adds the HTTP {@code Content-Type} header to a {@link HttpMessage}.
+   *
+   * @param message the {@link HttpMessage} to which the content type header should be added
+   * @param file    the file from were the content type should be extracted
+   */
+  public static void setContentTypeHeader(final HttpMessage message, final File file) {
+    setContentTypeHeader(message, MIMETYPES_FILE_TYPE_MAP.getContentType(file));
+  }
 
-        final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
-        final long length = randomAccessFile.length();
+  /**
+   * Adds the HTTP {@code Content-Type} header to a {@link HttpMessage}.
+   *
+   * @param message     the {@link HttpMessage} to which the content type header should be added
+   * @param contentType the content type as a {@link CharSequence} which should be used
+   */
+  public static void setContentTypeHeader(final HttpMessage message, final CharSequence contentType) {
+    message.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
+  }
 
-        final HttpResponse response = new DefaultHttpResponse(request.protocolVersion(), HttpResponseStatus.OK);
-        HttpUtil.setContentLength(response, length);
-        HttpUtil.setTransferEncodingChunked(response, true);
-        setContentTypeHeader(response, file);
-        setDateAndCacheHeaders(response, file);
+  /**
+   * Adds the HTTP {@code Content-Type} header to a {@link HttpMessage}.
+   *
+   * @param message     the {@link HttpMessage} to which the content type header should be added
+   * @param contentType the content type as a {@link CharSequence} which should be used
+   * @param charset     the {@link Charset} of the content type
+   */
+  public static void setContentTypeHeader(final HttpMessage message, final CharSequence contentType, final Charset charset) {
+    message.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType + "; charset=" + charset.toString());
+  }
 
-        ctx.write(response);
+  /**
+   * Checks if the {@link File} has been edited since the specified {@link Instant}.
+   *
+   * @param instant the {@link Instant} with which it should be checked if the {@link File} has been edited
+   * @param file    the {@link File} which should be checked
+   * @return if the {@link File} has been edited since the specified {@link Instant}
+   */
+  public static boolean checkModified(final Instant instant, final File file) {
+    return instant.getEpochSecond() != file.lastModified() / 1000;
+  }
 
-        if (body) {
-            if (ctx.pipeline().get(SslHandler.class) == null) {
-                ctx.write(new DefaultFileRegion(randomAccessFile.getChannel(), 0, length), ctx.newProgressivePromise());
-                ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-            } else {
-                ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(randomAccessFile, 0, length, 8192)), ctx.newProgressivePromise());
-            }
-        } else ctx.write(LastHttpContent.EMPTY_LAST_CONTENT);
-    }
+  /**
+   * Sends a redirect ot the new uri to the specified {@link ChannelHandlerContext}.
+   *
+   * @param ctx     the {@link ChannelHandlerContext} to which the redirect should be send
+   * @param request the {@link HttpRequest} from the {@link ChannelHandlerContext}
+   * @param newUri  the new {@link URI} to witch the client should be redirected
+   */
+  public static void sendRedirect(final ChannelHandlerContext ctx, final HttpRequest request, final URI newUri) {
+    final HttpResponse response = new DefaultHttpResponse(request.protocolVersion(), HttpResponseStatus.TEMPORARY_REDIRECT);
+    response.headers().set(HttpHeaderNames.LOCATION, newUri.getRawPath());
+    sendAndCleanupConnection(ctx, response, null);
+  }
 
-    /**
-     * Adds the HTTP {@code Date} header to a {@link HttpResponse}.
-     * The date is formatted in the {@link DateTimeFormatter#RFC_1123_DATE_TIME} format.
-     *
-     * @param response the {@link HttpResponse} to which the date header should be added
-     */
-    public static void setDateHeader(final HttpResponse response) {
-        response.headers().set(HttpHeaderNames.DATE, formatDate(OffsetDateTime.now(HTTP_TIME_ZONE)));
-    }
+  /**
+   * Sends to the {@link ChannelHandlerContext} thad the requested content is not modified science the last.
+   *
+   * @param ctx     the {@link ChannelHandlerContext} to which the redirect should be send
+   * @param request the {@link HttpRequest} from the {@link ChannelHandlerContext}
+   */
+  public static void sendNotModified(final ChannelHandlerContext ctx, final HttpRequest request) {
+    final HttpResponse response = new DefaultHttpResponse(request.protocolVersion(), HttpResponseStatus.NOT_MODIFIED);
+    setDateHeader(response);
+    sendAndCleanupConnection(ctx, response, null);
+  }
 
-    /**
-     * Adds the HTTP {@code Date} and all required Cache headers ({@code Expires},
-     * {@code Cache-Control}, {@code Last-Modified}) to a {@link HttpResponse}.
-     * The date is formatted in the {@link DateTimeFormatter#RFC_1123_DATE_TIME} format.
-     *
-     * @param response    the {@link HttpResponse} to which the date and cache headers should be added
-     * @param fileToCache the {@link File} from from which the cache data should be extracted
-     */
-    public static void setDateAndCacheHeaders(final HttpResponse response, final File fileToCache) {
-        final OffsetDateTime time = OffsetDateTime.now(HTTP_TIME_ZONE);
-        response.headers().set(HttpHeaderNames.DATE, formatDate(time));
-        response.headers().set(HttpHeaderNames.EXPIRES, formatDate(time.plus(HTTP_CACHE_SECONDS, ChronoUnit.SECONDS)));
-        response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, max-age=" + HTTP_CACHE_SECONDS);
-        response.headers().set(HttpHeaderNames.LAST_MODIFIED, formatDate(fileToCache.lastModified()));
-    }
+  /**
+   * Send a status to a {@link ChannelHandlerContext} (Client).
+   *
+   * @param ctx     the {@link ChannelHandlerContext} to which the message should be send
+   * @param request the request from the {@link ChannelHandlerContext} (Client)
+   * @param status  the status which should be send to the {@link ChannelHandlerContext} (Client)
+   */
+  public static void sendStatus(final ChannelHandlerContext ctx, final HttpRequest request, final HttpResponseStatus status) {
+    sendStatus(ctx, request, status, true);
+  }
 
-    /**
-     * Adds the HTTP {@code Content-Type} header to a {@link HttpMessage}.
-     *
-     * @param message the {@link HttpMessage} to which the content type header should be added
-     * @param file    the file from were the content type should be extracted
-     */
-    public static void setContentTypeHeader(final HttpMessage message, final File file) {
-        setContentTypeHeader(message, MIMETYPES_FILE_TYPE_MAP.getContentType(file));
-    }
+  /**
+   * Send a status to a {@link ChannelHandlerContext} (Client).
+   *
+   * @param ctx     the {@link ChannelHandlerContext} to which the message should be send
+   * @param request the request from the {@link ChannelHandlerContext} (Client)
+   * @param status  the status which should be send to the {@link ChannelHandlerContext} (Client)
+   * @param body    if the status code should be send also via the {@link LastHttpContent} (Http Body)
+   */
+  public static void sendStatus(final ChannelHandlerContext ctx, final HttpRequest request, final HttpResponseStatus status, final boolean body) {
+    final HttpResponse response = new DefaultHttpResponse(request.protocolVersion(), status);
+    if (body) setContentTypeHeader(response, "text/plain; charset=" + StandardCharsets.UTF_8.toString());
+    sendAndCleanupConnection(ctx, response, body ? new DefaultLastHttpContent(Unpooled.copiedBuffer(status.toString() + "\r\n", CharsetUtil.UTF_8)) : null);
+  }
 
-    /**
-     * Adds the HTTP {@code Content-Type} header to a {@link HttpMessage}.
-     *
-     * @param message     the {@link HttpMessage} to which the content type header should be added
-     * @param contentType the content type as a {@link CharSequence} which should be used
-     */
-    public static void setContentTypeHeader(final HttpMessage message, final CharSequence contentType) {
-        message.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
-    }
+  /**
+   * Sends a response to a {@link ChannelHandlerContext} (Client).
+   *
+   * @param ctx      the {@link ChannelHandlerContext} to which the message should be send
+   * @param response the response which should be send to the {@link ChannelHandlerContext} (Client)
+   * @param content  the content which should be send to the {@link ChannelHandlerContext} (Client)
+   */
+  public static void sendAndCleanupConnection(final ChannelHandlerContext ctx, final HttpResponse response, final LastHttpContent content) {
+    // FIXME: Add also correct content length if HttpMethod#HEAD is selected!
+    HttpUtil.setContentLength(response, content == null ? 0 : content.content().readableBytes());
 
-    /**
-     * Adds the HTTP {@code Content-Type} header to a {@link HttpMessage}.
-     *
-     * @param message     the {@link HttpMessage} to which the content type header should be added
-     * @param contentType the content type as a {@link CharSequence} which should be used
-     * @param charset     the {@link Charset} of the content type
-     */
-    public static void setContentTypeHeader(final HttpMessage message, final CharSequence contentType, final Charset charset) {
-        message.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType + "; charset=" + charset.toString());
-    }
-
-    /**
-     * Checks if the {@link File} has been edited since the specified {@link Instant}.
-     *
-     * @param instant the {@link Instant} with which it should be checked if the {@link File} has been edited
-     * @param file    the {@link File} which should be checked
-     * @return if the {@link File} has been edited since the specified {@link Instant}
-     */
-    public static boolean checkModified(final Instant instant, final File file) {
-        return instant.getEpochSecond() != file.lastModified() / 1000;
-    }
-
-    /**
-     * Sends a redirect ot the new uri to the specified {@link ChannelHandlerContext}.
-     *
-     * @param ctx     the {@link ChannelHandlerContext} to which the redirect should be send
-     * @param request the {@link HttpRequest} from the {@link ChannelHandlerContext}
-     * @param newUri  the new {@link URI} to witch the client should be redirected
-     */
-    public static void sendRedirect(final ChannelHandlerContext ctx, final HttpRequest request, final URI newUri) {
-        final HttpResponse response = new DefaultHttpResponse(request.protocolVersion(), HttpResponseStatus.TEMPORARY_REDIRECT);
-        response.headers().set(HttpHeaderNames.LOCATION, newUri.getRawPath());
-        sendAndCleanupConnection(ctx, response, null);
-    }
-
-    /**
-     * Sends to the {@link ChannelHandlerContext} thad the requested content is not modified science the last.
-     *
-     * @param ctx     the {@link ChannelHandlerContext} to which the redirect should be send
-     * @param request the {@link HttpRequest} from the {@link ChannelHandlerContext}
-     */
-    public static void sendNotModified(final ChannelHandlerContext ctx, final HttpRequest request) {
-        final HttpResponse response = new DefaultHttpResponse(request.protocolVersion(), HttpResponseStatus.NOT_MODIFIED);
-        setDateHeader(response);
-        sendAndCleanupConnection(ctx, response, null);
-    }
-
-    /**
-     * Send a status to a {@link ChannelHandlerContext} (Client).
-     *
-     * @param ctx     the {@link ChannelHandlerContext} to which the message should be send
-     * @param request the request from the {@link ChannelHandlerContext} (Client)
-     * @param status  the status which should be send to the {@link ChannelHandlerContext} (Client)
-     */
-    public static void sendStatus(final ChannelHandlerContext ctx, final HttpRequest request, final HttpResponseStatus status) {
-        sendStatus(ctx, request, status, true);
-    }
-
-    /**
-     * Send a status to a {@link ChannelHandlerContext} (Client).
-     *
-     * @param ctx     the {@link ChannelHandlerContext} to which the message should be send
-     * @param request the request from the {@link ChannelHandlerContext} (Client)
-     * @param status  the status which should be send to the {@link ChannelHandlerContext} (Client)
-     * @param body    if the status code should be send also via the {@link LastHttpContent} (Http Body)
-     */
-    public static void sendStatus(final ChannelHandlerContext ctx, final HttpRequest request, final HttpResponseStatus status, final boolean body) {
-        final HttpResponse response = new DefaultHttpResponse(request.protocolVersion(), status);
-        if (body) setContentTypeHeader(response, "text/plain; charset=" + StandardCharsets.UTF_8.toString());
-        sendAndCleanupConnection(ctx, response, body ? new DefaultLastHttpContent(Unpooled.copiedBuffer(status.toString() + "\r\n", CharsetUtil.UTF_8)) : null);
-    }
-
-    /**
-     * Sends a response to a {@link ChannelHandlerContext} (Client).
-     *
-     * @param ctx      the {@link ChannelHandlerContext} to which the message should be send
-     * @param response the response which should be send to the {@link ChannelHandlerContext} (Client)
-     * @param content  the content which should be send to the {@link ChannelHandlerContext} (Client)
-     */
-    public static void sendAndCleanupConnection(final ChannelHandlerContext ctx, final HttpResponse response, final LastHttpContent content) {
-        // FIXME: Add also correct content length if HttpMethod#HEAD is selected!
-        HttpUtil.setContentLength(response, content == null ? 0 : content.content().readableBytes());
-
-        ctx.write(response);
-        ctx.write(content == null ? LastHttpContent.EMPTY_LAST_CONTENT : content);
-    }
+    ctx.write(response);
+    ctx.write(content == null ? LastHttpContent.EMPTY_LAST_CONTENT : content);
+  }
 }

@@ -10,10 +10,10 @@ import org.jetbrains.annotations.Nullable;
 @AllArgsConstructor
 public final class ApiRequest {
 
-    @NotNull
-    private final String endpoint;
-    @NotNull
-    private final JsonObject data;
-    @Nullable
-    private String tag;
+  @NotNull
+  private final String endpoint;
+  @NotNull
+  private final JsonObject data;
+  @Nullable
+  private String tag;
 }

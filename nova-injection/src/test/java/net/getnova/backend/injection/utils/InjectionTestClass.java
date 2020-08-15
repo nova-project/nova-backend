@@ -5,7 +5,7 @@ import lombok.Getter;
 
 public class InjectionTestClass {
 
-    @Inject
-    @Getter
-    private InjectionTestObject testObject;
+  @Inject
+  @Getter
+  private InjectionTestObject testObject;
 }

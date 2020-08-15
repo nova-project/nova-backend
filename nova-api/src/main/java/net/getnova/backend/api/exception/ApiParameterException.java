@@ -4,11 +4,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class ApiParameterException extends ApiException {
 
-    public ApiParameterException(@NotNull final String message) {
-        super(message);
-    }
+  public ApiParameterException(@NotNull final String message) {
+    super(message);
+  }
 
-    public ApiParameterException(@NotNull final String message, @NotNull final Throwable cause) {
-        super(message, cause);
-    }
+  public ApiParameterException(@NotNull final String message, @NotNull final Throwable cause) {
+    super(message, cause);
+  }
 }

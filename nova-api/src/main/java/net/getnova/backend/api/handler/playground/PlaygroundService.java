@@ -16,26 +16,26 @@ import java.util.TreeSet;
 @Singleton
 public final class PlaygroundService {
 
-    private final PlaygroundConfig config;
-    private final TreeSet<ApiEndpointCollectionData> collections;
+  private final PlaygroundConfig config;
+  private final TreeSet<ApiEndpointCollectionData> collections;
 
-    @Inject
-    private HttpServerService httpServerService;
+  @Inject
+  private HttpServerService httpServerService;
 
-    @Inject
-    public PlaygroundService(final ConfigService configService) {
-        this.config = configService.addConfig("playground", new PlaygroundConfig());
-        this.collections = new TreeSet<>();
+  @Inject
+  public PlaygroundService(final ConfigService configService) {
+    this.config = configService.addConfig("playground", new PlaygroundConfig());
+    this.collections = new TreeSet<>();
+  }
+
+  @StartService
+  private void start(final StartServiceEvent event) {
+    if (this.config.isEnabled()) {
+      this.httpServerService.addLocationProvider(this.config.getPath(), new PlaygroundLocationProvider(this.collections));
     }
+  }
 
-    @StartService
-    private void start(final StartServiceEvent event) {
-        if (this.config.isEnabled()) {
-            this.httpServerService.addLocationProvider(this.config.getPath(), new PlaygroundLocationProvider(this.collections));
-        }
-    }
-
-    public void addCollections(final Collection<ApiEndpointCollectionData> collections) {
-        this.collections.addAll(collections);
-    }
+  public void addCollections(final Collection<ApiEndpointCollectionData> collections) {
+    this.collections.addAll(collections);
+  }
 }

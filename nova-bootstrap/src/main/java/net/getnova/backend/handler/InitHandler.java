@@ -12,14 +12,14 @@ import javax.inject.Singleton;
 @EqualsAndHashCode
 public final class InitHandler implements BootstrapHandler {
 
-    @Inject
-    private InjectionHandler injectionHandler;
+  @Inject
+  private InjectionHandler injectionHandler;
 
-    @Inject
-    private ServiceHandler serviceHandler;
+  @Inject
+  private ServiceHandler serviceHandler;
 
-    @Override
-    public void execute() {
-        this.serviceHandler.init(new InitServiceEvent());
-    }
+  @Override
+  public void execute() {
+    this.serviceHandler.init(new InitServiceEvent());
+  }
 }

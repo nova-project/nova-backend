@@ -10,22 +10,22 @@ import lombok.Getter;
 @Getter(AccessLevel.PACKAGE)
 final class EventLoopGroupHandler {
 
-    private static final boolean EPOLL = Epoll.isAvailable();
+  private static final boolean EPOLL = Epoll.isAvailable();
 
-    private final EventLoopGroup bossGroup;
-    private final EventLoopGroup workGroup;
+  private final EventLoopGroup bossGroup;
+  private final EventLoopGroup workGroup;
 
-    EventLoopGroupHandler() {
-        this.bossGroup = EPOLL ? new EpollEventLoopGroup(1) : new NioEventLoopGroup(1);
-        this.workGroup = EPOLL ? new EpollEventLoopGroup() : new NioEventLoopGroup();
-    }
+  EventLoopGroupHandler() {
+    this.bossGroup = EPOLL ? new EpollEventLoopGroup(1) : new NioEventLoopGroup(1);
+    this.workGroup = EPOLL ? new EpollEventLoopGroup() : new NioEventLoopGroup();
+  }
 
-    void stop() {
-        if (!this.bossGroup.isShutdown()) this.bossGroup.shutdownGracefully();
-        if (!this.workGroup.isShutdown()) this.workGroup.shutdownGracefully();
-    }
+  void stop() {
+    if (!this.bossGroup.isShutdown()) this.bossGroup.shutdownGracefully();
+    if (!this.workGroup.isShutdown()) this.workGroup.shutdownGracefully();
+  }
 
-    boolean isRunning() {
-        return !this.bossGroup.isShutdown() && !this.workGroup.isShutdown();
-    }
+  boolean isRunning() {
+    return !this.bossGroup.isShutdown() && !this.workGroup.isShutdown();
+  }
 }

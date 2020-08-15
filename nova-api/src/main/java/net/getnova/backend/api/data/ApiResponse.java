@@ -15,51 +15,52 @@ import org.jetbrains.annotations.Nullable;
 @EqualsAndHashCode
 public final class ApiResponse implements JsonSerializable {
 
-    @NotNull
-    private final ApiResponseStatus responseCode;
-    @Nullable
-    private final String message;
-    @Nullable
-    private final JsonElement data;
-    @Setter
-    @Nullable
-    private String tag;
+  @NotNull
+  private final ApiResponseStatus responseCode;
+  @Nullable
+  private final String message;
+  @Nullable
+  private final JsonElement data;
+  @Setter
+  @Nullable
+  private String tag;
 
-    public ApiResponse(@NotNull final ApiResponseStatus responseCode) {
-        this(responseCode, null, null);
-    }
+  public ApiResponse(@NotNull final ApiResponseStatus responseCode) {
+    this(responseCode, null, null);
+  }
 
-    public ApiResponse(@NotNull final ApiResponseStatus responseCode, @Nullable final String message) {
-        this(responseCode, message, null);
-    }
+  public ApiResponse(@NotNull final ApiResponseStatus responseCode, @Nullable final String message) {
+    this(responseCode, message, null);
+  }
 
-    public ApiResponse(@NotNull final ApiResponseStatus responseCode, @Nullable final Object data) {
-        this(responseCode, null, data);
-    }
+  public ApiResponse(@NotNull final ApiResponseStatus responseCode, @Nullable final Object data) {
+    this(responseCode, null, data);
+  }
 
-    public ApiResponse(@NotNull final ApiResponseStatus responseCode, @Nullable final String message, @Nullable final Object data) {
-        this.responseCode = responseCode;
-        this.message = message;
-        this.data = JsonUtils.toJson(data);
-    }
+  public ApiResponse(@NotNull final ApiResponseStatus responseCode, @Nullable final String message, @Nullable final Object data) {
+    this.responseCode = responseCode;
+    this.message = message;
+    this.data = JsonUtils.toJson(data);
+  }
 
-    @NotNull
-    @Override
-    public JsonElement serialize() {
-        return this.serialize(false);
-    }
+  @NotNull
+  @Override
+  public JsonElement serialize() {
+    return this.serialize(false);
+  }
 
-    @NotNull
-    public JsonElement serialize(final boolean small) {
-        final JsonBuilder info = small
-                ? JsonBuilder.create("error", this.responseCode.isError())
-                .add("message", this.message != null, () -> this.message)
-                : JsonBuilder.create("tag", this.getTag())
-                .add("status", this.getResponseCode())
-                .add("message", this.message != null, this::getMessage);
+  @NotNull
+  public JsonElement serialize(final boolean small) {
+    final JsonBuilder info = small
+      ? JsonBuilder.create("error", this.responseCode.isError())
+      .add("message", this.message != null, () -> this.message)
+      : JsonBuilder.create("tag", this.getTag())
+      .add("status", this.getResponseCode())
+      .add("message", this.message != null, this::getMessage);
 
-        return JsonBuilder.create("info", info)
-                .add("data", !(this.data instanceof JsonNull), this::getData)
-                .build();
-    }
+    return JsonBuilder
+      .create("info", info)
+      .add("data", !(this.data instanceof JsonNull), this::getData)
+      .build();
+  }
 }

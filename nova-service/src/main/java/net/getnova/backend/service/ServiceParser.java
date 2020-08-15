@@ -20,59 +20,59 @@ import java.lang.reflect.Parameter;
 @Slf4j
 final class ServiceParser {
 
-    private ServiceParser() {
-        throw new UnsupportedOperationException();
+  private ServiceParser() {
+    throw new UnsupportedOperationException();
+  }
+
+  static ServiceData parseService(final InjectionHandler injectionHandler, final Class<?> clazz) {
+    if (!clazz.isAnnotationPresent(Service.class)) {
+      log.error("Service class {} is not annotated with {}.", clazz.getName(), Service.class.getName());
+      return null;
     }
 
-    static ServiceData parseService(final InjectionHandler injectionHandler, final Class<?> clazz) {
-        if (!clazz.isAnnotationPresent(Service.class)) {
-            log.error("Service class {} is not annotated with {}.", clazz.getName(), Service.class.getName());
-            return null;
-        }
+    final Service service = clazz.getAnnotation(Service.class);
 
-        final Service service = clazz.getAnnotation(Service.class);
+    return new ServiceData(service.id(), service.depends(),
+      injectionHandler.getInjector().getInstance(clazz), // Dont create every time a new instance
+      getMethod(clazz, PreInitService.class, PreInitServiceEvent.class),
+      getMethod(clazz, InitService.class, InitServiceEvent.class),
+      getMethod(clazz, PostInitService.class, PostInitServiceEvent.class),
+      getMethod(clazz, StartService.class, StartServiceEvent.class),
+      getMethod(clazz, StopService.class, StopServiceEvent.class)
+    );
+  }
 
-        return new ServiceData(service.id(), service.depends(),
-                injectionHandler.getInjector().getInstance(clazz), // Dont create every time a new instance
-                getMethod(clazz, PreInitService.class, PreInitServiceEvent.class),
-                getMethod(clazz, InitService.class, InitServiceEvent.class),
-                getMethod(clazz, PostInitService.class, PostInitServiceEvent.class),
-                getMethod(clazz, StartService.class, StartServiceEvent.class),
-                getMethod(clazz, StopService.class, StopServiceEvent.class)
-        );
+  private static Method getMethod(final Class<?> clazz,
+                                  final Class<? extends Annotation> annotation,
+                                  final Class<?> eventClass) {
+    for (final Method method : clazz.getDeclaredMethods()) {
+      method.setAccessible(true);
+      if (method.isAnnotationPresent(annotation)) {
+        if (checkMethod(method, eventClass)) return method;
+        else return null;
+      }
+    }
+    return null;
+  }
+
+  private static boolean checkMethod(final Method method, final Class<?> eventClass) {
+    final Parameter[] parameters = method.getParameters();
+    if (parameters.length != 1 || !parameters[0].getType().equals(eventClass)) {
+      log.error(
+        "Service event method {} does not have the right parameter count or type. Required is {}.",
+        method.getDeclaringClass().getName() + "." + method.getName(),
+        eventClass.getName()
+      );
+      return false;
     }
 
-    private static Method getMethod(final Class<?> clazz,
-                                    final Class<? extends Annotation> annotation,
-                                    final Class<?> eventClass) {
-        for (final Method method : clazz.getDeclaredMethods()) {
-            method.setAccessible(true);
-            if (method.isAnnotationPresent(annotation)) {
-                if (checkMethod(method, eventClass)) return method;
-                else return null;
-            }
-        }
-        return null;
+    if (!Void.TYPE.isAssignableFrom(method.getReturnType())) {
+      log.error(
+        "Service event method {} does not have void as return type.",
+        method.getDeclaringClass().getName() + "." + method.getName()
+      );
+      return false;
     }
-
-    private static boolean checkMethod(final Method method, final Class<?> eventClass) {
-        final Parameter[] parameters = method.getParameters();
-        if (parameters.length != 1 || !parameters[0].getType().equals(eventClass)) {
-            log.error(
-                    "Service event method {} does not have the right parameter count or type. Required is {}.",
-                    method.getDeclaringClass().getName() + "." + method.getName(),
-                    eventClass.getName()
-            );
-            return false;
-        }
-
-        if (!Void.TYPE.isAssignableFrom(method.getReturnType())) {
-            log.error(
-                    "Service event method {} does not have void as return type.",
-                    method.getDeclaringClass().getName() + "." + method.getName()
-            );
-            return false;
-        }
-        return true;
-    }
+    return true;
+  }
 }

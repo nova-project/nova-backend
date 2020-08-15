@@ -4,7 +4,7 @@ import java.io.IOException;
 
 class ServiceException extends IOException {
 
-    ServiceException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
+  ServiceException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 }

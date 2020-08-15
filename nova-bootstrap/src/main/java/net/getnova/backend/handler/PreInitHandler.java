@@ -12,17 +12,17 @@ import javax.inject.Singleton;
 @EqualsAndHashCode
 public final class PreInitHandler implements BootstrapHandler {
 
-    @Inject
-    private InjectionHandler injectionHandler;
+  @Inject
+  private InjectionHandler injectionHandler;
 
-    @Inject
-    private ServiceHandler serviceHandler;
+  @Inject
+  private ServiceHandler serviceHandler;
 
-    @Override
-    public void execute() {
-        this.injectionHandler.addInjectionBinder(
-                binder -> this.serviceHandler.preInit(new PreInitServiceEvent(binder))
-        );
-        this.injectionHandler.recreateBindings();
-    }
+  @Override
+  public void execute() {
+    this.injectionHandler.addInjectionBinder(
+      binder -> this.serviceHandler.preInit(new PreInitServiceEvent(binder))
+    );
+    this.injectionHandler.recreateBindings();
+  }
 }

@@ -15,16 +15,16 @@ import java.util.Map;
 @EqualsAndHashCode
 public final class RestApiLocation extends HttpLocation<ApiRequest> {
 
-    private final Map<String, ApiEndpointData> endpoints;
+  private final Map<String, ApiEndpointData> endpoints;
 
-    public RestApiLocation(@NotNull final Map<String, ApiEndpointData> endpoints) {
-        super(new HttpObjectAggregator(65536), new RestApiCodec());
-        this.endpoints = endpoints;
-    }
+  public RestApiLocation(@NotNull final Map<String, ApiEndpointData> endpoints) {
+    super(new HttpObjectAggregator(65536), new RestApiCodec());
+    this.endpoints = endpoints;
+  }
 
-    @Override
-    protected void channelRead0(@NotNull final ChannelHandlerContext ctx, @NotNull final ApiRequest msg) throws Exception {
-        final ApiResponse apiResponse = ApiExecutor.execute(this.endpoints, msg);
-        if (apiResponse != null) ctx.write(apiResponse);
-    }
+  @Override
+  protected void channelRead0(@NotNull final ChannelHandlerContext ctx, @NotNull final ApiRequest msg) throws Exception {
+    final ApiResponse apiResponse = ApiExecutor.execute(this.endpoints, msg);
+    if (apiResponse != null) ctx.write(apiResponse);
+  }
 }

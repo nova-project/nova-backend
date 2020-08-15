@@ -13,14 +13,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 class HttpServerCodecInitializer implements CodecInitializer {
 
-    private final InjectionHandler injectionHandler;
-    private final Map<String, HttpLocationProvider<?>> locationProviders;
+  private final InjectionHandler injectionHandler;
+  private final Map<String, HttpLocationProvider<?>> locationProviders;
 
-    @Override
-    public void configure(final ChannelPipeline pipeline) {
-        pipeline.addLast("http-server-codec", new HttpServerCodec())
-                .addLast("chunked-write-handler", new ChunkedWriteHandler())
-                .addLast("keep-alive-handler", new HttpServerKeepAliveHandler())
-                .addLast("content-decoder", new HttpServerContentDecoder(this.injectionHandler, this.locationProviders));
-    }
+  @Override
+  public void configure(final ChannelPipeline pipeline) {
+    pipeline.addLast("http-server-codec", new HttpServerCodec())
+      .addLast("chunked-write-handler", new ChunkedWriteHandler())
+      .addLast("keep-alive-handler", new HttpServerKeepAliveHandler())
+      .addLast("content-decoder", new HttpServerContentDecoder(this.injectionHandler, this.locationProviders));
+  }
 }

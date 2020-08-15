@@ -14,65 +14,65 @@ import java.util.jar.Manifest;
 
 final class ModuleLoader {
 
-    private ModuleLoader() {
-        throw new UnsupportedOperationException();
+  private ModuleLoader() {
+    throw new UnsupportedOperationException();
+  }
+
+  static Result loadModules(final File moduleFolder) throws IOException {
+    if (!moduleFolder.exists()) {
+      throw new ModuleException("Module folder \"" + moduleFolder.getAbsolutePath() + "\" not found.");
     }
 
-    static Result loadModules(final File moduleFolder) throws IOException {
-        if (!moduleFolder.exists()) {
-            throw new ModuleException("Module folder \"" + moduleFolder.getAbsolutePath() + "\" not found.");
+    final File[] files = moduleFolder.listFiles();
+    final URL[] urls = new URL[files.length];
+
+    for (int i = 0; i < files.length; i++) urls[i] = files[i].toURI().toURL();
+    final ClassLoader loader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
+
+    final Set<ModuleData> modules = new LinkedHashSet<>();
+    for (final File file : files) modules.add(loadModule(loader, file));
+
+    return new Result(loader, modules);
+  }
+
+  private static ModuleData loadModule(final ClassLoader loader, final File file) throws IOException {
+    try (JarFile jarFile = new JarFile(file)) {
+
+      final Manifest manifest = jarFile.getManifest();
+      if (manifest == null) {
+        throw new ModuleException("Missing manifest file in jar file \"" + jarFile.getName() + "\".");
+      }
+
+      final Attributes attributes = manifest.getMainAttributes();
+      final String moduleName = loadValue(jarFile, attributes, "Module-Name");
+      final String moduleVersion = loadValue(jarFile, attributes, "Module-Version");
+      final String moduleServices = loadValue(jarFile, attributes, "Module-Services");
+
+      final Set<Class<?>> services = new LinkedHashSet<>();
+      for (final String serviceName : moduleServices.split(",")) {
+        try {
+          services.add(loader.loadClass(serviceName));
+        } catch (ClassNotFoundException e) {
+          throw new ModuleException("Module service class \"" + serviceName + "\" can not found in jar file \"" + jarFile.getName() + "\".");
         }
+      }
 
-        final File[] files = moduleFolder.listFiles();
-        final URL[] urls = new URL[files.length];
-
-        for (int i = 0; i < files.length; i++) urls[i] = files[i].toURI().toURL();
-        final ClassLoader loader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
-
-        final Set<ModuleData> modules = new LinkedHashSet<>();
-        for (final File file : files) modules.add(loadModule(loader, file));
-
-        return new Result(loader, modules);
+      return new ModuleData(moduleName, moduleVersion, services);
     }
+  }
 
-    private static ModuleData loadModule(final ClassLoader loader, final File file) throws IOException {
-        try (JarFile jarFile = new JarFile(file)) {
-
-            final Manifest manifest = jarFile.getManifest();
-            if (manifest == null) {
-                throw new ModuleException("Missing manifest file in jar file \"" + jarFile.getName() + "\".");
-            }
-
-            final Attributes attributes = manifest.getMainAttributes();
-            final String moduleName = loadValue(jarFile, attributes, "Module-Name");
-            final String moduleVersion = loadValue(jarFile, attributes, "Module-Version");
-            final String moduleServices = loadValue(jarFile, attributes, "Module-Services");
-
-            final Set<Class<?>> services = new LinkedHashSet<>();
-            for (final String serviceName : moduleServices.split(",")) {
-                try {
-                    services.add(loader.loadClass(serviceName));
-                } catch (ClassNotFoundException e) {
-                    throw new ModuleException("Module service class \"" + serviceName + "\" can not found in jar file \"" + jarFile.getName() + "\".");
-                }
-            }
-
-            return new ModuleData(moduleName, moduleVersion, services);
-        }
+  private static String loadValue(final JarFile jarFile, final Attributes attributes, final String name) throws ModuleException {
+    final String value = attributes.getValue(name);
+    if (value == null) {
+      throw new ModuleException("Missing manifest attribute \"" + name + "\" in jar file \"" + jarFile.getName() + "\".");
     }
+    return value;
+  }
 
-    private static String loadValue(final JarFile jarFile, final Attributes attributes, final String name) throws ModuleException {
-        final String value = attributes.getValue(name);
-        if (value == null) {
-            throw new ModuleException("Missing manifest attribute \"" + name + "\" in jar file \"" + jarFile.getName() + "\".");
-        }
-        return value;
-    }
+  @Data
+  static final class Result {
 
-    @Data
-    static final class Result {
-
-        private final ClassLoader loader;
-        private final Set<ModuleData> modules;
-    }
+    private final ClassLoader loader;
+    private final Set<ModuleData> modules;
+  }
 }

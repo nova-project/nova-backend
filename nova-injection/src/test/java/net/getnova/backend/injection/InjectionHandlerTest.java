@@ -16,43 +16,43 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class InjectionHandlerTest {
 
-    private Set<InjectionBinder> injectionBinders;
-    private InjectionTestObject testObject;
+  private Set<InjectionBinder> injectionBinders;
+  private InjectionTestObject testObject;
 
-    @BeforeEach
-    void setUp() {
-        this.injectionBinders = new HashSet<>();
-        this.testObject = new InjectionTestObjectImpl();
-        this.injectionBinders.add(binder -> binder.bind(InjectionTestObject.class).toInstance(this.testObject));
-    }
+  @BeforeEach
+  void setUp() {
+    this.injectionBinders = new HashSet<>();
+    this.testObject = new InjectionTestObjectImpl();
+    this.injectionBinders.add(binder -> binder.bind(InjectionTestObject.class).toInstance(this.testObject));
+  }
 
-    @AfterEach
-    void tearDown() {
-        this.injectionBinders = null;
-    }
+  @AfterEach
+  void tearDown() {
+    this.injectionBinders = null;
+  }
 
-    @Test
-    void addInjectionBinder() throws NoSuchFieldException, IllegalAccessException {
-        final InjectionHandler injectionHandler = new InjectionHandler();
-        this.injectionBinders.forEach(injectionHandler::addInjectionBinder);
+  @Test
+  void addInjectionBinder() throws NoSuchFieldException, IllegalAccessException {
+    final InjectionHandler injectionHandler = new InjectionHandler();
+    this.injectionBinders.forEach(injectionHandler::addInjectionBinder);
 
-        assertIterableEquals(
-                this.injectionBinders,
-                (Iterable<?>) RefectionUtils.getFieldValue(injectionHandler, "binders")
-        );
-    }
+    assertIterableEquals(
+      this.injectionBinders,
+      (Iterable<?>) RefectionUtils.getFieldValue(injectionHandler, "binders")
+    );
+  }
 
-    @Test
-    void createBindings() {
-        final InjectionHandler injectionHandler = new InjectionHandler();
-        this.injectionBinders.forEach(injectionHandler::addInjectionBinder);
-        injectionHandler.createBindings(Stage.PRODUCTION);
+  @Test
+  void createBindings() {
+    final InjectionHandler injectionHandler = new InjectionHandler();
+    this.injectionBinders.forEach(injectionHandler::addInjectionBinder);
+    injectionHandler.createBindings(Stage.PRODUCTION);
 
-        assertEquals(
-                injectionHandler.getInjector()
-                        .getInstance(InjectionTestClass.class)
-                        .getTestObject(),
-                this.testObject
-        );
-    }
+    assertEquals(
+      injectionHandler.getInjector()
+        .getInstance(InjectionTestClass.class)
+        .getTestObject(),
+      this.testObject
+    );
+  }
 }

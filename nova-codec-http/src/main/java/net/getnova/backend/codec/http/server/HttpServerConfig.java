@@ -11,9 +11,9 @@ import net.getnova.backend.config.ConfigValue;
 @Setter(AccessLevel.NONE)
 class HttpServerConfig {
 
-    @ConfigValue(id = "host", comment = "The host of the http server.")
-    private String host = "0.0.0.0";
+  @ConfigValue(id = "host", comment = "The host of the http server.")
+  private String host = "0.0.0.0";
 
-    @ConfigValue(id = "port", comment = "The port of the server.")
-    private int port = 6060;
+  @ConfigValue(id = "port", comment = "The port of the server.")
+  private int port = 6060;
 }

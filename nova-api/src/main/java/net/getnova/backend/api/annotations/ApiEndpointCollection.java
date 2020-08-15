@@ -11,9 +11,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface ApiEndpointCollection {
 
-    @NotNull
-    String id();
+  @NotNull
+  String id();
 
-    @NotNull
-    String[] description();
+  @NotNull
+  String[] description();
 }

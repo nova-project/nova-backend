@@ -18,39 +18,39 @@ import java.net.URI;
 @RequiredArgsConstructor
 final class PlaygroundLocation extends HttpLocation<HttpRequest> {
 
-    private static final String INDEX_FILE = "index.html";
-    private final File baseDir;
-    private final ByteBuf playgroundContent;
-    private long playgroundContentLength = -1;
+  private static final String INDEX_FILE = "index.html";
+  private final File baseDir;
+  private final ByteBuf playgroundContent;
+  private long playgroundContentLength = -1;
 
-    @Override
-    protected void channelRead0(final ChannelHandlerContext ctx, final HttpRequest msg) throws Exception {
-        final String path = new URI(msg.uri()).getPath();
-        final File file = new File(this.baseDir, path.endsWith("/") ? path + INDEX_FILE : path);
-        final boolean head = msg.method().equals(HttpMethod.HEAD);
+  @Override
+  protected void channelRead0(final ChannelHandlerContext ctx, final HttpRequest msg) throws Exception {
+    final String path = new URI(msg.uri()).getPath();
+    final File file = new File(this.baseDir, path.endsWith("/") ? path + INDEX_FILE : path);
+    final boolean head = msg.method().equals(HttpMethod.HEAD);
 
-        if (file.getName().equals("playground.json")) {
-            final DefaultHttpResponse response = new DefaultHttpResponse(msg.protocolVersion(), HttpResponseStatus.OK);
-            if (this.playgroundContentLength == -1) {
-                this.playgroundContentLength = this.playgroundContent.readableBytes();
-            }
-            HttpUtil.setContentLength(response, this.playgroundContentLength);
-            HttpUtils.setContentTypeHeader(response, "application/json", HttpUtils.CHARSET);
+    if (file.getName().equals("playground.json")) {
+      final DefaultHttpResponse response = new DefaultHttpResponse(msg.protocolVersion(), HttpResponseStatus.OK);
+      if (this.playgroundContentLength == -1) {
+        this.playgroundContentLength = this.playgroundContent.readableBytes();
+      }
+      HttpUtil.setContentLength(response, this.playgroundContentLength);
+      HttpUtils.setContentTypeHeader(response, "application/json", HttpUtils.CHARSET);
 
-            HttpUtils.sendAndCleanupConnection(ctx, response, new DefaultLastHttpContent(this.playgroundContent));
-            return;
-        }
-
-        if (!HttpUtils.fileExist(this.baseDir, file)) {
-            HttpUtils.sendStatus(ctx, msg, HttpResponseStatus.NOT_FOUND, !head);
-            return;
-        }
-
-        if (file.isDirectory()) {
-            HttpUtils.sendRedirect(ctx, msg, this.getOriginalUri().resolve(this.getOriginalUri().getRawPath() + '/'));
-            return;
-        }
-
-        HttpUtils.sendFile(ctx, msg, file, !head);
+      HttpUtils.sendAndCleanupConnection(ctx, response, new DefaultLastHttpContent(this.playgroundContent));
+      return;
     }
+
+    if (!HttpUtils.fileExist(this.baseDir, file)) {
+      HttpUtils.sendStatus(ctx, msg, HttpResponseStatus.NOT_FOUND, !head);
+      return;
+    }
+
+    if (file.isDirectory()) {
+      HttpUtils.sendRedirect(ctx, msg, this.getOriginalUri().resolve(this.getOriginalUri().getRawPath() + '/'));
+      return;
+    }
+
+    HttpUtils.sendFile(ctx, msg, file, !head);
+  }
 }

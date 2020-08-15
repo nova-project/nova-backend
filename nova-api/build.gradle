@@ -1,10 +1,10 @@
 apply plugin: 'java-library'
 
 dependencies {
-    implementation project(':nova-logging')
-    implementation project(':nova-injection')
-    implementation project(':nova-service')
-    implementation project(':nova-json')
-    implementation project(':nova-codec-http')
-    implementation project(':nova-config')
+  implementation project(':nova-logging')
+  implementation project(':nova-injection')
+  implementation project(':nova-service')
+  implementation project(':nova-json')
+  implementation project(':nova-codec-http')
+  implementation project(':nova-config')
 }

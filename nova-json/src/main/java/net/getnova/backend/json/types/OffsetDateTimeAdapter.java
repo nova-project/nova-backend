@@ -18,21 +18,21 @@ import java.time.ZoneOffset;
 
 public final class OffsetDateTimeAdapter implements JsonSerializer<OffsetDateTime>, JsonDeserializer<OffsetDateTime> {
 
-    @Override
-    public JsonElement serialize(final OffsetDateTime src, final Type typeOfSrc, final JsonSerializationContext context) {
-        return JsonUtils.toJson(src.toInstant());
-    }
+  @Override
+  public JsonElement serialize(final OffsetDateTime src, final Type typeOfSrc, final JsonSerializationContext context) {
+    return JsonUtils.toJson(src.toInstant());
+  }
 
-    @Override
-    public OffsetDateTime deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
-        try {
-            if (json.isJsonPrimitive()) {
-                return OffsetDateTime.ofInstant(JsonUtils.fromJson(json, Instant.class), ZoneOffset.UTC);
-            } else {
-                throw new JsonParseException("Unable to parse a non \"" + JsonPrimitive.class.getName() + "\" into a \"" + OffsetDateTime.class.getName() + "\".");
-            }
-        } catch (JsonTypeMappingException e) {
-            throw new JsonParseException(e);
-        }
+  @Override
+  public OffsetDateTime deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
+    try {
+      if (json.isJsonPrimitive()) {
+        return OffsetDateTime.ofInstant(JsonUtils.fromJson(json, Instant.class), ZoneOffset.UTC);
+      } else {
+        throw new JsonParseException("Unable to parse a non \"" + JsonPrimitive.class.getName() + "\" into a \"" + OffsetDateTime.class.getName() + "\".");
+      }
+    } catch (JsonTypeMappingException e) {
+      throw new JsonParseException(e);
     }
+  }
 }

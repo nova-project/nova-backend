@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class PreInitServiceEvent {
 
-    private final Binder binder;
+  private final Binder binder;
 }

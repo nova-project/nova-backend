@@ -7,9 +7,9 @@ import java.lang.reflect.Field;
 @Data
 class ConfigValueData {
 
-    private final String id;
-    private final String[] comment;
+  private final String id;
+  private final String[] comment;
 
-    private final Field field;
-    private final Object config;
+  private final Field field;
+  private final Object config;
 }

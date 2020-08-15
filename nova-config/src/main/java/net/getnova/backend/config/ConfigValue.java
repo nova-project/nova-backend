@@ -9,17 +9,17 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfigValue {
 
-    /**
-     * This field contains the id of the config value.
-     *
-     * @return the id of the value
-     */
-    String id();
+  /**
+   * This field contains the id of the config value.
+   *
+   * @return the id of the value
+   */
+  String id();
 
-    /**
-     * This field contains the comment of the config value.
-     *
-     * @return the comment of the config value
-     */
-    String[] comment();
+  /**
+   * This field contains the comment of the config value.
+   *
+   * @return the comment of the config value
+   */
+  String[] comment();
 }

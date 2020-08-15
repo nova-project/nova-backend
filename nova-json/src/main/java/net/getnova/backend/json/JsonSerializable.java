@@ -30,13 +30,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface JsonSerializable {
 
-    /**
-     * Converts this to an {@link JsonElement}.
-     *
-     * @return an {@link JsonElement} with the values from this.
-     * @see JsonSerializable
-     * @see JsonElement
-     */
-    @NotNull
-    JsonElement serialize();
+  /**
+   * Converts this to an {@link JsonElement}.
+   *
+   * @return an {@link JsonElement} with the values from this.
+   * @see JsonSerializable
+   * @see JsonElement
+   */
+  @NotNull
+  JsonElement serialize();
 }

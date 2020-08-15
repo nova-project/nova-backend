@@ -19,40 +19,40 @@ import java.util.TreeSet;
 @Slf4j
 class PlaygroundLocationProvider implements HttpLocationProvider<PlaygroundLocation> {
 
-    private final File baseDir;
-    private final ByteBuf playground;
+  private final File baseDir;
+  private final ByteBuf playground;
 
-    PlaygroundLocationProvider(final TreeSet<ApiEndpointCollectionData> collections) {
-        this.baseDir = this.loadBaseDir();
-        this.playground = this.generatePlayground(collections);
+  PlaygroundLocationProvider(final TreeSet<ApiEndpointCollectionData> collections) {
+    this.baseDir = this.loadBaseDir();
+    this.playground = this.generatePlayground(collections);
 
-        /* Create Index file, with instructions how to install the playground. */
-        final File indexFile = new File(this.baseDir, "index.html");
-        if (!indexFile.exists()) this.createIndexFile(indexFile);
+    /* Create Index file, with instructions how to install the playground. */
+    final File indexFile = new File(this.baseDir, "index.html");
+    if (!indexFile.exists()) this.createIndexFile(indexFile);
+  }
+
+  private File loadBaseDir() {
+    final File baseDir = new File("www/playground").getAbsoluteFile();
+    if (!baseDir.exists()) baseDir.mkdirs();
+    return baseDir;
+  }
+
+  private ByteBuf generatePlayground(final TreeSet<ApiEndpointCollectionData> collections) {
+    return Unpooled.copiedBuffer(JsonUtils.toJson(collections).toString(), HttpUtils.CHARSET);
+  }
+
+  private void createIndexFile(final File indexFile) {
+    try (InputStream inputStream = PlaygroundLocationProvider.class.getResourceAsStream("/www/playground/index.html");
+         OutputStream outputStream = new FileOutputStream(indexFile)) {
+      inputStream.transferTo(outputStream);
+    } catch (IOException e) {
+      log.warn("Unable to write file {}: {}", indexFile.getPath(), e.toString());
     }
+  }
 
-    private File loadBaseDir() {
-        final File baseDir = new File("www/playground").getAbsoluteFile();
-        if (!baseDir.exists()) baseDir.mkdirs();
-        return baseDir;
-    }
-
-    private ByteBuf generatePlayground(final TreeSet<ApiEndpointCollectionData> collections) {
-        return Unpooled.copiedBuffer(JsonUtils.toJson(collections).toString(), HttpUtils.CHARSET);
-    }
-
-    private void createIndexFile(final File indexFile) {
-        try (InputStream inputStream = PlaygroundLocationProvider.class.getResourceAsStream("/www/playground/index.html");
-             OutputStream outputStream = new FileOutputStream(indexFile)) {
-            inputStream.transferTo(outputStream);
-        } catch (IOException e) {
-            log.warn("Unable to write file {}: {}", indexFile.getPath(), e.toString());
-        }
-    }
-
-    @NotNull
-    @Override
-    public PlaygroundLocation getLocation() {
-        return new PlaygroundLocation(this.baseDir, this.playground);
-    }
+  @NotNull
+  @Override
+  public PlaygroundLocation getLocation() {
+    return new PlaygroundLocation(this.baseDir, this.playground);
+  }
 }

@@ -15,28 +15,28 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class InjectionModuleTest {
 
-    private Set<InjectionBinder> injectionBinders;
-    private InjectionTestObject testObject;
+  private Set<InjectionBinder> injectionBinders;
+  private InjectionTestObject testObject;
 
-    @BeforeEach
-    void setUp() {
-        this.injectionBinders = new HashSet<>();
-        this.testObject = new InjectionTestObjectImpl();
-        this.injectionBinders.add(binder -> binder.bind(InjectionTestObject.class).toInstance(this.testObject));
-    }
+  @BeforeEach
+  void setUp() {
+    this.injectionBinders = new HashSet<>();
+    this.testObject = new InjectionTestObjectImpl();
+    this.injectionBinders.add(binder -> binder.bind(InjectionTestObject.class).toInstance(this.testObject));
+  }
 
-    @AfterEach
-    void tearDown() {
-        this.injectionBinders = null;
-    }
+  @AfterEach
+  void tearDown() {
+    this.injectionBinders = null;
+  }
 
-    @Test
-    void configure() {
-        assertEquals(
-                Guice.createInjector(new InjectionModule(this.injectionBinders))
-                        .getInstance(InjectionTestClass.class)
-                        .getTestObject(),
-                this.testObject
-        );
-    }
+  @Test
+  void configure() {
+    assertEquals(
+      Guice.createInjector(new InjectionModule(this.injectionBinders))
+        .getInstance(InjectionTestClass.class)
+        .getTestObject(),
+      this.testObject
+    );
+  }
 }

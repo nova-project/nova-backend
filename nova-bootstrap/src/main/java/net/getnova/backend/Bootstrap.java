@@ -9,22 +9,22 @@ package net.getnova.backend;
  */
 public final class Bootstrap {
 
-    /**
-     * Do not create an instance of this class.
-     * This class is only used as main entry point of the Nova Backend.
-     *
-     * @see Bootstrap#main(String[])
-     */
-    private Bootstrap() {
-        throw new UnsupportedOperationException();
-    }
+  /**
+   * Do not create an instance of this class.
+   * This class is only used as main entry point of the Nova Backend.
+   *
+   * @see Bootstrap#main(String[])
+   */
+  private Bootstrap() {
+    throw new UnsupportedOperationException();
+  }
 
-    /**
-     * The main entry point of the Nova Backend.
-     *
-     * @param args the program arguments.
-     */
-    public static void main(final String[] args) {
-        new NovaImpl(args);
-    }
+  /**
+   * The main entry point of the Nova Backend.
+   *
+   * @param args the program arguments.
+   */
+  public static void main(final String[] args) {
+    new NovaImpl(args);
+  }
 }

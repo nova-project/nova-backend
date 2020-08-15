@@ -15,8 +15,8 @@ import javax.persistence.Version;
 @AllArgsConstructor
 public abstract class TableModel {
 
-    @JsonTransient
-    @Version
-    @Column(name = "version", nullable = false)
-    private long version;
+  @JsonTransient
+  @Version
+  @Column(name = "version", nullable = false)
+  private long version;
 }

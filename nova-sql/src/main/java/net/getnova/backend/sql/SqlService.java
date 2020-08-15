@@ -22,75 +22,75 @@ import java.nio.charset.StandardCharsets;
 @Singleton
 public final class SqlService {
 
-    private static final Charset SQL_CHARSET = StandardCharsets.UTF_8;
+  private static final Charset SQL_CHARSET = StandardCharsets.UTF_8;
 
-    private final SqlProperties properties;
-    private final SqlConfig config;
-    private boolean validConfig = true;
-    private boolean error = false;
-    private SqlSessionFactory sessionFactory;
+  private final SqlProperties properties;
+  private final SqlConfig config;
+  private boolean validConfig = true;
+  private boolean error = false;
+  private SqlSessionFactory sessionFactory;
 
-    /**
-     * Creates a new {@link SqlService}.
-     *
-     * @param configService an instance of the {@link ConfigService},
-     *                      it is injected by the dependency injection.
-     */
-    @Inject
-    public SqlService(final ConfigService configService) {
-        this.properties = new SqlProperties(SQL_CHARSET);
-        this.config = configService.addConfig("sql", new SqlConfig());
+  /**
+   * Creates a new {@link SqlService}.
+   *
+   * @param configService an instance of the {@link ConfigService},
+   *                      it is injected by the dependency injection.
+   */
+  @Inject
+  public SqlService(final ConfigService configService) {
+    this.properties = new SqlProperties(SQL_CHARSET);
+    this.config = configService.addConfig("sql", new SqlConfig());
+  }
+
+  @PreInitService
+  private void preInit(final PreInitServiceEvent event) {
+    SqlServerType serverType = null;
+    try {
+      serverType = SqlServerType.valueOf(this.config.getServerType().toUpperCase());
+    } catch (IllegalArgumentException ignored) {
+      log.error("Can't found sql serverType type {}.", this.config.getServerType());
+      this.validConfig = false;
     }
 
-    @PreInitService
-    private void preInit(final PreInitServiceEvent event) {
-        SqlServerType serverType = null;
-        try {
-            serverType = SqlServerType.valueOf(this.config.getServerType().toUpperCase());
-        } catch (IllegalArgumentException ignored) {
-            log.error("Can't found sql serverType type {}.", this.config.getServerType());
-            this.validConfig = false;
-        }
+    if (this.validConfig) {
+      this.properties.setServer(serverType, this.config.getLocation(), this.config.getDatabase());
+      this.properties.setUser(this.config.getUsername(), this.config.getPassword());
 
-        if (this.validConfig) {
-            this.properties.setServer(serverType, this.config.getLocation(), this.config.getDatabase());
-            this.properties.setUser(this.config.getUsername(), this.config.getPassword());
-
-            this.sessionFactory = new SqlSessionFactory(this.properties);
-        }
+      this.sessionFactory = new SqlSessionFactory(this.properties);
     }
+  }
 
-    @StartService
-    private void start(final StartServiceEvent event) {
-        if (this.validConfig) {
-            try {
-                this.sessionFactory.build();
-            } catch (SqlException e) {
-                this.error = true;
-                log.error("Unable to connect to the database server.", e);
-            }
-        }
+  @StartService
+  private void start(final StartServiceEvent event) {
+    if (this.validConfig) {
+      try {
+        this.sessionFactory.build();
+      } catch (SqlException e) {
+        this.error = true;
+        log.error("Unable to connect to the database server.", e);
+      }
     }
+  }
 
-    @StopService
-    private void stop(final StopServiceEvent event) {
-        if (this.validConfig && !error) this.sessionFactory.close();
-    }
+  @StopService
+  private void stop(final StopServiceEvent event) {
+    if (this.validConfig && !error) this.sessionFactory.close();
+  }
 
-    /**
-     * Opens a new Sql-{@link Session}.
-     *
-     * @return the {@link Session}
-     */
-    public Session openSession() {
-        return this.sessionFactory.openSession();
-    }
+  /**
+   * Opens a new Sql-{@link Session}.
+   *
+   * @return the {@link Session}
+   */
+  public Session openSession() {
+    return this.sessionFactory.openSession();
+  }
 
-    public void addEntity(final Class<? extends TableModel> entity) {
-        try {
-            this.sessionFactory.addEntity(entity);
-        } catch (SqlException e) {
-            log.error("Unable to register entity " + entity.getName() + ".", e);
-        }
+  public void addEntity(final Class<? extends TableModel> entity) {
+    try {
+      this.sessionFactory.addEntity(entity);
+    } catch (SqlException e) {
+      log.error("Unable to register entity " + entity.getName() + ".", e);
     }
+  }
 }

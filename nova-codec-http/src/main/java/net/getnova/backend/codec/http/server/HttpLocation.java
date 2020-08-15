@@ -18,20 +18,20 @@ import java.net.URI;
 @Setter
 public abstract class HttpLocation<T> extends NettyChannelHandler<T> {
 
-    @Getter(AccessLevel.PACKAGE)
-    private final ChannelHandler[] parentHandlers;
+  @Getter(AccessLevel.PACKAGE)
+  private final ChannelHandler[] parentHandlers;
 
-    @Getter(AccessLevel.PROTECTED)
-    private URI originalUri;
+  @Getter(AccessLevel.PROTECTED)
+  private URI originalUri;
 
-    /**
-     * Creates a new path mapping.
-     *
-     * @param parentHandlers the parent {@link ChannelHandler}'s which
-     *                       are progressed before this {@link HttpLocation}
-     *                       is progressed.
-     */
-    public HttpLocation(final ChannelHandler... parentHandlers) {
-        this.parentHandlers = parentHandlers;
-    }
+  /**
+   * Creates a new path mapping.
+   *
+   * @param parentHandlers the parent {@link ChannelHandler}'s which
+   *                       are progressed before this {@link HttpLocation}
+   *                       is progressed.
+   */
+  public HttpLocation(final ChannelHandler... parentHandlers) {
+    this.parentHandlers = parentHandlers;
+  }
 }

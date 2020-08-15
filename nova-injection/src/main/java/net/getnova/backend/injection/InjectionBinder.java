@@ -12,11 +12,11 @@ import com.google.inject.Binder;
  */
 public interface InjectionBinder {
 
-    /**
-     * Collects configuration information (primarily <i>bindings</i>) which
-     * will be used to configure the {@link InjectionHandler}.
-     *
-     * @param binder the {@link Binder} witch collects the information's about the bindings
-     */
-    void bindInjections(Binder binder);
+  /**
+   * Collects configuration information (primarily <i>bindings</i>) which
+   * will be used to configure the {@link InjectionHandler}.
+   *
+   * @param binder the {@link Binder} witch collects the information's about the bindings
+   */
+  void bindInjections(Binder binder);
 }

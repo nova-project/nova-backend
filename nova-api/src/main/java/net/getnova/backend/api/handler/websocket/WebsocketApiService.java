@@ -22,34 +22,34 @@ import java.util.Set;
 @Singleton
 public final class WebsocketApiService {
 
-    private final Set<Object> collections;
-    private final WebsocketApiConfig config;
-    @Getter
-    private Set<ApiEndpointCollectionData> collectionsData;
+  private final Set<Object> collections;
+  private final WebsocketApiConfig config;
+  @Getter
+  private Set<ApiEndpointCollectionData> collectionsData;
 
-    @Inject
-    private HttpServerService httpServerService;
+  @Inject
+  private HttpServerService httpServerService;
 
-    @Inject
-    private InjectionHandler injectionHandler;
+  @Inject
+  private InjectionHandler injectionHandler;
 
-    @Inject
-    public WebsocketApiService(final ConfigService configService) {
-        this.collections = new LinkedHashSet<>();
-        this.config = configService.addConfig("websocket-api", new WebsocketApiConfig());
-    }
+  @Inject
+  public WebsocketApiService(final ConfigService configService) {
+    this.collections = new LinkedHashSet<>();
+    this.config = configService.addConfig("websocket-api", new WebsocketApiConfig());
+  }
 
-    @PostInitService
-    private void postInit(@NotNull final PostInitServiceEvent event) {
-        this.collectionsData = ApiEndpointCollectionParser.parseCollections(this.collections);
-        final Map<String, ApiEndpointData> endpoints = ApiEndpointCollectionParser.getEndpoints(this.collectionsData);
-        this.httpServerService.addLocationProvider(this.config.getPath(), new WebsocketApiLocationProvider(endpoints));
-    }
+  @PostInitService
+  private void postInit(@NotNull final PostInitServiceEvent event) {
+    this.collectionsData = ApiEndpointCollectionParser.parseCollections(this.collections);
+    final Map<String, ApiEndpointData> endpoints = ApiEndpointCollectionParser.getEndpoints(this.collectionsData);
+    this.httpServerService.addLocationProvider(this.config.getPath(), new WebsocketApiLocationProvider(endpoints));
+  }
 
-    @NotNull
-    public <T> T addEndpointCollection(@NotNull final Class<T> collection) {
-        final T instance = this.injectionHandler.getInjector().getInstance(collection);
-        this.collections.add(instance);
-        return instance;
-    }
+  @NotNull
+  public <T> T addEndpointCollection(@NotNull final Class<T> collection) {
+    final T instance = this.injectionHandler.getInjector().getInstance(collection);
+    this.collections.add(instance);
+    return instance;
+  }
 }

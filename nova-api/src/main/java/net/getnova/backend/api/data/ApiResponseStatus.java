@@ -14,41 +14,42 @@ import org.jetbrains.annotations.NotNull;
 @RequiredArgsConstructor
 public enum ApiResponseStatus implements JsonSerializable {
 
-    // Information responses 1xx
+  // Information responses 1xx
 
-    // Successful responses 2xx
-    OK(HttpResponseStatus.OK, false),
+  // Successful responses 2xx
+  OK(HttpResponseStatus.OK, false),
 
-    // Redirection messages 3xx
+  // Redirection messages 3xx
 
-    // Client error responses 4xx
-    BAD_REQUEST(HttpResponseStatus.BAD_REQUEST, true),
-    UNAUTHORIZED(HttpResponseStatus.UNAUTHORIZED, true),
-    FORBIDDEN(HttpResponseStatus.FORBIDDEN, true),
-    NOT_FOUND(HttpResponseStatus.NOT_FOUND, true),
+  // Client error responses 4xx
+  BAD_REQUEST(HttpResponseStatus.BAD_REQUEST, true),
+  UNAUTHORIZED(HttpResponseStatus.UNAUTHORIZED, true),
+  FORBIDDEN(HttpResponseStatus.FORBIDDEN, true),
+  NOT_FOUND(HttpResponseStatus.NOT_FOUND, true),
 
-    // Server error responses 5xx
-    INTERNAL_SERVER_ERROR(HttpResponseStatus.INTERNAL_SERVER_ERROR, true),
-    NOT_IMPLEMENTED(HttpResponseStatus.NOT_IMPLEMENTED, true),
-    SERVICE_UNAVAILABLE(HttpResponseStatus.SERVICE_UNAVAILABLE, true);
+  // Server error responses 5xx
+  INTERNAL_SERVER_ERROR(HttpResponseStatus.INTERNAL_SERVER_ERROR, true),
+  NOT_IMPLEMENTED(HttpResponseStatus.NOT_IMPLEMENTED, true),
+  SERVICE_UNAVAILABLE(HttpResponseStatus.SERVICE_UNAVAILABLE, true);
 
-    // Self made 9xx
+  // Self made 9xx
 
-    private final int code;
-    @NotNull
-    private final String name;
-    private final boolean error;
+  private final int code;
+  @NotNull
+  private final String name;
+  private final boolean error;
 
-    ApiResponseStatus(@NotNull final HttpResponseStatus status, final boolean error) {
-        this(status.code(), status.reasonPhrase(), error);
-    }
+  ApiResponseStatus(@NotNull final HttpResponseStatus status, final boolean error) {
+    this(status.code(), status.reasonPhrase(), error);
+  }
 
-    @NotNull
-    @Override
-    public JsonElement serialize() {
-        return JsonBuilder.create("code", this.code)
-                .add("name", this.name)
-                .add("error", this.error)
-                .build();
-    }
+  @NotNull
+  @Override
+  public JsonElement serialize() {
+    return JsonBuilder
+      .create("code", this.code)
+      .add("name", this.name)
+      .add("error", this.error)
+      .build();
+  }
 }

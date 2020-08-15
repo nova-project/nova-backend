@@ -15,46 +15,46 @@ import java.util.Collection;
 
 final class ApiParameterExecutor {
 
-    private ApiParameterExecutor() {
-        throw new UnsupportedOperationException();
+  private ApiParameterExecutor() {
+    throw new UnsupportedOperationException();
+  }
+
+  @NotNull
+  static Object[] parseParameters(@NotNull final ApiContext context, @NotNull final Collection<ApiParameterData> parameters) throws ApiParameterException {
+    final Object[] values = new Object[parameters.size()];
+
+    int i = 0;
+    for (final ApiParameterData parameter : parameters) {
+      values[i] = getParameter(context, parameter);
+      i++;
     }
 
-    @NotNull
-    static Object[] parseParameters(@NotNull final ApiContext context, @NotNull final Collection<ApiParameterData> parameters) throws ApiParameterException {
-        final Object[] values = new Object[parameters.size()];
+    return values;
+  }
 
-        int i = 0;
-        for (final ApiParameterData parameter : parameters) {
-            values[i] = getParameter(context, parameter);
-            i++;
+  @Nullable
+  private static Object getParameter(@NotNull final ApiContext context, @NotNull final ApiParameterData parameter) throws ApiParameterException {
+    switch (parameter.getType()) {
+      case NORMAL:
+        final JsonElement jsonValue = context.getRequest().getData().get(parameter.getId());
+        if (parameter.isRequired() && (jsonValue == null || jsonValue instanceof JsonNull)) {
+          throw new ApiParameterException("The parameter \"" + parameter.getId() + "\" was not found.");
         }
 
-        return values;
-    }
-
-    @Nullable
-    private static Object getParameter(@NotNull final ApiContext context, @NotNull final ApiParameterData parameter) throws ApiParameterException {
-        switch (parameter.getType()) {
-            case NORMAL:
-                final JsonElement jsonValue = context.getRequest().getData().get(parameter.getId());
-                if (parameter.isRequired() && (jsonValue == null || jsonValue instanceof JsonNull)) {
-                    throw new ApiParameterException("The parameter \"" + parameter.getId() + "\" was not found.");
-                }
-
-                try {
-                    return JsonUtils.fromJson(jsonValue, parameter.getClassType());
-                } catch (JsonTypeMappingException e) {
-                    throw new ApiInternalParameterException("Unable to parse parameter \"" + parameter.getId()
-                            + "\" in endpoint \"" + context.getRequest().getEndpoint() + "\": " + e.getMessage(), e);
-                }
-            case ENDPOINT:
-                return context.getRequest().getEndpoint();
-            case TAG:
-                return context.getRequest().getTag();
-            case DATA:
-                return context.getRequest().getData();
-            default:
-                throw new IllegalArgumentException();
+        try {
+          return JsonUtils.fromJson(jsonValue, parameter.getClassType());
+        } catch (JsonTypeMappingException e) {
+          throw new ApiInternalParameterException("Unable to parse parameter \"" + parameter.getId()
+            + "\" in endpoint \"" + context.getRequest().getEndpoint() + "\": " + e.getMessage(), e);
         }
+      case ENDPOINT:
+        return context.getRequest().getEndpoint();
+      case TAG:
+        return context.getRequest().getTag();
+      case DATA:
+        return context.getRequest().getData();
+      default:
+        throw new IllegalArgumentException();
     }
+  }
 }

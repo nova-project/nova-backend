@@ -13,35 +13,35 @@ import javax.inject.Singleton;
 @Singleton
 public class NettyService {
 
-    private EventLoopGroupHandler eventLoopGroupHandler;
+  private EventLoopGroupHandler eventLoopGroupHandler;
 
-    @PreInitService
-    private void preInit(final PreInitServiceEvent event) {
-        this.eventLoopGroupHandler = new EventLoopGroupHandler();
-    }
+  @PreInitService
+  private void preInit(final PreInitServiceEvent event) {
+    this.eventLoopGroupHandler = new EventLoopGroupHandler();
+  }
 
-    @StopService
-    private void stop(final StopServiceEvent event) {
-        this.eventLoopGroupHandler.stop();
-    }
+  @StopService
+  private void stop(final StopServiceEvent event) {
+    this.eventLoopGroupHandler.stop();
+  }
 
-    /**
-     * Returns the current bos group.
-     *
-     * @return the current bos group.
-     * @see EventLoopGroup
-     */
-    public EventLoopGroup getBossGroup() {
-        return this.eventLoopGroupHandler.getBossGroup();
-    }
+  /**
+   * Returns the current bos group.
+   *
+   * @return the current bos group.
+   * @see EventLoopGroup
+   */
+  public EventLoopGroup getBossGroup() {
+    return this.eventLoopGroupHandler.getBossGroup();
+  }
 
-    /**
-     * Returns the current worker group.
-     *
-     * @return the current worker group.
-     * @see EventLoopGroup
-     */
-    public EventLoopGroup getWorkerGroup() {
-        return this.eventLoopGroupHandler.getWorkGroup();
-    }
+  /**
+   * Returns the current worker group.
+   *
+   * @return the current worker group.
+   * @see EventLoopGroup
+   */
+  public EventLoopGroup getWorkerGroup() {
+    return this.eventLoopGroupHandler.getWorkGroup();
+  }
 }

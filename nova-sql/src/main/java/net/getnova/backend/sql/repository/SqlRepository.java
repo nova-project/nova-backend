@@ -5,23 +5,23 @@ import java.util.stream.Stream;
 
 public interface SqlRepository<T, K> {
 
-    List<T> list();
+  List<T> list();
 
-    Stream<T> stream();
+  Stream<T> stream();
 
-    T find(K key);
+  T find(K key);
 
-    T save(T entity);
+  T save(T entity);
 
-    T update(T entity);
+  T update(T entity);
 
-    T saveOrUpdate(T entity);
+  T saveOrUpdate(T entity);
 
-    /**
-     * Deletes the entity with the specified primary key.
-     *
-     * @param key the primary key of the entity, which should be deleted
-     * @return if the entity with the primary key was found and deleted
-     */
-    boolean delete(K key);
+  /**
+   * Deletes the entity with the specified primary key.
+   *
+   * @param key the primary key of the entity, which should be deleted
+   * @return if the entity with the primary key was found and deleted
+   */
+  boolean delete(K key);
 }

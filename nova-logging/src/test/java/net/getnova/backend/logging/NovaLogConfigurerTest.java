@@ -13,36 +13,36 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class NovaLogConfigurerTest {
 
-    @Test
-    void constructor() throws IllegalAccessException, InstantiationException {
-        Assertions.assertTrue(RefectionUtils.checkPrivateUnsupportedOperationConstructor(NovaLogConfigurer.class));
-    }
+  @Test
+  void constructor() throws IllegalAccessException, InstantiationException {
+    Assertions.assertTrue(RefectionUtils.checkPrivateUnsupportedOperationConstructor(NovaLogConfigurer.class));
+  }
 
-    @Test
-    void redirectSysLog() {
-        final PrintStream out = System.out;
-        final PrintStream err = System.err;
+  @Test
+  void redirectSysLog() {
+    final PrintStream out = System.out;
+    final PrintStream err = System.err;
 
-        NovaLogConfigurer.redirectSysLog();
+    NovaLogConfigurer.redirectSysLog();
 
-        assertNotEquals(out, System.out);
-        assertNotEquals(err, System.err);
+    assertNotEquals(out, System.out);
+    assertNotEquals(err, System.err);
 
-        System.setOut(out);
-        System.setErr(err);
-    }
+    System.setOut(out);
+    System.setErr(err);
+  }
 
-    @Test
-    void setLoglevel() {
-        assertNotEquals(Level.OFF, this.getLogLevel());
-        NovaLogConfigurer.setLoglevel(NovaLogLevel.OFF);
-        assertEquals(Level.OFF, this.getLogLevel());
-    }
+  @Test
+  void setLoglevel() {
+    assertNotEquals(Level.OFF, this.getLogLevel());
+    NovaLogConfigurer.setLoglevel(NovaLogLevel.OFF);
+    assertEquals(Level.OFF, this.getLogLevel());
+  }
 
-    private Level getLogLevel() {
-        return ((LoggerContext) LogManager.getContext(false))
-                .getConfiguration()
-                .getLoggerConfig(LogManager.ROOT_LOGGER_NAME)
-                .getLevel();
-    }
+  private Level getLogLevel() {
+    return ((LoggerContext) LogManager.getContext(false))
+      .getConfiguration()
+      .getLoggerConfig(LogManager.ROOT_LOGGER_NAME)
+      .getLevel();
+  }
 }

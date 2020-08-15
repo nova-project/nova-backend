@@ -16,8 +16,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public abstract class TableModelId extends TableModel {
 
-    @Id
-    @Column(name = "id", updatable = false, nullable = false)
-    @Type(type = "uuid-char")
-    private UUID id;
+  @Id
+  @Column(name = "id", updatable = false, nullable = false)
+  @Type(type = "uuid-char")
+  private UUID id;
 }

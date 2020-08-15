@@ -1,7 +1,7 @@
 apply plugin: 'java-library'
 
 dependencies {
-    implementation project(':nova-logging')
-    implementation project(':nova-service')
-    api 'io.netty:netty-all:4.1.51.Final'
+  implementation project(':nova-logging')
+  implementation project(':nova-service')
+  api 'io.netty:netty-all:4.1.51.Final'
 }

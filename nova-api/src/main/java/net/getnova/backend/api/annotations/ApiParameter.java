@@ -12,14 +12,14 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 public @interface ApiParameter {
 
-    @NotNull
-    String id();
+  @NotNull
+  String id();
 
-    boolean required() default true;
+  boolean required() default true;
 
-    @NotNull
-    ApiParameterType type() default ApiParameterType.NORMAL;
+  @NotNull
+  ApiParameterType type() default ApiParameterType.NORMAL;
 
-    @NotNull
-    String[] description();
+  @NotNull
+  String[] description();
 }

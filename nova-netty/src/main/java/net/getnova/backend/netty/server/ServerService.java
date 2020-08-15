@@ -17,34 +17,34 @@ import java.util.List;
 @Singleton
 public class ServerService {
 
-    private final List<Server> servers;
-    @Inject
-    private InjectionHandler injectionHandler;
+  private final List<Server> servers;
+  @Inject
+  private InjectionHandler injectionHandler;
 
-    /**
-     * Creates a new {@link ServerService}.
-     */
-    public ServerService() {
-        this.servers = new LinkedList<>();
-    }
+  /**
+   * Creates a new {@link ServerService}.
+   */
+  public ServerService() {
+    this.servers = new LinkedList<>();
+  }
 
-    @StartService
-    private void start(final StartServiceEvent event) {
-        this.servers.forEach(Server::start);
-    }
+  @StartService
+  private void start(final StartServiceEvent event) {
+    this.servers.forEach(Server::start);
+  }
 
-    @StopService
-    private void stop(final StopServiceEvent event) {
-        this.servers.forEach(Server::close);
-    }
+  @StopService
+  private void stop(final StopServiceEvent event) {
+    this.servers.forEach(Server::close);
+  }
 
-    /**
-     * Adds a server to the managed server lifecycle.
-     *
-     * @param server the server witch should be added to the lifecycle.
-     */
-    public void addServer(final Server server) {
-        this.injectionHandler.getInjector().injectMembers(server);
-        this.servers.add(server);
-    }
+  /**
+   * Adds a server to the managed server lifecycle.
+   *
+   * @param server the server witch should be added to the lifecycle.
+   */
+  public void addServer(final Server server) {
+    this.injectionHandler.getInjector().injectMembers(server);
+    this.servers.add(server);
+  }
 }

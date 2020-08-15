@@ -26,61 +26,61 @@ import org.apache.logging.log4j.Level;
 @RequiredArgsConstructor
 public enum NovaLogLevel {
 
-    /**
-     * No events will be logged.
-     */
-    OFF(Level.OFF),
+  /**
+   * No events will be logged.
+   */
+  OFF(Level.OFF),
 
-    /**
-     * A severe error that will prevent the application from continuing.
-     */
-    FATAL(Level.FATAL),
+  /**
+   * A severe error that will prevent the application from continuing.
+   */
+  FATAL(Level.FATAL),
 
-    /**
-     * An error in the application, possibly recoverable.
-     */
-    ERROR(Level.ERROR),
+  /**
+   * An error in the application, possibly recoverable.
+   */
+  ERROR(Level.ERROR),
 
-    /**
-     * An event that might possible lead to an error.
-     */
-    WARN(Level.WARN),
+  /**
+   * An event that might possible lead to an error.
+   */
+  WARN(Level.WARN),
 
-    /**
-     * An event for informational purposes.
-     */
-    INFO(Level.INFO),
+  /**
+   * An event for informational purposes.
+   */
+  INFO(Level.INFO),
 
-    /**
-     * A general debugging event.
-     */
-    DEBUG(Level.DEBUG),
+  /**
+   * A general debugging event.
+   */
+  DEBUG(Level.DEBUG),
 
-    /**
-     * A fine-grained debug message, typically capturing the flow through the application.
-     */
-    TRACE(Level.TRACE),
+  /**
+   * A fine-grained debug message, typically capturing the flow through the application.
+   */
+  TRACE(Level.TRACE),
 
-    /**
-     * All events should be logged.
-     */
-    ALL(Level.ALL);
+  /**
+   * All events should be logged.
+   */
+  ALL(Level.ALL);
 
-    /**
-     * Holds the {@code Log4j2} version of the loglevel.
-     */
-    private final Level level;
+  /**
+   * Holds the {@code Log4j2} version of the loglevel.
+   */
+  private final Level level;
 
-    /**
-     * Gets a {@link NovaLogLevel} from the name.
-     *
-     * @param name the name of the log level
-     * @return the {@link NovaLogLevel} with the specified name
-     */
-    public static NovaLogLevel getByName(final String name) {
-        for (final NovaLogLevel level : NovaLogLevel.values()) {
-            if (level.name().equalsIgnoreCase(name)) return level;
-        }
-        return ALL;
+  /**
+   * Gets a {@link NovaLogLevel} from the name.
+   *
+   * @param name the name of the log level
+   * @return the {@link NovaLogLevel} with the specified name
+   */
+  public static NovaLogLevel getByName(final String name) {
+    for (final NovaLogLevel level : NovaLogLevel.values()) {
+      if (level.name().equalsIgnoreCase(name)) return level;
     }
+    return ALL;
+  }
 }

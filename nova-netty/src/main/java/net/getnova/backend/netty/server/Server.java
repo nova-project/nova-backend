@@ -22,66 +22,66 @@ import java.net.SocketAddress;
 @Slf4j
 public abstract class Server implements AutoCloseable {
 
-    private static final boolean EPOLL = Epoll.isAvailable();
-    private final String id;
-    private final SocketAddress address;
-    private final SslContext sslContext;
-    private final CodecHandler codecHandler;
-    @Inject
-    private NettyService nettyService;
-    private Thread thread;
-    private Channel channel;
+  private static final boolean EPOLL = Epoll.isAvailable();
+  private final String id;
+  private final SocketAddress address;
+  private final SslContext sslContext;
+  private final CodecHandler codecHandler;
+  @Inject
+  private NettyService nettyService;
+  private Thread thread;
+  private Channel channel;
 
-    protected abstract Class<? extends ServerChannel> getServerChannelType(boolean epoll);
+  protected abstract Class<? extends ServerChannel> getServerChannelType(boolean epoll);
 
-    /**
-     * Starts the current server.
-     */
-    public void start() {
+  /**
+   * Starts the current server.
+   */
+  public void start() {
+    this.close();
+    this.thread = new Thread(() -> {
+      try {
+        this.channel = new ServerBootstrap()
+          .option(ChannelOption.SO_BACKLOG, 1024)
+          .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+          .group(this.nettyService.getBossGroup(), this.nettyService.getWorkerGroup())
+          .channel(this.getServerChannelType(EPOLL))
+          .childHandler(new NettyInitializer(this.sslContext, this.codecHandler.getInitializers()))
+          .bind(this.address)
+          .sync()
+          .channel();
+
+        log.info("Server {} is now listening on {}.", this.id, this.channel.localAddress());
+
+        this.channel.closeFuture().sync();
+      } catch (Exception e) {
+        log.error("Server " + this.id + " crashed. Restarting in 20 seconds.", e);
+
+        try {
+          Thread.sleep(20000);
+        } catch (InterruptedException ignored) {
+        }
+        this.start();
+
+      } finally {
         this.close();
-        this.thread = new Thread(() -> {
-            try {
-                this.channel = new ServerBootstrap()
-                        .option(ChannelOption.SO_BACKLOG, 1024)
-                        .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-                        .group(this.nettyService.getBossGroup(), this.nettyService.getWorkerGroup())
-                        .channel(this.getServerChannelType(EPOLL))
-                        .childHandler(new NettyInitializer(this.sslContext, this.codecHandler.getInitializers()))
-                        .bind(this.address)
-                        .sync()
-                        .channel();
+      }
+    }, "server-" + this.id);
+    this.thread.start();
+  }
 
-                log.info("Server {} is now listening on {}.", this.id, this.channel.localAddress());
-
-                this.channel.closeFuture().sync();
-            } catch (Exception e) {
-                log.error("Server " + this.id + " crashed. Restarting in 20 seconds.", e);
-
-                try {
-                    Thread.sleep(20000);
-                } catch (InterruptedException ignored) {
-                }
-                this.start();
-
-            } finally {
-                this.close();
-            }
-        }, "server-" + this.id);
-        this.thread.start();
+  /**
+   * Closes the current server.
+   */
+  @Override
+  public void close() {
+    if (this.channel != null) {
+      if (this.channel.isOpen()) this.channel.close();
+      this.channel = null;
     }
-
-    /**
-     * Closes the current server.
-     */
-    @Override
-    public void close() {
-        if (this.channel != null) {
-            if (this.channel.isOpen()) this.channel.close();
-            this.channel = null;
-        }
-        if (this.thread != null) {
-            this.thread.interrupt();
-            this.thread = null;
-        }
+    if (this.thread != null) {
+      this.thread.interrupt();
+      this.thread = null;
     }
+  }
 }

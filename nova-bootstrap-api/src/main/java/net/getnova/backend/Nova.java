@@ -5,15 +5,15 @@ package net.getnova.backend;
  */
 public interface Nova {
 
-    /**
-     * This method triggers the shutdown progress of the backend.
-     */
-    void shutdown();
+  /**
+   * This method triggers the shutdown progress of the backend.
+   */
+  void shutdown();
 
-    /**
-     * Returns the current state of the backend. (debug or no debug)
-     *
-     * @return the current state of the backend
-     */
-    boolean isDebug();
+  /**
+   * Returns the current state of the backend. (debug or no debug)
+   *
+   * @return the current state of the backend
+   */
+  boolean isDebug();
 }

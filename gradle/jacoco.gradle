@@ -1,18 +1,18 @@
 apply plugin: "jacoco"
 
 test {
-    finalizedBy jacocoTestReport
+  finalizedBy jacocoTestReport
 }
 
 jacocoTestReport {
-    dependsOn test
+  dependsOn test
 
-    reports {
-        xml.enabled true
-        xml.destination file("${buildDir}/reports/coverage.xml")
-        csv.enabled false
-        csv.destination file("${buildDir}/reports/coverage.csv")
-        html.enabled true
-        html.destination file("${buildDir}/reports/coverage-html")
-    }
+  reports {
+    xml.enabled true
+    xml.destination file("${buildDir}/reports/coverage.xml")
+    csv.enabled false
+    csv.destination file("${buildDir}/reports/coverage.csv")
+    html.enabled true
+    html.destination file("${buildDir}/reports/coverage-html")
+  }
 }

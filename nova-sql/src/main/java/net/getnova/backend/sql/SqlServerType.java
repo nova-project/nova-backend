@@ -11,10 +11,10 @@ import org.hibernate.dialect.PostgreSQL10Dialect;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum SqlServerType {
 
-    POSTGRES("postgresql", "org.postgresql.Driver", PostgreSQL10Dialect.class),
-    MARIADB("mariadb", "org.mariadb.jdbc.Driver", MariaDB103Dialect.class);
+  POSTGRES("postgresql", "org.postgresql.Driver", PostgreSQL10Dialect.class),
+  MARIADB("mariadb", "org.mariadb.jdbc.Driver", MariaDB103Dialect.class);
 
-    private final String urlPrefix;
-    private final String driver;
-    private final Class<? extends Dialect> dialect;
+  private final String urlPrefix;
+  private final String driver;
+  private final Class<? extends Dialect> dialect;
 }

@@ -15,21 +15,21 @@ import java.time.Instant;
 
 public final class InstantTypeAdapter implements JsonSerializer<Instant>, JsonDeserializer<Instant> {
 
-    @Override
-    public JsonElement serialize(final Instant src, final Type typeOfSrc, final JsonSerializationContext context) {
-        return JsonUtils.toJson(src.toEpochMilli());
-    }
+  @Override
+  public JsonElement serialize(final Instant src, final Type typeOfSrc, final JsonSerializationContext context) {
+    return JsonUtils.toJson(src.toEpochMilli());
+  }
 
-    @Override
-    public Instant deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
-        try {
-            if (json.isJsonPrimitive()) {
-                return Instant.ofEpochMilli(JsonUtils.fromJson(json, long.class));
-            } else {
-                throw new JsonParseException("Unable to parse a non \"" + JsonPrimitive.class.getName() + "\" into a \"" + Instant.class.getName() + "\".");
-            }
-        } catch (JsonTypeMappingException e) {
-            throw new JsonParseException(e);
-        }
+  @Override
+  public Instant deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
+    try {
+      if (json.isJsonPrimitive()) {
+        return Instant.ofEpochMilli(JsonUtils.fromJson(json, long.class));
+      } else {
+        throw new JsonParseException("Unable to parse a non \"" + JsonPrimitive.class.getName() + "\" into a \"" + Instant.class.getName() + "\".");
+      }
+    } catch (JsonTypeMappingException e) {
+      throw new JsonParseException(e);
     }
+  }
 }

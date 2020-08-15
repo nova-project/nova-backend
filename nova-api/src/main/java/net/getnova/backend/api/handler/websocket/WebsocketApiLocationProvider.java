@@ -10,11 +10,11 @@ import java.util.Map;
 @Data
 public final class WebsocketApiLocationProvider implements HttpLocationProvider<WebsocketApiLocation> {
 
-    private final Map<String, ApiEndpointData> endpoints;
+  private final Map<String, ApiEndpointData> endpoints;
 
-    @NotNull
-    @Override
-    public WebsocketApiLocation getLocation() {
-        return new WebsocketApiLocation(this.endpoints);
-    }
+  @NotNull
+  @Override
+  public WebsocketApiLocation getLocation() {
+    return new WebsocketApiLocation(this.endpoints);
+  }
 }

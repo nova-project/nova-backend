@@ -17,40 +17,40 @@ import java.net.InetSocketAddress;
 @Singleton
 public class HttpServerService {
 
-    private final HttpServerConfig config;
-    private final HttpServerCodec codec;
-    @Inject
-    private ServerService serverService;
+  private final HttpServerConfig config;
+  private final HttpServerCodec codec;
+  @Inject
+  private ServerService serverService;
 
-    /**
-     * Creates a new Http Service.
-     *
-     * @param configService    the instance of the {@link ConfigService}
-     * @param injectionHandler the instance of the {@link InjectionHandler}
-     */
-    @Inject
-    public HttpServerService(final ConfigService configService, final InjectionHandler injectionHandler) {
-        this.config = configService.addConfig("http-server", new HttpServerConfig());
-        this.codec = new HttpServerCodec(injectionHandler);
-    }
+  /**
+   * Creates a new Http Service.
+   *
+   * @param configService    the instance of the {@link ConfigService}
+   * @param injectionHandler the instance of the {@link InjectionHandler}
+   */
+  @Inject
+  public HttpServerService(final ConfigService configService, final InjectionHandler injectionHandler) {
+    this.config = configService.addConfig("http-server", new HttpServerConfig());
+    this.codec = new HttpServerCodec(injectionHandler);
+  }
 
-    @PostInitService
-    private void postInit(final PostInitServiceEvent event) {
-        this.serverService.addServer(new InetServer("http",
-                new InetSocketAddress(this.config.getHost(), this.config.getPort()),
-                null,
-                new CodecHandler(this.codec)));
-    }
+  @PostInitService
+  private void postInit(final PostInitServiceEvent event) {
+    this.serverService.addServer(new InetServer("http",
+      new InetSocketAddress(this.config.getHost(), this.config.getPort()),
+      null,
+      new CodecHandler(this.codec)));
+  }
 
-    /**
-     * Adds a new {@link HttpLocationProvider} to the {@link java.util.Map} of location providers.
-     *
-     * @param path     the path to the {@link HttpLocation}. Without a {@code /} at the start
-     * @param provider {@link HttpLocationProvider} instance of the {@link HttpLocation}
-     * @see HttpLocationProvider
-     * @see HttpLocation
-     */
-    public void addLocationProvider(final String path, final HttpLocationProvider<?> provider) {
-        this.codec.addLocationProvider(path.toLowerCase(), provider);
-    }
+  /**
+   * Adds a new {@link HttpLocationProvider} to the {@link java.util.Map} of location providers.
+   *
+   * @param path     the path to the {@link HttpLocation}. Without a {@code /} at the start
+   * @param provider {@link HttpLocationProvider} instance of the {@link HttpLocation}
+   * @see HttpLocationProvider
+   * @see HttpLocation
+   */
+  public void addLocationProvider(final String path, final HttpLocationProvider<?> provider) {
+    this.codec.addLocationProvider(path.toLowerCase(), provider);
+  }
 }

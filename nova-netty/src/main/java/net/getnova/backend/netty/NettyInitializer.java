@@ -14,14 +14,14 @@ import java.util.List;
 @EqualsAndHashCode
 public final class NettyInitializer extends ChannelInitializer<Channel> {
 
-    private final SslContext sslContext;
-    private final List<CodecInitializer> initializers;
+  private final SslContext sslContext;
+  private final List<CodecInitializer> initializers;
 
-    @Override
-    protected void initChannel(final Channel channel) {
-        final ChannelPipeline pipeline = channel.pipeline();
+  @Override
+  protected void initChannel(final Channel channel) {
+    final ChannelPipeline pipeline = channel.pipeline();
 
-        if (this.sslContext != null) pipeline.addLast("ssl", this.sslContext.newHandler(channel.alloc()));
-        this.initializers.forEach(initializer -> initializer.configure(pipeline));
-    }
+    if (this.sslContext != null) pipeline.addLast("ssl", this.sslContext.newHandler(channel.alloc()));
+    this.initializers.forEach(initializer -> initializer.configure(pipeline));
+  }
 }

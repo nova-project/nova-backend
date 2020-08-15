@@ -12,15 +12,15 @@ import java.util.Map;
 
 public final class ApiExecutor {
 
-    private ApiExecutor() {
-        throw new UnsupportedOperationException();
-    }
+  private ApiExecutor() {
+    throw new UnsupportedOperationException();
+  }
 
-    @Nullable
-    public static ApiResponse execute(@NotNull final Map<String, ApiEndpointData> endpoints, @NotNull final ApiRequest request) {
-        final ApiEndpointData endpoint = endpoints.get(request.getEndpoint());
-        return endpoint == null
-                ? new ApiResponse(ApiResponseStatus.NOT_FOUND, "ENDPOINT")
-                : ApiEndpointExecutor.execute(new ApiContext(request), endpoint);
-    }
+  @Nullable
+  public static ApiResponse execute(@NotNull final Map<String, ApiEndpointData> endpoints, @NotNull final ApiRequest request) {
+    final ApiEndpointData endpoint = endpoints.get(request.getEndpoint());
+    return endpoint == null
+      ? new ApiResponse(ApiResponseStatus.NOT_FOUND, "ENDPOINT")
+      : ApiEndpointExecutor.execute(new ApiContext(request), endpoint);
+  }
 }

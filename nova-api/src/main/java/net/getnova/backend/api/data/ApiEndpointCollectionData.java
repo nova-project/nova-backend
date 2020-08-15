@@ -12,24 +12,25 @@ import java.util.TreeSet;
 @Data
 public final class ApiEndpointCollectionData implements JsonSerializable, Comparable<ApiEndpointCollectionData> {
 
-    @NotNull
-    private final String id;
-    @NotNull
-    private final String description;
-    @NotNull
-    private final Map<String, ApiEndpointData> endpoints;
+  @NotNull
+  private final String id;
+  @NotNull
+  private final String description;
+  @NotNull
+  private final Map<String, ApiEndpointData> endpoints;
 
-    @NotNull
-    @Override
-    public JsonElement serialize() {
-        return JsonBuilder.create("id", this.id)
-                .add("description", this.description)
-                .add("endpoints", new TreeSet<>(this.endpoints.values()))
-                .build();
-    }
+  @NotNull
+  @Override
+  public JsonElement serialize() {
+    return JsonBuilder
+      .create("id", this.id)
+      .add("description", this.description)
+      .add("endpoints", new TreeSet<>(this.endpoints.values()))
+      .build();
+  }
 
-    @Override
-    public int compareTo(@NotNull final ApiEndpointCollectionData collectionData) {
-        return this.id.compareTo(collectionData.id);
-    }
+  @Override
+  public int compareTo(@NotNull final ApiEndpointCollectionData collectionData) {
+    return this.id.compareTo(collectionData.id);
+  }
 }
