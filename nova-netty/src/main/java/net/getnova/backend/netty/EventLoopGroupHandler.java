@@ -24,8 +24,4 @@ final class EventLoopGroupHandler {
     if (!this.bossGroup.isShutdown()) this.bossGroup.shutdownGracefully();
     if (!this.workGroup.isShutdown()) this.workGroup.shutdownGracefully();
   }
-
-  boolean isRunning() {
-    return !this.bossGroup.isShutdown() && !this.workGroup.isShutdown();
-  }
 }

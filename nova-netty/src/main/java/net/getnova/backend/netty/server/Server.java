@@ -54,17 +54,16 @@ public abstract class Server implements AutoCloseable {
         log.info("Server {} is now listening on {}.", this.id, this.channel.localAddress());
 
         this.channel.closeFuture().sync();
+        this.close();
+
       } catch (Exception e) {
-        log.error("Server " + this.id + " crashed. Restarting in 20 seconds.", e);
+        log.error("Server " + this.id + " crashed. Restarting in 20 seconds. ({})", e.getMessage());
 
         try {
           Thread.sleep(20000);
         } catch (InterruptedException ignored) {
         }
         this.start();
-
-      } finally {
-        this.close();
       }
     }, "server-" + this.id);
     this.thread.start();

@@ -3,8 +3,9 @@ package net.getnova.backend.netty.codec;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @EqualsAndHashCode
@@ -20,7 +21,8 @@ public class CodecHandler {
    * @param codecs the codecs which should be configured
    */
   public CodecHandler(final Codec... codecs) {
-    this.initializers = new LinkedList<>();
-    for (final Codec codec : codecs) this.initializers.add(codec.getInitializer());
+    this.initializers = Arrays.stream(codecs)
+      .map(Codec::getInitializer)
+      .collect(Collectors.toUnmodifiableList());
   }
 }
