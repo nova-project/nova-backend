@@ -78,9 +78,7 @@ public enum NovaLogLevel {
    * @return the {@link NovaLogLevel} with the specified name
    */
   public static NovaLogLevel getByName(final String name) {
-    for (final NovaLogLevel level : NovaLogLevel.values()) {
-      if (level.name().equalsIgnoreCase(name)) return level;
-    }
+    for (final NovaLogLevel level : NovaLogLevel.values()) if (level.name().equalsIgnoreCase(name)) return level;
     return ALL;
   }
 }
