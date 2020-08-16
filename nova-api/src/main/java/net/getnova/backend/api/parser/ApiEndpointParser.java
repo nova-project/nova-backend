@@ -41,9 +41,7 @@ final class ApiEndpointParser {
       return null;
     }
 
-    if (!hasAccess) if (!method.trySetAccessible()) {
-      return null;
-    }
+    if (!hasAccess && !method.trySetAccessible()) return null;
 
     if (!method.isAnnotationPresent(ApiEndpoint.class)) {
       if (!hasAccess) method.setAccessible(false);
