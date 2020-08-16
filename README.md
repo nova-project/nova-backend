@@ -17,3 +17,9 @@
 </p>
 
 ## Versions
+- [v1.0.5 (latest)](javadoc/1.0.5)
+- [v1.0.4](javadoc/1.0.4)
+- [v1.0.3](javadoc/1.0.3)
+- [v1.0.2](javadoc/1.0.2)
+- [v1.0.1](javadoc/1.0.1)
+- [v1.0.0](javadoc/1.0.0)
