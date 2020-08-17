@@ -7,7 +7,7 @@ import net.getnova.backend.json.JsonSerializable;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
@@ -18,7 +18,7 @@ public final class ApiEndpointData implements JsonSerializable, Comparable<ApiEn
   @NotNull
   private final String description;
   @NotNull
-  private final Set<ApiParameterData> parameters;
+  private final List<ApiParameterData> parameters;
   private final boolean enabled;
 
   @NotNull

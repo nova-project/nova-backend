@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.jar.Attributes;
@@ -60,7 +60,7 @@ final class ModuleLoader {
       final String moduleVersion = loadValue(jarFile, attributes, "Module-Version");
       final String moduleServices = loadValue(jarFile, attributes, "Module-Services");
 
-      final Set<Class<?>> services = new LinkedHashSet<>();
+      final Set<Class<?>> services = new HashSet<>();
       for (final String serviceName : moduleServices.split(",")) {
         try {
           services.add(loader.loadClass(serviceName));

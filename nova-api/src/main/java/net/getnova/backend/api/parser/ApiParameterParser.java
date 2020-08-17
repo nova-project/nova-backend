@@ -8,8 +8,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 @Slf4j
 final class ApiParameterParser {
@@ -19,8 +19,8 @@ final class ApiParameterParser {
   }
 
   @Nullable
-  static Set<ApiParameterData> parseParameters(@NotNull final Class<?> clazz, @NotNull final Method method) {
-    final Set<ApiParameterData> parameterData = new LinkedHashSet<>();
+  static List<ApiParameterData> parseParameters(@NotNull final Class<?> clazz, @NotNull final Method method) {
+    final List<ApiParameterData> parameterData = new LinkedList<>();
     for (final Parameter parameter : method.getParameters()) {
 
       final ApiParameterData currentParameterData = parseParameter(parameter);

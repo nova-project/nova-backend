@@ -15,9 +15,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -44,8 +44,8 @@ final class ConfigUtils {
     throw new UnsupportedOperationException();
   }
 
-  static Set<ConfigValueData> parseConfig(final Object object) {
-    final Set<ConfigValueData> values = new LinkedHashSet<>();
+  static List<ConfigValueData> parseConfig(final Object object) {
+    final List<ConfigValueData> values = new LinkedList<>();
 
     for (final Field field : object.getClass().getDeclaredFields()) {
       if (!field.isAnnotationPresent(ConfigValue.class)) continue;
@@ -59,7 +59,7 @@ final class ConfigUtils {
     return values;
   }
 
-  static void loadFromFile(final File file, final Map<String, Set<ConfigValueData>> configs) throws IOException {
+  static void loadFromFile(final File file, final Map<String, List<ConfigValueData>> configs) throws IOException {
     try (InputStream inputStream = new FileInputStream(file)) {
       final Map<String, Object> data = YAML.load(inputStream);
 
@@ -74,7 +74,7 @@ final class ConfigUtils {
     }
   }
 
-  static void loadFromEnvironment(final Map<String, Set<ConfigValueData>> configs) {
+  static void loadFromEnvironment(final Map<String, List<ConfigValueData>> configs) {
     final Map<String, String> environment = System.getenv();
 
     configs.forEach((id, values) -> values.forEach(valueData -> {
@@ -84,13 +84,13 @@ final class ConfigUtils {
     }));
   }
 
-  static void save(final File configFile, final Map<String, Set<ConfigValueData>> configs) throws IOException {
+  static void save(final File configFile, final Map<String, List<ConfigValueData>> configs) throws IOException {
     try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(configFile)))) {
       final Map<String, Object> values = new LinkedHashMap<>();
 
       boolean lowLevel;
       Map<String, Object> currentMap;
-      for (final Map.Entry<String, Set<ConfigValueData>> configEntry : configs.entrySet()) {
+      for (final Map.Entry<String, List<ConfigValueData>> configEntry : configs.entrySet()) {
         lowLevel = configEntry.getKey() == null || configEntry.getKey().isEmpty() || configEntry.getKey().isBlank();
         currentMap = lowLevel ? values : new LinkedHashMap<>();
 

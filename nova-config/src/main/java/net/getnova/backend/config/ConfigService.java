@@ -8,8 +8,8 @@ import net.getnova.backend.service.event.PreInitServiceEvent;
 import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -21,7 +21,7 @@ import java.util.TreeMap;
 @Singleton
 public class ConfigService {
 
-  private final Map<String, Set<ConfigValueData>> configs;
+  private final Map<String, List<ConfigValueData>> configs;
   private final File configFile;
   private boolean environment;
 

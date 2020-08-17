@@ -11,9 +11,9 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -55,11 +55,11 @@ final class ApiEndpointParser {
     }
 
     final ApiEndpoint endpointAnnotation = method.getAnnotation(ApiEndpoint.class);
-    final Set<ApiParameterData> parameters = ApiParameterParser.parseParameters(clazz, method);
+    final List<ApiParameterData> parameters = ApiParameterParser.parseParameters(clazz, method);
 
     return new ApiEndpointData(endpointAnnotation.id(),
       String.join("\n", endpointAnnotation.description()),
-      parameters == null ? Collections.emptySet() : parameters,
+      parameters == null ? Collections.emptyList() : parameters,
       parameters != null,
       instance, clazz, method);
   }
