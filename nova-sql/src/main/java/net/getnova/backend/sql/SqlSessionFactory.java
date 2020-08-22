@@ -24,7 +24,7 @@ class SqlSessionFactory implements AutoCloseable {
         .enableAutoClose()
         .build());
     } catch (HibernateException e) {
-      throw e.getCause() == null ? new SqlException(e.getMessage(), e) : new SqlException(e.getCause().getMessage().split(":", 2)[1]);
+      throw new SqlException(e.getMessage(), e);
     }
   }
 
