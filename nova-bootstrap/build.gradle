@@ -3,15 +3,16 @@ plugins {
 }
 
 application {
-  mainClassName 'net.getnova.backend.Bootstrap'
+  mainClassName = 'net.getnova.backend.Bootstrap'
 }
 
 dependencies {
   implementation project(':nova-logging')
+  implementation project(':nova-bootstrap-api')
   implementation 'commons-cli:commons-cli:1.4'
 
   rootProject.allprojects {
-    if (project.name.toLowerCase() != 'nova-bootstrap' && project != rootProject && !project.name.toLowerCase().contains('test')) {
+    if (!project.name.contains('boot') && project != rootProject && !project.name.toLowerCase().contains('test')) {
       implementation project
     }
   }

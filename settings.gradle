@@ -12,4 +12,5 @@ include 'nova-modules'
 include 'nova-api'
 include 'nova-json'
 include 'nova-bootstrap-api'
+include 'nova-boot'
 

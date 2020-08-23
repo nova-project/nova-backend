@@ -31,9 +31,18 @@
         <module name="nova-backend.nova-test-utils.test" />
         <module name="nova-backend.nova-api.main" />
         <module name="nova-backend.nova-bootstrap.test" />
+        <module name="nova-backend.nova-boot.test" />
         <module name="nova-backend.nova-sql.test" />
         <module name="nova-backend.nova-netty.test" />
         <module name="nova-backend.nova-logging.main" />
+      </profile>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-context-indexer/5.2.8.RELEASE/295bce69b2a9563ad1f82eb77400c2815f713c94/spring-context-indexer-5.2.8.RELEASE.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.12/48e4e5d60309ebd833bc528dcf77668eab3cd72c/lombok-1.18.12.jar" />
+        </processorPath>
+        <module name="nova-backend.nova-boot.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="14" />

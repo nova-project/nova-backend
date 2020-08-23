@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'java-library'
+}
+
+application {
+    mainClassName = 'net.getnova.backend.boot.Bootstrap'
+}
+
+dependencies {
+    /* Logging */
+    api 'org.slf4j:slf4j-api:1.7.30'
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+    implementation 'io.sentry:sentry-logback:1.7.30'
+
+    /* Bootstrapping & Dependency Injection */
+    api 'org.springframework:spring-context:5.2.8.RELEASE'
+    annotationProcessor "org.springframework:spring-context-indexer:5.2.8.RELEASE"
+    api 'jakarta.annotation:jakarta.annotation-api:1.3.5'
+}

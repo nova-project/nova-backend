@@ -12,16 +12,31 @@
               <option name="patterns">
                 <list>
                   <Item>
-                    <option name="path" value=".github/workflows/github-packages.yaml" />
-                  </Item>
-                  <Item>
                     <option name="path" value=".github/workflows/build.yaml" />
                   </Item>
                   <Item>
                     <option name="path" value=".github/workflows/docker.yaml" />
                   </Item>
                   <Item>
+                    <option name="path" value=".github/workflows/github-packages.yaml" />
+                  </Item>
+                  <Item>
                     <option name="path" value=".github/workflows/javadocs.yaml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="windows-terminal">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="windows-terminal" />
+              <option name="relativePathToSchema" value="https://raw.githubusercontent.com/microsoft/terminal/release-1.1/doc/cascadia/profiles.schema.json" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.json5" />
                   </Item>
                 </list>
               </option>
