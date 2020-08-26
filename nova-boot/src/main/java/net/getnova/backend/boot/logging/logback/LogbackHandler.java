@@ -61,7 +61,8 @@ public final class LogbackHandler implements LoggingHandler {
   private void printBanner(final List<String> banner) {
     final String version = LogbackHandler.class.getPackage().getImplementationVersion();
     System.out.println(ANSIConstants.ESC_START + AnsiStyle.BOLD + ";" + AnsiColor.BRIGHT_BLUE + ANSIConstants.ESC_END
-      + BANNER_SPACING + String.join(CoreConstants.LINE_SEPARATOR + BANNER_SPACING, banner)
+      + BANNER_SPACING + String.join(CoreConstants.LINE_SEPARATOR + BANNER_SPACING
+      + ANSIConstants.ESC_START + AnsiStyle.BOLD + ";" + AnsiColor.BRIGHT_BLUE + ANSIConstants.ESC_END, banner)
       + CoreConstants.LINE_SEPARATOR
       + BANNER_SPACING + ":: Nova Backend (" + (version == null ? "development" : version) + ") :: Java Runtime: " + System.getProperty("java.version")
       + " (" + System.getProperty("java.vendor") + ") ::"
