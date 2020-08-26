@@ -93,7 +93,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: nova-backend
-          path: nova-bootstrap/build/install/nova-bootstrap
+          path: nova-boot/build/install/nova-boot
 
   docker:
     needs: build

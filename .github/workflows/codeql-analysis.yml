@@ -52,7 +52,7 @@ jobs:
       #    uses a compiled language
 
       #- run: |
-      #   make bootstrap
+      #   make boot
       #   make release
 
       - name: Perform CodeQL Analysis
