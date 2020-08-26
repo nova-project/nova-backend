@@ -26,10 +26,13 @@ public final class ModuleService {
       final ModuleLoader.Result result = ModuleLoader.loadModules(this.moduleFolder);
       Thread.currentThread().setContextClassLoader(result.getLoader());
       result.getModules().forEach(module -> {
-        this.bootstrap.addConfiguration(module.getMainClass());
-        for (final Class<?> service : module.getServices()) this.bootstrap.addConfiguration(service);
+//        this.bootstrap.addConfiguration(module.getMainClass());
+//        ModuleLoader.loadConfigurations(module.getServices()).forEach(this.bootstrap::addConfiguration);
       });
-      if (!result.getModules().isEmpty()) this.bootstrap.refresh();
+//      if (!result.getModules().isEmpty()) this.bootstrap.refresh();
+    } catch (ModuleException e) {
+      if (e.getCause() != null) log.error(e.getMessage(), e.getCause());
+      else log.error(e.getMessage());
     } catch (IOException e) {
       log.error("Unable to load modules.", e);
     }

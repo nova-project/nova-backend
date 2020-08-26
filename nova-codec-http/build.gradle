@@ -1,9 +1,10 @@
 apply plugin: 'java-library'
 
 dependencies {
-  implementation project(':nova-logging')
-  implementation project(':nova-service')
-  implementation project(':nova-config')
-  api project(':nova-netty')
-  implementation 'javax.activation:activation:1.1.1'
+    implementation(project(':nova-boot'))
+    api(project(':nova-netty'))
+
+    annotationProcessor("org.springframework:spring-context-indexer:5.2.8.RELEASE")
+    api('javax.activation:activation:1.1.1')
+//    api('jakarta.activation:jakarta.activation-api:1.2.2')
 }

@@ -1,30 +1,30 @@
 plugins {
-  id 'base'
-  id 'io.freefair.git-version' version '5.1.1'
-  id 'io.freefair.aggregate-javadoc' version '5.1.1'
-  id 'io.freefair.lombok' version '5.1.1' apply false
-  id 'io.freefair.javadoc-utf-8' version '5.1.1'
+    id 'base'
+    id 'io.freefair.git-version' version '5.1.1'
+    id 'io.freefair.aggregate-javadoc' version '5.1.1'
+    id 'io.freefair.lombok' version '5.1.1' apply false
+    id 'io.freefair.javadoc-utf-8' version '5.1.1'
 //    id 'io.freefair.javadoc-links' version '5.1.0'
 //    id 'io.freefair.aggregate-jacoco-report' version '5.1.0'
-  id 'nebula.project' version '7.0.9' apply false
-  id 'com.jfrog.bintray' version '1.8.5' apply false
+    id 'nebula.project' version '7.0.9' apply false
+    id 'com.jfrog.bintray' version '1.8.5' apply false
 }
 
 version version.toString().startsWith('v') ? version.toString().substring(1) : version
 version version.toString() == 'master-SNAPSHOT' ? "edge" : version
 
 allprojects {
-  group 'net.getnova.backend'
-  version rootProject.version
+    group 'net.getnova.backend'
+    version rootProject.version
 }
 
 subprojects {
-  apply plugin: "nebula.project"
-  apply from: "${rootDir}/gradle/java.gradle"
-  apply from: "${rootDir}/gradle/lombok.gradle"
-  apply from: "${rootDir}/gradle/test.gradle"
-  apply from: "${rootDir}/gradle/checkstyle.gradle"
-  apply from: "${rootDir}/gradle/javadoc.gradle"
-  apply from: "${rootDir}/gradle/jacoco.gradle"
-  apply from: "${rootDir}/gradle/bintray.gradle"
+    apply plugin: "nebula.project"
+    apply from: "${rootDir}/gradle/java.gradle"
+    apply from: "${rootDir}/gradle/lombok.gradle"
+    apply from: "${rootDir}/gradle/test.gradle"
+//    apply from: "${rootDir}/gradle/checkstyle.gradle"
+    apply from: "${rootDir}/gradle/javadoc.gradle"
+    apply from: "${rootDir}/gradle/jacoco.gradle"
+    apply from: "${rootDir}/gradle/bintray.gradle"
 }

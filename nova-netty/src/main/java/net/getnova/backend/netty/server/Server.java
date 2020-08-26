@@ -9,12 +9,12 @@ import io.netty.channel.epoll.Epoll;
 import io.netty.handler.ssl.SslContext;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.netty.NettyInitializer;
-import net.getnova.backend.netty.NettyService;
+import net.getnova.backend.netty.NettyModule;
 import net.getnova.backend.netty.codec.CodecHandler;
 
-import javax.inject.Inject;
 import java.net.SocketAddress;
 
 @RequiredArgsConstructor
@@ -27,8 +27,8 @@ public abstract class Server implements AutoCloseable {
   private final SocketAddress address;
   private final SslContext sslContext;
   private final CodecHandler codecHandler;
-  @Inject
-  private NettyService nettyService;
+  @Setter
+  private NettyModule nettyModule;
   private Thread thread;
   private Channel channel;
 
@@ -44,7 +44,7 @@ public abstract class Server implements AutoCloseable {
         this.channel = new ServerBootstrap()
           .option(ChannelOption.SO_BACKLOG, 1024)
           .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-          .group(this.nettyService.getBossGroup(), this.nettyService.getWorkerGroup())
+          .group(this.nettyModule.getBossGroup(), this.nettyModule.getWorkerGroup())
           .channel(this.getServerChannelType(EPOLL))
           .childHandler(new NettyInitializer(this.sslContext, this.codecHandler.getInitializers()))
           .bind(this.address)

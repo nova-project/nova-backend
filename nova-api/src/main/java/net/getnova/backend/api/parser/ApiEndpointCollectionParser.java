@@ -6,6 +6,7 @@ import net.getnova.backend.api.data.ApiEndpointData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -19,7 +20,7 @@ public final class ApiEndpointCollectionParser {
   }
 
   @NotNull
-  public static Set<ApiEndpointCollectionData> parseCollections(@NotNull final Set<Object> instances) {
+  public static Set<ApiEndpointCollectionData> parseCollections(@NotNull final Collection<Object> instances) {
     return instances.stream()
       .map(ApiEndpointCollectionParser::parseCollection)
       .filter(Objects::nonNull)

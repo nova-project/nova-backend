@@ -11,7 +11,6 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.codec.http.HttpUtils;
-import net.getnova.backend.injection.InjectionHandler;
 
 import java.net.URI;
 import java.util.AbstractMap;
@@ -23,7 +22,6 @@ import java.util.Map;
 @Slf4j
 class HttpServerContentDecoder extends MessageToMessageDecoder<HttpRequest> {
 
-  private final InjectionHandler injectionHandler;
   private final Map<String, HttpLocationProvider<?>> locationProviders;
 
   @Override
@@ -76,7 +74,7 @@ class HttpServerContentDecoder extends MessageToMessageDecoder<HttpRequest> {
     for (final Map.Entry<String, HttpLocationProvider<?>> locationProvider : this.locationProviders.entrySet()) {
       if (path.startsWith(locationProvider.getKey())) {
         final HttpLocation<?> location = locationProvider.getValue().getLocation();
-        this.injectionHandler.getInjector().injectMembers(location);
+//        this.injectionHandler.getInjector().injectMembers(location); FIXME
         return new AbstractMap.SimpleEntry<>(locationProvider.getKey(), location);
       }
     }

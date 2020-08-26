@@ -10,7 +10,7 @@ import java.net.URI;
 
 /**
  * A {@link HttpLocation} is a path on a web space.
- * It's uses in the {@link HttpServerService} to provide easy path mapping.
+ * It's uses in the {@link HttpServerModule} to provide easy path mapping.
  * That meas you can use different handlers for differed paths.
  *
  * @param <T> the type of the message type which is received from the client.

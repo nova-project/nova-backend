@@ -1,14 +1,13 @@
 package net.getnova.backend.api.handler.rest;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
-import net.getnova.backend.config.ConfigValue;
+import lombok.Getter;
+import net.getnova.backend.boot.config.Config;
+import org.springframework.beans.factory.annotation.Value;
 
-@Data
-@Setter(AccessLevel.NONE)
+@Getter
+@Config
 public final class RestApiConfig {
 
-  @ConfigValue(id = "path", comment = "The path of in the url, were the rest api is available.")
-  private String path = "api";
+  @Value("${REST_API_PATH:api}")
+  private String path;
 }

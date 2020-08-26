@@ -1,17 +1,16 @@
 package net.getnova.backend.api.handler.playground;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
-import net.getnova.backend.config.ConfigValue;
+import lombok.Getter;
+import net.getnova.backend.boot.config.Config;
+import org.springframework.beans.factory.annotation.Value;
 
-@Data
-@Setter(AccessLevel.NONE)
+@Getter
+@Config
 public final class PlaygroundConfig {
 
-  @ConfigValue(id = "enabled", comment = "Specifies whether the playground should be made available.")
-  private boolean enabled = false;
+  @Value("${PLAYGROUND_ENABELD:false}")
+  private boolean enabled;
 
-  @ConfigValue(id = "path", comment = "The path of in the url, were the playground is available.")
-  private String path = "playground";
+  @Value("${PLAYGROUND_PATH:playground}")
+  private String path;
 }

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.jar.Attributes;
@@ -16,7 +17,7 @@ import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
 @Slf4j
-final class ModuleLoader {
+public final class ModuleLoader {
 
   private ModuleLoader() {
     throw new UnsupportedOperationException();
@@ -37,13 +38,29 @@ final class ModuleLoader {
       .map(file -> {
         try {
           return loadModule(loader, file);
+        } catch (ModuleException e) {
+          if (e.getCause() != null) log.error(e.getMessage(), e.getCause());
+          else log.error(e.getMessage());
         } catch (IOException e) {
           log.error("Unable to load module.", e);
-          return null;
         }
+        return null;
       })
       .filter(Objects::nonNull)
       .collect(Collectors.toUnmodifiableSet()));
+  }
+
+  public static Set<Class<?>> loadModules(final Class<?>[] classes) {
+    final Set<Class<?>> configurations = new HashSet<>();
+    for (final Class<?> clazz : classes) {
+      if (!clazz.isAnnotationPresent(Module.class)) {
+        log.error("The requested configuration class {} does not have the Annotation {}.", clazz.getName(), Module.class.getName());
+        continue;
+      }
+      configurations.addAll(loadModules(clazz.getAnnotation(Module.class).value()));
+      configurations.add(clazz);
+    }
+    return configurations;
   }
 
   private static ModuleData loadModule(final ClassLoader loader, final File file) throws IOException {

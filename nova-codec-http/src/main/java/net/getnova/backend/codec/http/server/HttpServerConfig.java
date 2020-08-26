@@ -1,19 +1,16 @@
 package net.getnova.backend.codec.http.server;
 
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
-import net.getnova.backend.config.ConfigValue;
+import net.getnova.backend.boot.config.Config;
+import org.springframework.beans.factory.annotation.Value;
 
-@Data
+@Config
 @Getter(AccessLevel.PACKAGE)
-@Setter(AccessLevel.NONE)
 class HttpServerConfig {
 
-  @ConfigValue(id = "host", comment = "The host of the http server.")
-  private String host = "0.0.0.0";
-
-  @ConfigValue(id = "port", comment = "The port of the server.")
-  private int port = 6060;
+  @Value("${HTTP_PORT:6060}")
+  private final int port = 6060;
+  @Value("${HTTP_HOST:0.0.0.0}")
+  private String host;
 }

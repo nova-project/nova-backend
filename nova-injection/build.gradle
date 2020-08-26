@@ -1,6 +1,0 @@
-apply plugin: 'java-library'
-
-dependencies {
-  implementation project(':nova-logging')
-  api 'com.google.inject:guice:4.2.3'
-}

@@ -1,6 +1,6 @@
 apply plugin: 'java-library'
 
 dependencies {
-  implementation project(':nova-logging')
-  api 'com.google.code.gson:gson:2.8.6'
+    implementation project(':nova-boot')
+    api 'com.google.code.gson:gson:2.8.6'
 }

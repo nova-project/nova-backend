@@ -1,10 +1,8 @@
 apply plugin: 'java-library'
 
 dependencies {
-  implementation project(':nova-logging')
-  implementation project(':nova-injection')
-  implementation project(':nova-service')
-  implementation project(':nova-json')
-  implementation project(':nova-codec-http')
-  implementation project(':nova-config')
+    implementation(project(':nova-boot'))
+    implementation(project(':nova-json'))
+    implementation(project(':nova-codec-http'))
+    annotationProcessor("org.springframework:spring-context-indexer:5.2.8.RELEASE")
 }
