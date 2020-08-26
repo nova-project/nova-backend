@@ -64,7 +64,8 @@ public final class LogbackHandler implements LoggingHandler {
       + BANNER_SPACING + String.join(CoreConstants.LINE_SEPARATOR + BANNER_SPACING
       + ANSIConstants.ESC_START + AnsiStyle.BOLD + ";" + AnsiColor.BRIGHT_BLUE + ANSIConstants.ESC_END, banner)
       + CoreConstants.LINE_SEPARATOR
-      + BANNER_SPACING + ":: Nova Backend (" + (version == null ? "development" : version) + ") :: Java Runtime: " + System.getProperty("java.version")
+      + BANNER_SPACING + ANSIConstants.ESC_START + AnsiStyle.BOLD + ";" + AnsiColor.BRIGHT_BLUE + ANSIConstants.ESC_END
+      + ":: Nova Backend (" + (version == null ? "development" : version) + ") :: Java Runtime: " + System.getProperty("java.version")
       + " (" + System.getProperty("java.vendor") + ") ::"
       + ANSIConstants.ESC_START + AnsiStyle.RESET + ANSIConstants.ESC_END
       + CoreConstants.LINE_SEPARATOR
