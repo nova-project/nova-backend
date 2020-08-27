@@ -17,7 +17,7 @@ RUN set -o errexit -o nounset \
 WORKDIR ${DATA_DIR}
 COPY --chown=nova:nova ./nova-backend/ ${NOVA_HOME}/
 
-RUN ln --symbolic ${NOVA_HOME}/bin/nova-boot /usr/bin/nova \
+RUN ln --symbolic ${NOVA_HOME}/bin/nova-starter /usr/bin/nova \
   && chmod +x /usr/bin/nova
 USER ${NOVA_USER}
 

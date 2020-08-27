@@ -14,7 +14,7 @@ COPY --chown=gradle:gradle . /home/${GRADLE_USER}/src
 WORKDIR /home/${GRADLE_USER}/src
 
 USER ${GRADLE_USER}
-RUN chmod +x ./gradlew && ./gradlew installDist --stacktrace --no-daemon
+RUN chmod +x ./gradlew && ./gradlew :nova-starter:installDist --stacktrace --no-daemon
 
 FROM adoptopenjdk:14-jre-hotspot
 
@@ -33,9 +33,9 @@ RUN set -o errexit -o nounset \
     && chown --recursive ${NOVA_USER}:${NOVA_GROUP} /home/${NOVA_USER}
 
 WORKDIR ${DATA_DIR}
-COPY --from=builder --chown=nova:nova /home/${GRADLE_USER}/src/nova-boot/build/install/nova-boot/ ${NOVA_HOME}/
+COPY --from=builder --chown=nova:nova /home/${GRADLE_USER}/src/nova-starter/build/install/nova-starter/ ${NOVA_HOME}/
 
-RUN ln --symbolic ${NOVA_HOME}/bin/nova-boot /usr/bin/nova \
+RUN ln --symbolic ${NOVA_HOME}/bin/nova-starter /usr/bin/nova \
   && chmod +x /usr/bin/nova
 USER ${NOVA_USER}
 

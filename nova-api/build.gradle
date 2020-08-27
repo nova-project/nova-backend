@@ -1,8 +1,14 @@
-apply plugin: 'java-library'
+plugins {
+  id 'java'
+  id 'java-library'
+}
 
 dependencies {
-    compileOnly(project(':nova-boot'))
-    implementation(project(':nova-json'))
-    implementation(project(':nova-codec-http'))
-    annotationProcessor("org.springframework:spring-context-indexer:5.2.8.RELEASE")
+  compileOnly(project(':nova-boot'))
+  implementation(project(':nova-json'))
+  implementation(project(':nova-codec-http'))
+  annotationProcessor("org.springframework:spring-context-indexer:5.2.8.RELEASE")
+
+  /* Util */
+  compileOnly('org.jetbrains:annotations:20.0.0')
 }

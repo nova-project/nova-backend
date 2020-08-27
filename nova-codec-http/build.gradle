@@ -1,10 +1,16 @@
-apply plugin: 'java-library'
+plugins {
+  id 'java'
+  id 'java-library'
+}
 
 dependencies {
-    compileOnly(project(':nova-boot'))
-    api(project(':nova-netty'))
+  compileOnly(project(':nova-boot'))
+  api(project(':nova-netty'))
 
-    annotationProcessor("org.springframework:spring-context-indexer:5.2.8.RELEASE")
-    api('javax.activation:activation:1.1.1')
+  annotationProcessor("org.springframework:spring-context-indexer:5.2.8.RELEASE")
+  api('javax.activation:activation:1.1.1')
 //    api('jakarta.activation:jakarta.activation-api:1.2.2')
+
+  /* Util */
+  compileOnly('org.jetbrains:annotations:20.0.0')
 }

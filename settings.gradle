@@ -6,4 +6,5 @@ include 'nova-codec-http'
 include 'nova-api'
 include 'nova-json'
 include 'nova-boot'
+include 'nova-starter'
 

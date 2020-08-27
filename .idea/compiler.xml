@@ -13,9 +13,11 @@
         <module name="nova-backend.nova-test-utils.main" />
         <module name="nova-backend.nova-codec-http.test" />
         <module name="nova-backend.nova-boot.test" />
+        <module name="nova-backend.nova-starter.main" />
         <module name="nova-backend.nova-api.test" />
         <module name="nova-backend.nova-data-jpa.test" />
         <module name="nova-backend.nova-netty.test" />
+        <module name="nova-backend.nova-starter.test" />
         <module name="nova-backend.nova-json.test" />
       </profile>
       <profile name="Gradle Imported" enabled="true">
