@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Bootstrap" type="Application" factoryName="Application" nameIsGenerated="true">
     <envs>
+      <env name="SQL_SERVER_LOCATION" value="mariadb://[::1]:3306" />
       <env name="DEBUG" value="true" />
-      <env name="LOG_LEVEL" value="DEBUG" />
     </envs>
     <option name="MAIN_CLASS_NAME" value="net.getnova.backend.boot.Bootstrap" />
     <module name="nova-backend.nova-boot.main" />
