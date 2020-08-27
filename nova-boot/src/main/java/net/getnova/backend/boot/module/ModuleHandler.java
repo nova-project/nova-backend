@@ -46,10 +46,7 @@ public class ModuleHandler {
     try {
       final ModuleLoader.Result result = ModuleLoader.loadModules(this.moduleFolder);
       Thread.currentThread().setContextClassLoader(result.getLoader());
-      result.getModules().forEach(module -> {
-        contextHandler.register(module.getMainClass());
-        contextHandler.register(ModuleLoader.loadModules(module.getServices()).toArray(new Class<?>[0]));
-      });
+      result.getModules().forEach(module -> contextHandler.register(ModuleLoader.loadModules(module.getMainClass()).toArray(new Class[0])));
     } catch (ModuleException e) {
       if (e.getCause() != null) log.error(e.getMessage(), e.getCause());
       else log.error(e.getMessage());

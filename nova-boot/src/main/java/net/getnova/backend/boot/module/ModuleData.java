@@ -9,5 +9,4 @@ public class ModuleData {
   private final String version;
 
   private final Class<?> mainClass;
-  private final Class<?>[] services;
 }

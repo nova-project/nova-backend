@@ -25,14 +25,14 @@ public final class ModuleLoader {
 
   static Result loadModules(final File moduleFolder) throws IOException {
     if (!moduleFolder.exists()) {
-      throw new ModuleException("Module folder \"" + moduleFolder.getAbsolutePath() + "\" not found.");
+      throw new ModuleException(String.format("Module folder \"%s\" not found.", moduleFolder.getAbsolutePath()));
     }
 
     final File[] files = moduleFolder.listFiles();
     final URL[] urls = new URL[files.length];
 
     for (int i = 0; i < files.length; i++) urls[i] = files[i].toURI().toURL();
-    final ClassLoader loader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
+    final ClassLoader loader = URLClassLoader.newInstance(urls, ModuleLoader.class.getClassLoader());
 
     return new Result(loader, Arrays.stream(files)
       .map(file -> {
@@ -50,7 +50,7 @@ public final class ModuleLoader {
       .collect(Collectors.toUnmodifiableSet()));
   }
 
-  public static Set<Class<?>> loadModules(final Class<?>[] classes) {
+  public static Set<Class<?>> loadModules(final Class<?>... classes) {
     final Set<Class<?>> configurations = new HashSet<>();
     for (final Class<?> clazz : classes) {
       if (!clazz.isAnnotationPresent(Module.class)) {
@@ -68,7 +68,7 @@ public final class ModuleLoader {
 
       final Manifest manifest = jarFile.getManifest();
       if (manifest == null) {
-        throw new ModuleException("Missing manifest file in jar file \"" + jarFile.getName() + "\".");
+        throw new ModuleException(String.format("Missing manifest in jar file \"%s\".", jarFile.getName()));
       }
 
       final Attributes attributes = manifest.getMainAttributes();
@@ -78,28 +78,27 @@ public final class ModuleLoader {
 
       Class<?> mainClass;
       try {
-        mainClass = loader.loadClass(moduleName);
+        log.info(Arrays.toString(loader.getDefinedPackages()));
+        mainClass = Class.forName(moduleMainClassName, true, loader);
       } catch (ClassNotFoundException e) {
-        throw new ModuleException("Module main class \"" + moduleMainClassName + "\" can not found in jar file \"" + jarFile.getName() + "\".");
+        throw new ModuleException(String.format("Module (\"%s\") main class \"%s\" can not found in jar file \"%s\".",
+          moduleName, moduleMainClassName, jarFile.getName()));
       }
 
       if (!mainClass.isAnnotationPresent(Module.class)) {
-        throw new ModuleException("Module " + moduleName + " main class " + moduleMainClassName + " is missing annotation " + Module.class.getName() + ".");
+        throw new ModuleException(String.format("Module (\"%s\") main class \"%s\" is missing annotation \"%s\".",
+          moduleName, moduleMainClassName, Module.class.getName()));
       }
 
-      final Class<?>[] configurations = mainClass.getAnnotation(Module.class).value();
-      for (Class<?> configuration : configurations)
-        if (!configuration.isAnnotationPresent(Module.class))
-          throw new ModuleException("Module " + moduleName + " depends on configuration witch is missing annotation " + Module.class.getName() + ".");
-
-      return new ModuleData(moduleName, moduleVersion, mainClass, configurations);
+      return new ModuleData(moduleName, moduleVersion, mainClass);
     }
   }
 
   private static String loadValue(final JarFile jarFile, final Attributes attributes, final String name) throws ModuleException {
     final String value = attributes.getValue(name);
     if (value == null) {
-      throw new ModuleException("Missing manifest attribute \"" + name + "\" in jar file \"" + jarFile.getName() + "\".");
+      throw new ModuleException(String.format("Missing manifest attribute \"%s\" in jar file \"%s\".",
+        name, jarFile.getName()));
     }
     return value;
   }
