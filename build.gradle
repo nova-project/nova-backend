@@ -5,7 +5,6 @@ plugins {
     id 'io.freefair.lombok' version '5.1.1' apply false
     id 'io.freefair.javadoc-utf-8' version '5.1.1'
 //    id 'io.freefair.javadoc-links' version '5.1.0'
-//    id 'io.freefair.aggregate-jacoco-report' version '5.1.0'
     id 'nebula.project' version '7.0.9' apply false
     id 'com.jfrog.bintray' version '1.8.5' apply false
 }
@@ -15,6 +14,9 @@ version version.toString() == 'master-SNAPSHOT' ? "edge" : version
 
 allprojects {
     group 'net.getnova.backend'
+}
+
+subprojects {
     version rootProject.version
 }
 
@@ -25,6 +27,5 @@ subprojects {
     apply from: "${rootDir}/gradle/test.gradle"
 //    apply from: "${rootDir}/gradle/checkstyle.gradle"
     apply from: "${rootDir}/gradle/javadoc.gradle"
-    apply from: "${rootDir}/gradle/jacoco.gradle"
     apply from: "${rootDir}/gradle/bintray.gradle"
 }

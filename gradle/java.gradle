@@ -1,4 +1,4 @@
-apply plugin: "java"
+apply plugin: 'java'
 
 repositories {
     jcenter()
@@ -6,22 +6,18 @@ repositories {
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_14
 
-dependencies {
-    implementation 'org.jetbrains:annotations:20.0.0'
-}
-
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : project.name,
-                "Specification-Vendor"    : "Nova Project (https://github.com/getnova)",
-                "Specification-Version"   : project.version,
-                "Implementation-Vendor"   : "Nova Project (https://github.com/getnova)",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                'Specification-Title'     : project.name,
+                'Specification-Vendor'    : 'Nova Project (https://github.com/getnova)',
+                'Specification-Version'   : project.version,
+                'Implementation-Vendor'   : 'Nova Project (https://github.com/getnova)',
+                'Implementation-Timestamp': new Date().format('yyyy-MM-dd\'T\'HH:mm:ssZ')
         ])
     }
 }
 
 tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
+    options.encoding = 'UTF-8'
 }
