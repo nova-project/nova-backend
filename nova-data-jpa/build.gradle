@@ -16,7 +16,7 @@ dependencies {
   api('org.springframework.data:spring-data-jpa:2.3.3.RELEASE')
   implementation('com.zaxxer:HikariCP:3.4.5')
 
-  api('org.hibernate:hibernate-core:5.4.20.Final') {
+  api('org.hibernate:hibernate-core:5.4.21.Final') {
     exclude group: "javax.activation", module: "javax.activation-api"
     exclude group: "javax.persistence", module: "javax.persistence-api"
 //        exclude group: "javax.xml.bind", module: "jaxb-api"
