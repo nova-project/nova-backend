@@ -78,7 +78,6 @@ public final class ModuleLoader {
 
       Class<?> mainClass;
       try {
-        log.info(Arrays.toString(loader.getDefinedPackages()));
         mainClass = Class.forName(moduleMainClassName, true, loader);
       } catch (ClassNotFoundException e) {
         throw new ModuleException(String.format("Module (\"%s\") main class \"%s\" can not found in jar file \"%s\".",
