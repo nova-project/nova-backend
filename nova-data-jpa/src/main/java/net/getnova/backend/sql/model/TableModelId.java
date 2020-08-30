@@ -1,7 +1,7 @@
 package net.getnova.backend.sql.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.util.UUID;
 
-@Data
+@Getter
 @MappedSuperclass
 @NoArgsConstructor
 @AllArgsConstructor

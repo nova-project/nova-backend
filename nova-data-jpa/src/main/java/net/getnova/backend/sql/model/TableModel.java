@@ -1,7 +1,7 @@
 package net.getnova.backend.sql.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.getnova.backend.json.JsonTransient;
 
@@ -9,7 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
-@Data
+@Getter
 @MappedSuperclass
 @NoArgsConstructor
 @AllArgsConstructor
