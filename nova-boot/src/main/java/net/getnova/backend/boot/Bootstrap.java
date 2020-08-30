@@ -45,6 +45,7 @@ public class Bootstrap {
 
     this.moduleHandler.loadModules();
     this.moduleHandler.loadDebugModules(args);
+    this.contextHandler.setClassLoader(this.moduleHandler.getLoader());
 
     Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown, "shutdown"));
     if (!this.contextHandler.refresh()) this.shutdown();

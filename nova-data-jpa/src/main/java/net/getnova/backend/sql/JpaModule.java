@@ -2,7 +2,9 @@ package net.getnova.backend.sql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.pool.HikariPool;
 import lombok.extern.slf4j.Slf4j;
+import net.getnova.backend.boot.Bootstrap;
 import net.getnova.backend.boot.module.Module;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -19,9 +21,11 @@ import java.nio.charset.StandardCharsets;
 @ComponentScan
 public class JpaModule {
 
+  private final Bootstrap bootstrap;
   private final SqlConfig config;
 
-  public JpaModule(final SqlConfig config) {
+  public JpaModule(final Bootstrap bootstrap, final SqlConfig config) {
+    this.bootstrap = bootstrap;
     this.config = config;
   }
 
@@ -44,7 +48,13 @@ public class JpaModule {
     config.setMaximumPoolSize(20);
     config.setMinimumIdle(5);
 
-    return new HikariDataSource(config);
+    try {
+      return new HikariDataSource(config);
+    } catch (HikariPool.PoolInitializationException e) {
+      log.error("Unable to connect to database: {}", e.getMessage());
+      this.bootstrap.shutdown();
+      return null;
+    }
   }
 
   @Bean

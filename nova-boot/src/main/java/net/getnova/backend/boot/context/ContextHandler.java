@@ -28,6 +28,10 @@ public class ContextHandler {
     }
   }
 
+  public void setClassLoader(final ClassLoader loader) {
+    this.applicationContext.setClassLoader(loader);
+  }
+
   public void close() {
     this.applicationContext.close();
   }

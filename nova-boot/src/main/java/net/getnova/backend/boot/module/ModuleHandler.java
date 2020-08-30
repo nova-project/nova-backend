@@ -1,5 +1,6 @@
 package net.getnova.backend.boot.module;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.boot.Bootstrap;
 import net.getnova.backend.boot.context.ContextHandler;
@@ -15,6 +16,8 @@ public class ModuleHandler {
   private final Bootstrap bootstrap;
   private final File moduleFolder;
   private final boolean loadModules;
+  @Getter
+  private ClassLoader loader;
 
   public ModuleHandler(final Bootstrap bootstrap, final File moduleFolder) {
     this.bootstrap = bootstrap;
@@ -46,6 +49,7 @@ public class ModuleHandler {
     try {
       final ModuleLoader.Result result = ModuleLoader.loadModules(this.moduleFolder);
       Thread.currentThread().setContextClassLoader(result.getLoader());
+      this.loader = result.getLoader();
       result.getModules().forEach(module -> contextHandler.register(ModuleLoader.loadModules(module.getMainClass()).toArray(new Class[0])));
     } catch (ModuleException e) {
       if (e.getCause() != null) log.error(e.getMessage(), e.getCause());
