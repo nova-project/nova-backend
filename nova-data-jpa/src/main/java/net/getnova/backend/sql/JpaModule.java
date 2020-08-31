@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -59,21 +60,21 @@ public class JpaModule {
 
   @Bean
   public LocalContainerEntityManagerFactoryBean entityManagerFactory(final DataSource dataSource) {
-    final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
-    entityManagerFactoryBean.setDataSource(dataSource);
-    entityManagerFactoryBean.setPackagesToScan("net.getnova");
-
     final HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-//    jpaVendorAdapter.setPrepareConnection();
-//    jpaVendorAdapter.setGenerateDdl(true);
     jpaVendorAdapter.setShowSql(this.config.isShowStatements());
-    entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
+    jpaVendorAdapter.setGenerateDdl(true);
+
+    final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
     entityManagerFactoryBean.setJpaProperties(new SqlProperties(StandardCharsets.UTF_8));
+    entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
+    entityManagerFactoryBean.setPackagesToScan("net.getnova");
+    entityManagerFactoryBean.setDataSource(dataSource);
+
     return entityManagerFactoryBean;
   }
 
   @Bean
-  public JpaTransactionManager transactionManager(final EntityManagerFactory entityManagerFactory) {
+  public PlatformTransactionManager transactionManager(final EntityManagerFactory entityManagerFactory) {
     return new JpaTransactionManager(entityManagerFactory);
   }
 }
