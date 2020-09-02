@@ -8,5 +8,5 @@ dependencies {
   api('com.google.code.gson:gson:2.8.6')
 
   /* Util */
-  compileOnly('org.jetbrains:annotations:20.0.0')
+  compileOnly('org.jetbrains:annotations:20.1.0')
 }
