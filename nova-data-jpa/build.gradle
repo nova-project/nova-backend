@@ -30,5 +30,5 @@ dependencies {
   runtimeOnly('com.h2database:h2:1.4.200')
 
   /* Util */
-  compileOnly('org.jetbrains:annotations:20.0.0')
+  compileOnly('org.jetbrains:annotations:20.1.0')
 }
