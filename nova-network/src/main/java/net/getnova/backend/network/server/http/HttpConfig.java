@@ -15,9 +15,9 @@ public class HttpConfig {
   @Value("${HTTP_PORT:6060}")
   private int port;
 
-  @Value("${HTTP_TLS_CRT}")
+  @Value("${HTTP_TLS_CRT:}")
   private String crtPath;
 
-  @Value("${HTTP_TLS_KEY}")
+  @Value("${HTTP_TLS_KEY:}")
   private String keyPath;
 }

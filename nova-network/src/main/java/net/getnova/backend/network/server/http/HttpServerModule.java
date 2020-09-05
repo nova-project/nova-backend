@@ -24,7 +24,7 @@ public class HttpServerModule {
     final Bootstrap bootstrap,
     final HttpConfig config
   ) {
-    if (config.getCrtPath() != null && config.getKeyPath() != null) {
+    if (!config.getCrtPath().isBlank() && !config.getKeyPath().isBlank()) {
       this.server = new HttpServer("http",
         new InetSocketAddress(config.getHost(), config.getPort()), Duration.ofSeconds(10),
         new File(config.getCrtPath()), new File(config.getKeyPath()));
