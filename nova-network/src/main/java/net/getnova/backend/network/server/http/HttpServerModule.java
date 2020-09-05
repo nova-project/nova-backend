@@ -8,6 +8,7 @@ import net.getnova.backend.boot.Bootstrap;
 import net.getnova.backend.boot.module.Module;
 import org.springframework.context.annotation.ComponentScan;
 
+import java.io.File;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 
@@ -23,7 +24,13 @@ public class HttpServerModule {
     final Bootstrap bootstrap,
     final HttpConfig config
   ) {
-    this.server = new HttpServer("http", new InetSocketAddress(config.getHost(), config.getPort()), Duration.ofSeconds(10));
+    if (config.getCrtPath() != null && config.getKeyPath() != null) {
+      this.server = new HttpServer("http",
+        new InetSocketAddress(config.getHost(), config.getPort()), Duration.ofSeconds(10),
+        new File(config.getCrtPath()), new File(config.getKeyPath()));
+    } else {
+      this.server = new HttpServer("http", new InetSocketAddress(config.getHost(), config.getPort()), Duration.ofSeconds(10));
+    }
   }
 
   @PostConstruct

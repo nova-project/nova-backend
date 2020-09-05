@@ -45,9 +45,12 @@ public class HttpServer implements Server {
 
     if (this.certificateFile == null || this.keyFile == null)
       server = server.protocol(HttpProtocol.HTTP11);
-    else
+    else {
+      log.info("Using certificate ({}) and key ({}) for http server {} with tls.",
+        this.certificateFile.getAbsolutePath(), this.keyFile.getAbsolutePath(), this.id);
       server = server.protocol(HttpProtocol.HTTP11, HttpProtocol.H2)
         .secure(spec -> spec.sslContext(SslContextBuilder.forServer(this.certificateFile, this.keyFile)));
+    }
 
     server = server.route(routes -> this.routes = routes);
 
