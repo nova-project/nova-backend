@@ -3,6 +3,8 @@ package net.getnova.backend.sql;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.boot.Bootstrap;
 import net.getnova.backend.boot.module.Module;
@@ -12,10 +14,6 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
-
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Module
@@ -31,9 +29,8 @@ public class JpaModule {
   }
 
   @Bean
-  public DataSource dataSource() {
+  DataSource dataSource() {
     final HikariConfig config = new HikariConfig();
-
     config.setJdbcUrl("jdbc:" + this.config.getLocation() + "/" + this.config.getDatabase());
     config.setUsername(this.config.getUsername());
     config.setPassword(this.config.getPassword());
@@ -42,7 +39,7 @@ public class JpaModule {
 
     config.setIdleTimeout(600000); // 10 minutes
     config.setMaxLifetime(1800000); // 30 minutes
-    config.setConnectionTimeout(10000); // 10 seconds
+    config.setConnectionTimeout(10000); // 10 secondsH
     config.setInitializationFailTimeout(30000); // 30 seconds
     config.setValidationTimeout(5000); // 5 seconds
 
@@ -59,22 +56,22 @@ public class JpaModule {
   }
 
   @Bean
-  public LocalContainerEntityManagerFactoryBean entityManagerFactory(final DataSource dataSource) {
+  LocalContainerEntityManagerFactoryBean entityManagerFactory() {
     final HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
     jpaVendorAdapter.setShowSql(this.config.isShowStatements());
     jpaVendorAdapter.setGenerateDdl(true);
 
     final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
-    entityManagerFactoryBean.setJpaProperties(new SqlProperties(StandardCharsets.UTF_8));
+//    entityManagerFactoryBean.setJpaProperties(new SqlProperties(StandardCharsets.UTF_8));
     entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
     entityManagerFactoryBean.setPackagesToScan("net.getnova");
-    entityManagerFactoryBean.setDataSource(dataSource);
+    entityManagerFactoryBean.setDataSource(this.dataSource());
 
     return entityManagerFactoryBean;
   }
 
   @Bean
-  public PlatformTransactionManager transactionManager(final EntityManagerFactory entityManagerFactory) {
+  PlatformTransactionManager transactionManager(final EntityManagerFactory entityManagerFactory) {
     return new JpaTransactionManager(entityManagerFactory);
   }
 }

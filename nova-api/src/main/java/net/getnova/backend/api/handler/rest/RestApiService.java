@@ -1,13 +1,13 @@
 package net.getnova.backend.api.handler.rest;
 
+import javax.annotation.PostConstruct;
 import net.getnova.backend.api.data.ApiEndpointCollectionData;
 import net.getnova.backend.api.data.ApiEndpointData;
 import net.getnova.backend.api.parser.ApiEndpointCollectionParser;
 import net.getnova.backend.boot.module.Module;
-import net.getnova.backend.codec.http.server.HttpServerModule;
+import net.getnova.backend.network.server.http.HttpServerModule;
 import org.springframework.context.annotation.ComponentScan;
 
-import javax.annotation.PostConstruct;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +31,7 @@ public class RestApiService {
   private void postConstruct() {
     this.collectionsData = ApiEndpointCollectionParser.parseCollections(this.collections);
     final Map<String, ApiEndpointData> endpoints = ApiEndpointCollectionParser.getEndpoints(this.collectionsData);
-    this.httpServerModule.addLocationProvider(this.config.getPath(), new RestApiLocationProvider(endpoints));
+//    this.webFluxModule.addLocationProvider(this.config.getPath(), new RestApiLocationProvider(endpoints));
   }
 
 //  @NotNull

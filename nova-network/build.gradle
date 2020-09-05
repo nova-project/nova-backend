@@ -1,0 +1,16 @@
+plugins {
+  id 'java'
+  id 'java-library'
+}
+
+dependencies {
+  compileOnly(project(':nova-boot'))
+  annotationProcessor("org.springframework:spring-context-indexer:5.2.8.RELEASE")
+
+  api platform('io.projectreactor:reactor-bom:Dysprosium-SR11')
+  api('io.projectreactor:reactor-core')
+  api('io.projectreactor.netty:reactor-netty')
+
+  /* Util */
+  compileOnly('org.jetbrains:annotations:20.1.0')
+}

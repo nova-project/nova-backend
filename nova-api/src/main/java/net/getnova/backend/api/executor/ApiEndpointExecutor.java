@@ -37,11 +37,11 @@ final class ApiEndpointExecutor {
     try {
       return (ApiResponse) endpoint.getMethod().invoke(endpoint.getInstance(), parameters);
     } catch (IllegalArgumentException e) {
-      log.error("Endpoint " + endpoint.getClazz().getName() + "." + endpoint.getMethod().getName() + " does not has the right parameters.", e);
+      log.error("Endpoint {}.{} does not has the right parameters.", endpoint.getClazz().getName(), endpoint.getMethod().getName(), e);
     } catch (InvocationTargetException e) {
-      log.error("An exception was thrown in endpoint " + endpoint.getClazz().getName() + "." + endpoint.getMethod().getName() + ".", e.getTargetException());
-    } catch (Exception e) {
-      log.error("Unable to execute endpoint " + endpoint.getClazz().getName() + "." + endpoint.getMethod().getName() + ".", e);
+      log.error("An exception was thrown in endpoint {}.{}.", endpoint.getClazz().getName(), endpoint.getMethod().getName(), e.getTargetException());
+    } catch (Throwable e) {
+      log.error("Unable to execute endpoint {}.{}.", endpoint.getClazz().getName(), endpoint.getMethod().getName(), e);
     }
 
     return new ApiResponse(ApiResponseStatus.INTERNAL_SERVER_ERROR);

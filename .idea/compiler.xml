@@ -9,14 +9,11 @@
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.12/48e4e5d60309ebd833bc528dcf77668eab3cd72c/lombok-1.18.12.jar" />
         </processorPath>
         <module name="nova-backend.nova-json.main" />
-        <module name="nova-backend.nova-test-utils.test" />
-        <module name="nova-backend.nova-test-utils.main" />
-        <module name="nova-backend.nova-codec-http.test" />
+        <module name="nova-backend.nova-network.test" />
         <module name="nova-backend.nova-boot.test" />
         <module name="nova-backend.nova-starter.main" />
         <module name="nova-backend.nova-api.test" />
         <module name="nova-backend.nova-data-jpa.test" />
-        <module name="nova-backend.nova-netty.test" />
         <module name="nova-backend.nova-starter.test" />
         <module name="nova-backend.nova-json.test" />
       </profile>
@@ -27,10 +24,9 @@
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.12/48e4e5d60309ebd833bc528dcf77668eab3cd72c/lombok-1.18.12.jar" />
         </processorPath>
         <module name="nova-backend.nova-boot.main" />
-        <module name="nova-backend.nova-codec-http.main" />
+        <module name="nova-backend.nova-network.main" />
         <module name="nova-backend.nova-api.main" />
         <module name="nova-backend.nova-data-jpa.main" />
-        <module name="nova-backend.nova-netty.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="14" />
