@@ -1,5 +1,6 @@
 package net.getnova.backend.network.server.http;
 
+import io.netty.handler.ssl.OpenSsl;
 import io.netty.handler.ssl.SslContextBuilder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -46,8 +47,9 @@ public class HttpServer implements Server {
     if (this.certificateFile == null || this.keyFile == null)
       server = server.protocol(HttpProtocol.HTTP11);
     else {
-      log.info("Using certificate ({}) and key ({}) for http server {} with tls.",
+      log.info("Using certificate ({}) and private key ({}) for http server {} with SSL.",
         this.certificateFile.getAbsolutePath(), this.keyFile.getAbsolutePath(), this.id);
+      if (OpenSsl.isAvailable()) log.info("Using native SSL implementation.");
       server = server.protocol(HttpProtocol.HTTP11, HttpProtocol.H2)
         .secure(spec -> spec.sslContext(SslContextBuilder.forServer(this.certificateFile, this.keyFile)));
     }
