@@ -9,5 +9,13 @@
     "MarcelCoding"
   ],
   "branchName": "{{{branchPrefix}}}{{{managerBranchPrefix}}}{{{branchTopic}}}",
-  "branchPrefix": "dependencies/"
+  "branchPrefix": "dependencies/",
+  "packageRules": [
+    {
+      "packagePatterns": [
+        "^io\\.freefair\\..+"
+      ],
+      "groupName": "Freefair Gradle Plugins"
+    }
+  ]
 }
