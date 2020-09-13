@@ -1,4 +1,4 @@
 /**
  * This package contains all table model bases.
  */
-package net.getnova.backend.sql.model;
+package net.getnova.backend.jpa.model;

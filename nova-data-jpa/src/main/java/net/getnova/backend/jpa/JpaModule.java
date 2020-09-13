@@ -1,4 +1,4 @@
-package net.getnova.backend.sql;
+package net.getnova.backend.jpa;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -20,52 +20,44 @@ import org.springframework.transaction.PlatformTransactionManager;
 @ComponentScan
 public class JpaModule {
 
-  private final Bootstrap bootstrap;
-  private final SqlConfig config;
-
-  public JpaModule(final Bootstrap bootstrap, final SqlConfig config) {
-    this.bootstrap = bootstrap;
-    this.config = config;
-  }
-
   @Bean
-  DataSource dataSource() {
-    final HikariConfig config = new HikariConfig();
-    config.setJdbcUrl("jdbc:" + this.config.getLocation() + "/" + this.config.getDatabase());
-    config.setUsername(this.config.getUsername());
-    config.setPassword(this.config.getPassword());
+  DataSource dataSource(final Bootstrap bootstrap, final JpaConfig config) {
+    final HikariConfig hikariConfig = new HikariConfig();
+    hikariConfig.setJdbcUrl("jdbc:" + config.getLocation() + "/" + config.getDatabase());
+    hikariConfig.setUsername(config.getUsername());
+    hikariConfig.setPassword(config.getPassword());
 
-    config.setAutoCommit(false);
+    hikariConfig.setAutoCommit(false);
 
-    config.setIdleTimeout(600000); // 10 minutes
-    config.setMaxLifetime(1800000); // 30 minutes
-    config.setConnectionTimeout(10000); // 10 secondsH
-    config.setInitializationFailTimeout(30000); // 30 seconds
-    config.setValidationTimeout(5000); // 5 seconds
+    hikariConfig.setIdleTimeout(600000); // 10 minutes
+    hikariConfig.setMaxLifetime(1800000); // 30 minutes
+    hikariConfig.setConnectionTimeout(10000); // 10 secondsH
+    hikariConfig.setInitializationFailTimeout(30000); // 30 seconds
+    hikariConfig.setValidationTimeout(5000); // 5 seconds
 
-    config.setMaximumPoolSize(20);
-    config.setMinimumIdle(5);
+    hikariConfig.setMaximumPoolSize(20);
+    hikariConfig.setMinimumIdle(5);
 
     try {
-      return new HikariDataSource(config);
+      return new HikariDataSource(hikariConfig);
     } catch (HikariPool.PoolInitializationException e) {
       log.error("Unable to connect to database: {}", e.getMessage());
-      this.bootstrap.shutdown();
+      bootstrap.shutdown();
       return null;
     }
   }
 
   @Bean
-  LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+  LocalContainerEntityManagerFactoryBean entityManagerFactory(final JpaConfig config, final DataSource dataSource) {
     final HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-    jpaVendorAdapter.setShowSql(this.config.isShowStatements());
+    jpaVendorAdapter.setShowSql(config.isShowStatements());
     jpaVendorAdapter.setGenerateDdl(true);
 
     final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
 //    entityManagerFactoryBean.setJpaProperties(new SqlProperties(StandardCharsets.UTF_8));
     entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
     entityManagerFactoryBean.setPackagesToScan("net.getnova");
-    entityManagerFactoryBean.setDataSource(this.dataSource());
+    entityManagerFactoryBean.setDataSource(dataSource);
 
     return entityManagerFactoryBean;
   }

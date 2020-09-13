@@ -1,4 +1,4 @@
-package net.getnova.backend.sql;
+package net.getnova.backend.jpa;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 @Config
 @Getter(AccessLevel.PACKAGE)
-class SqlConfig {
+class JpaConfig {
 
   @Value("${SQL_SERVER_LOCATION:postgresql://localhost:5432}")
   private String location;

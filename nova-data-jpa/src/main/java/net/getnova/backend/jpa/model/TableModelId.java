@@ -1,4 +1,4 @@
-package net.getnova.backend.sql.model;
+package net.getnova.backend.jpa.model;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
