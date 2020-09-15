@@ -7,7 +7,7 @@ dependencies {
   compileOnly(project(':nova-boot'))
   implementation(project(':nova-json'))
   implementation(project(':nova-network'))
-  annotationProcessor("org.springframework:spring-context-indexer:5.2.8.RELEASE")
+  annotationProcessor("org.springframework:spring-context-indexer:5.2.9.RELEASE")
 
   /* Util */
   compileOnly('org.jetbrains:annotations:20.1.0')
