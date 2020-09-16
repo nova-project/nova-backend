@@ -6,7 +6,7 @@ plugins {
 dependencies {
   compileOnly(project(':nova-boot'))
   implementation(project(':nova-json'))
-  annotationProcessor("org.springframework:spring-context-indexer:5.2.8.RELEASE")
+  annotationProcessor("org.springframework:spring-context-indexer:5.2.9.RELEASE")
 
   api('jakarta.persistence:jakarta.persistence-api:2.2.3')
   api('jakarta.transaction:jakarta.transaction-api:1.3.3')
