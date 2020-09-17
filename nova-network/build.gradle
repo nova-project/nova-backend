@@ -10,7 +10,7 @@ dependencies {
   api(platform('io.projectreactor:reactor-bom:Dysprosium-SR12'))
   api('io.projectreactor:reactor-core')
   api('io.projectreactor.netty:reactor-netty')
-  api('io.projectreactor.addons:reactor-extra')
+//  api('io.projectreactor.addons:reactor-extra')
   runtimeOnly('io.netty:netty-tcnative-boringssl-static:2.0.34.Final')
 
   /* Util */
