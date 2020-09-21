@@ -1,4 +1,4 @@
-module data.jpa {
+module nova.data.jpa {
   exports net.getnova.backend.jpa;
   exports net.getnova.backend.jpa.model;
 

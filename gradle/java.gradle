@@ -1,3 +1,5 @@
+import static java.nio.charset.StandardCharsets.UTF_8
+
 apply plugin: 'java'
 
 repositories {
@@ -19,13 +21,8 @@ jar {
 }
 
 tasks.withType(JavaCompile) {
-  options.encoding = 'UTF-8'
-}
-
-compileJava {
-  inputs.property('moduleName', project.name.replace('-', '.'))
   doFirst {
+    options.encoding = UTF_8.toString();
     options.compilerArgs.addAll(['--module-path', classpath.asPath])
-    classpath = files()
   }
 }
