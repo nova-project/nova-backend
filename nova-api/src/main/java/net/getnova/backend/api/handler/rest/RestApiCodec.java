@@ -1,6 +1,5 @@
 package net.getnova.backend.api.handler.rest;
 
-import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
@@ -15,6 +14,7 @@ import net.getnova.backend.api.data.ApiRequest;
 import net.getnova.backend.api.data.ApiResponse;
 import net.getnova.backend.api.data.ApiResponseStatus;
 import net.getnova.backend.json.JsonTypeMappingException;
+import net.getnova.backend.json.JsonUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -52,7 +52,7 @@ public final class RestApiCodec extends MessageToMessageCodec<FullHttpRequest, A
   }
 
   private Object getRequest(final FullHttpRequest request) throws URISyntaxException {
-    return new ApiRequest(this.getEndpoint(request.uri()), new JsonObject(), null);
+    return new ApiRequest(null, this.getEndpoint(request.uri()), JsonUtils.EMPTY_OBJECT);
   }
 
   private Object postRequest(final FullHttpRequest request) throws URISyntaxException {

@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
 import net.getnova.backend.json.types.DurationTypeAdapter;
@@ -18,6 +19,8 @@ import java.util.Collection;
 import java.util.function.Function;
 
 public final class JsonUtils {
+
+  public static final JsonObject EMPTY_OBJECT = new JsonObject();
 
   @Getter
   private static final Gson GSON = new GsonBuilder()

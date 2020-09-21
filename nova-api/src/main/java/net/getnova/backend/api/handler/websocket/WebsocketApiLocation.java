@@ -12,12 +12,12 @@ import net.getnova.backend.api.executor.ApiExecutor;
 import net.getnova.backend.json.JsonTypeMappingException;
 import net.getnova.backend.json.JsonUtils;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
 import reactor.netty.http.websocket.WebsocketInbound;
 import reactor.netty.http.websocket.WebsocketOutbound;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.BiFunction;
 
 @RequiredArgsConstructor
@@ -28,39 +28,33 @@ public final class WebsocketApiLocation implements BiFunction<WebsocketInbound, 
   @Override
   public Publisher<Void> apply(final WebsocketInbound inbound, final WebsocketOutbound outbound) {
     return outbound.sendString(inbound.receiveFrames()
-      .map(frame -> {
-        JsonObject json = null;
-        ApiResponse apiResponse = null;
+      .flatMap(frame -> {
+        final JsonObject json = JsonUtils.fromJson(JsonParser.parseString(frame.content().toString(StandardCharsets.UTF_8)), JsonObject.class);
+        final ApiRequest request = new ApiRequest(
+          JsonUtils.fromJson(json.get("tag"), String.class),
+          JsonUtils.fromJson(json.get("endpoint"), String.class),
+          JsonUtils.fromJson(json.get("data"), JsonObject.class) == null ? JsonUtils.EMPTY_OBJECT : JsonUtils.fromJson(json.get("data"), JsonObject.class)
+        );
 
-        try {
-          json = JsonUtils.fromJson(JsonParser.parseString(frame.content().toString(StandardCharsets.UTF_8)), JsonObject.class);
-        } catch (JsonSyntaxException e) {
-          apiResponse = new ApiResponse(ApiResponseStatus.BAD_REQUEST, "JSON_SYNTAX");
-        } catch (JsonTypeMappingException e) {
-          apiResponse = e.getCause() instanceof JsonSyntaxException
-            ? new ApiResponse(ApiResponseStatus.BAD_REQUEST, "JSON_SYNTAX")
-            : new ApiResponse(ApiResponseStatus.INTERNAL_SERVER_ERROR);
+        ApiResponse apiResponse;
+        if (request.getTag() == null) {
+          apiResponse = new ApiResponse(ApiResponseStatus.BAD_REQUEST, "MISSING_TAG");
+        } else if (request.getEndpoint() == null) {
+          apiResponse = new ApiResponse(ApiResponseStatus.BAD_REQUEST, "MISSING_ENDPOINT");
+        } else {
+          apiResponse = ApiExecutor.execute(this.endpoints, request);
         }
 
-        if (apiResponse == null) {
-          final String tag = JsonUtils.fromJson(json.get("tag"), String.class);
-          final String endpoint = JsonUtils.fromJson(json.get("endpoint"), String.class);
-          final JsonObject data = JsonUtils.fromJson(json.get("data"), JsonObject.class);
+        if (apiResponse != null) apiResponse.setTag(request.getTag());
 
-          if (tag == null) {
-            apiResponse = new ApiResponse(ApiResponseStatus.BAD_REQUEST, "MISSING_TAG");
-          } else if (endpoint == null) {
-            apiResponse = new ApiResponse(ApiResponseStatus.BAD_REQUEST, "MISSING_ENDPOINT");
-          } else {
-            apiResponse = ApiExecutor.execute(this.endpoints, new ApiRequest(endpoint, data == null ? new JsonObject() : data, tag));
-          }
-
-          if (apiResponse != null) apiResponse.setTag(tag);
-        }
-
-        return apiResponse;
+        return Mono.justOrEmpty(apiResponse);
       })
-      .filter(Objects::nonNull)
+      .onErrorResume(JsonSyntaxException.class, cause -> Mono.just(new ApiResponse(ApiResponseStatus.BAD_REQUEST, "JSON_SYNTAX")))
+      .onErrorResume(JsonTypeMappingException.class, cause -> Mono.just(
+        cause.getCause() instanceof JsonSyntaxException
+          ? new ApiResponse(ApiResponseStatus.BAD_REQUEST, "JSON_SYNTAX")
+          : new ApiResponse(ApiResponseStatus.INTERNAL_SERVER_ERROR)
+      ))
       .map(response -> response.serialize().toString()));
   }
 }
