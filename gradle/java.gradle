@@ -21,3 +21,11 @@ jar {
 tasks.withType(JavaCompile) {
   options.encoding = 'UTF-8'
 }
+
+compileJava {
+  inputs.property('moduleName', project.name.replace('-', '.'))
+  doFirst {
+    options.compilerArgs.addAll(['--module-path', classpath.asPath])
+    classpath = files()
+  }
+}
