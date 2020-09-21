@@ -12,7 +12,7 @@ on:
 
 env:
   IMAGE_NAME: getnova/nova-backend
-  DOCKER_PLATFORMS: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
+  DOCKER_PLATFORMS: linux/amd64,linux/arm/v7,linux/arm64/v8
 
 jobs:
   check:
@@ -71,49 +71,12 @@ jobs:
           BINTRAY_USERNAME: ${{ secrets.BINTRAY_USERNAME }}
           BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
 
-  build:
+  docker:
     needs: check
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
-
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Set up JDK 14
-        uses: actions/setup-java@v1
-        with:
-          java-version: 14
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Build with Gradle
-        run: ./gradlew :nova-starter:installDist --no-daemon
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: nova-backend
-          path: nova-starter/build/install/nova-starter
-
-  docker:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Download artefacts
-        uses: actions/download-artifact@v1
-        with:
-          name: nova-backend
 
       - name: Set up Docker Buildx
         uses: crazy-max/ghaction-docker-buildx@v3
@@ -142,7 +105,7 @@ jobs:
 
           echo ::set-output name=version::$VERSION
           echo ::set-output name=buildx_args::--platform $DOCKER_PLATFORMS \
-            ${TAGS} --file ./docker/Dockerfile.github-actions ./
+            ${TAGS} --file ./docker/Dockerfile ./
 
       - name: Docker Buildx (build)
         run: docker buildx build --output "type=image,push=false" ${{ steps.prepare.outputs.buildx_args }}
