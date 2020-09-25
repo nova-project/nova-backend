@@ -8,13 +8,13 @@ RUN set -o errexit -o nounset \
     && useradd --system --gid ${GRADLE_GROUP} --uid 1000 --shell /bin/bash --create-home ${GRADLE_USER} \
     && chown --recursive ${GRADLE_USER}:${GRADLE_GROUP} /home/${GRADLE_USER} \
     && apt-get update \
-    && apt-get install git -y --no-install-recommends
+    && apt-get install git -y
 
 COPY --chown=gradle:gradle . /home/${GRADLE_USER}/src
 WORKDIR /home/${GRADLE_USER}/src
 
 USER ${GRADLE_USER}
-RUN chmod +x ./gradlew && ./gradlew :nova-starter:installDist --stacktrace --no-daemon
+RUN chmod +x ./gradlew && ./gradlew :nova-starter:installDist --stacktrace --no-daemon -Djdk.lang.Process.launchMechanism=vfork
 
 FROM adoptopenjdk:14-jre-hotspot
 
