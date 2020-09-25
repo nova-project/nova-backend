@@ -7,18 +7,19 @@ RUN set -o errexit -o nounset \
     && groupadd --system --gid 1000 ${GRADLE_GROUP} \
     && useradd --system --gid ${GRADLE_GROUP} --uid 1000 --shell /bin/bash --create-home ${GRADLE_USER} \
     && chown --recursive ${GRADLE_USER}:${GRADLE_GROUP} /home/${GRADLE_USER} \
+    && mkdir -p /home/src \
+    && chown --recursive ${GRADLE_USER}:${GRADLE_GROUP} /home/src \
     && apt-get update \
     && apt-get install git -y
 
-COPY --chown=gradle:gradle . /home/${GRADLE_USER}/src
-WORKDIR /home/${GRADLE_USER}/src
+COPY --chown=${GRADLE_USER}:${GRADLE_GROUP} . /home/src
+WORKDIR /home/src
 
 USER ${GRADLE_USER}
-RUN chmod +x ./gradlew && ./gradlew :nova-starter:installDist --stacktrace --no-daemon -Djdk.lang.Process.launchMechanism=vfork
+RUN chmod +x ./gradlew && ./gradlew :nova-starter:installDist --stacktrace --no-daemon
 
 FROM adoptopenjdk:14-jre-hotspot
 
-ARG GRADLE_USER=gradle
 ARG NOVA_USER=nova
 ARG NOVA_GROUP=nova
 
@@ -33,7 +34,7 @@ RUN set -o errexit -o nounset \
     && chown --recursive ${NOVA_USER}:${NOVA_GROUP} /home/${NOVA_USER}
 
 WORKDIR ${DATA_DIR}
-COPY --from=builder --chown=nova:nova /home/${GRADLE_USER}/src/nova-starter/build/install/nova-starter/ ${NOVA_HOME}/
+COPY --from=builder --chown=${NOVA_USER}:${NOVA_GROUP} /home/src/nova-starter/build/install/nova-starter/ ${NOVA_HOME}/
 
 RUN ln --symbolic ${NOVA_HOME}/bin/nova-starter /usr/bin/nova \
   && chmod +x /usr/bin/nova

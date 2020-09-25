@@ -290,3 +290,4 @@ gradle-app.setting
 run
 lombok.config
 tmp
+Dockerfile
