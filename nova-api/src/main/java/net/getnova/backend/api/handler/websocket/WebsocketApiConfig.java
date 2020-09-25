@@ -9,6 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 @Getter(AccessLevel.PACKAGE)
 final class WebsocketApiConfig {
 
-  @Value("${WEBSOCKET_API:ws}")
+  @Value("${WEBSOCKET_API_PATH:ws}")
   private String path;
 }

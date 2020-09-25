@@ -13,6 +13,7 @@ import net.getnova.backend.api.executor.ApiExecutor;
 import net.getnova.backend.json.JsonBuilder;
 import net.getnova.backend.json.JsonTypeMappingException;
 import net.getnova.backend.json.JsonUtils;
+import net.getnova.backend.network.server.http.route.WebsocketRoute;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.websocket.WebsocketInbound;
@@ -20,11 +21,10 @@ import reactor.netty.http.websocket.WebsocketOutbound;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.function.BiFunction;
 
 @Slf4j
 @RequiredArgsConstructor
-public final class WebsocketApiLocation implements BiFunction<WebsocketInbound, WebsocketOutbound, Publisher<Void>> {
+public final class WebsocketApiLocation implements WebsocketRoute {
 
   private static final ApiResponse ERROR_JSON_SYNTAX = new ApiResponse(ApiResponseStatus.BAD_REQUEST, "JSON_SYNTAX");
   private final Map<String, ApiEndpointData> endpoints;
@@ -35,9 +35,9 @@ public final class WebsocketApiLocation implements BiFunction<WebsocketInbound, 
       .flatMap(frame -> {
         final JsonObject json = JsonUtils.fromJson(JsonParser.parseString(frame.content().toString(StandardCharsets.UTF_8)), JsonObject.class);
         final ApiRequest request = new ApiRequest(
-          JsonUtils.fromJson(json.get("tag"), String.class),
           JsonUtils.fromJson(json.get("endpoint"), String.class),
-          JsonUtils.fromJson(json.get("data"), JsonObject.class) == null ? JsonUtils.EMPTY_OBJECT : JsonUtils.fromJson(json.get("data"), JsonObject.class)
+          JsonUtils.fromJson(json.get("data"), JsonObject.class) == null ? JsonUtils.EMPTY_OBJECT : JsonUtils.fromJson(json.get("data"), JsonObject.class),
+          JsonUtils.fromJson(json.get("tag"), String.class)
         );
 
         ApiResponse apiResponse;
@@ -50,10 +50,6 @@ public final class WebsocketApiLocation implements BiFunction<WebsocketInbound, 
         }
 
         if (apiResponse != null) {
-          if (apiResponse.getData() != null && apiResponse.getData().isResource()) {
-            return Mono.error(new IllegalArgumentException("Websocket api responses can only be Json elements, given is a resource."));
-          }
-
           apiResponse.setTag(request.getTag());
         }
 
@@ -80,7 +76,7 @@ public final class WebsocketApiLocation implements BiFunction<WebsocketInbound, 
 
         if (response.getTag() != null) builder.add("tag", response.getTag());
         if (response.getMessage() != null) builder.add("message", response.getMessage());
-        if (response.getData() != null) builder.add("data", response.getData().getJson());
+        if (response.getJson() != null) builder.add("data", response.getJson());
 
         return builder.build().toString();
       }));

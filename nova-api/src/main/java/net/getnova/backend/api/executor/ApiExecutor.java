@@ -6,7 +6,6 @@ import net.getnova.backend.api.data.ApiRequest;
 import net.getnova.backend.api.data.ApiResponse;
 import net.getnova.backend.api.data.ApiResponseStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -16,7 +15,7 @@ public final class ApiExecutor {
     throw new UnsupportedOperationException();
   }
 
-  @Nullable
+  @NotNull
   public static ApiResponse execute(@NotNull final Map<String, ApiEndpointData> endpoints, @NotNull final ApiRequest request) {
     final ApiEndpointData endpoint = endpoints.get(request.getEndpoint());
     return endpoint == null

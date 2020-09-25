@@ -10,9 +10,9 @@ import org.jetbrains.annotations.Nullable;
 public final class ApiRequest {
 
   @Nullable
-  private String tag;
-  @Nullable
   private final String endpoint;
   @Nullable
   private final JsonObject data;
+  @Nullable
+  private String tag;
 }

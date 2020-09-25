@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.network.server.Server;
 import reactor.netty.DisposableServer;
 import reactor.netty.http.HttpProtocol;
-import reactor.netty.http.server.HttpServerRoutes;
 
 import java.io.File;
 import java.net.SocketAddress;
@@ -22,17 +21,18 @@ public class HttpServer implements Server {
   private final String id;
   private final SocketAddress address;
   private final Duration lifecycleTimeout;
+  private final HttpRoutes routes;
 
   private File certificateFile;
   private File keyFile;
 
   private DisposableServer server;
-  private HttpServerRoutes routes;
 
-  public HttpServer(final String id, final SocketAddress address, final Duration lifecycleTimeout, final File certificateFile, final File keyFile) {
+  public HttpServer(final String id, final SocketAddress address, final Duration lifecycleTimeout, final HttpRoutes routes, final File certificateFile, final File keyFile) {
     this.id = id;
     this.address = address;
     this.lifecycleTimeout = lifecycleTimeout;
+    this.routes = routes;
     this.certificateFile = certificateFile;
     this.keyFile = keyFile;
   }
@@ -45,7 +45,7 @@ public class HttpServer implements Server {
       .forwarded(true);
 
     if (this.certificateFile == null || this.keyFile == null)
-      server = server.protocol(HttpProtocol.HTTP11);
+      server = server.protocol(HttpProtocol.HTTP11, HttpProtocol.H2C);
     else {
       log.info("Using certificate ({}) and private key ({}) for http server {} with SSL.",
         this.certificateFile.getAbsolutePath(), this.keyFile.getAbsolutePath(), this.id);
@@ -54,7 +54,7 @@ public class HttpServer implements Server {
         .secure(spec -> spec.sslContext(SslContextBuilder.forServer(this.certificateFile, this.keyFile)));
     }
 
-    server = server.route(routes -> this.routes = routes);
+    server = server.handle(this.routes.toHandler());
 
     try {
       this.server = server.bindNow(this.lifecycleTimeout);

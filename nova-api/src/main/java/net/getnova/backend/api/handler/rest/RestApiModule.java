@@ -1,6 +1,5 @@
-package net.getnova.backend.api.handler.websocket;
+package net.getnova.backend.api.handler.rest;
 
-import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.api.annotations.ApiEndpointCollection;
 import net.getnova.backend.api.data.ApiEndpointData;
 import net.getnova.backend.api.parser.ApiEndpointCollectionParser;
@@ -12,16 +11,16 @@ import org.springframework.context.annotation.ComponentScan;
 import java.util.Collection;
 import java.util.Map;
 
-@Slf4j
 @ComponentScan
 @Module(HttpServerModule.class)
-public class WebsocketApiModule {
+public class RestApiModule {
 
-  public WebsocketApiModule(final WebsocketApiConfig config,
-                            final HttpServerModule httpServerModule,
-                            final ApplicationContext context) {
+  public RestApiModule(final RestApiConfig config,
+                       final HttpServerModule httpServerModule,
+                       final ApplicationContext context) {
     final Collection<Object> collections = context.getBeansWithAnnotation(ApiEndpointCollection.class).values();
     final Map<String, ApiEndpointData> endpoints = ApiEndpointCollectionParser.getEndpoints(ApiEndpointCollectionParser.parseCollections(collections));
-    httpServerModule.getRoutes().addRoute(config.getPath(), new WebsocketApiLocation(endpoints));
+    final RestApiLocation handler = new RestApiLocation(endpoints);
+    httpServerModule.getRoutes().addRoute(config.getPath(), handler);
   }
 }

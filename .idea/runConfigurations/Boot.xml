@@ -19,7 +19,7 @@
           <option value="run" />
         </list>
       </option>
-      <option name="vmOptions" value="-XX:+ShowCodeDetailsInExceptionMessages" />
+      <option name="vmOptions" value="" />
     </ExternalSystemSettings>
     <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
     <method v="2" />

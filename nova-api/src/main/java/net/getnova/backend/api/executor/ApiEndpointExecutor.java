@@ -8,7 +8,6 @@ import net.getnova.backend.api.data.ApiResponseStatus;
 import net.getnova.backend.api.exception.ApiInternalParameterException;
 import net.getnova.backend.api.exception.ApiParameterException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -19,7 +18,7 @@ final class ApiEndpointExecutor {
     throw new UnsupportedOperationException();
   }
 
-  @Nullable
+  @NotNull
   static ApiResponse execute(@NotNull final ApiContext context, @NotNull final ApiEndpointData endpoint) {
     if (!endpoint.isEnabled()) return new ApiResponse(ApiResponseStatus.SERVICE_UNAVAILABLE, "ENDPOINT_DISABLED");
 
@@ -35,7 +34,14 @@ final class ApiEndpointExecutor {
     }
 
     try {
-      return (ApiResponse) endpoint.getMethod().invoke(endpoint.getInstance(), parameters);
+      final ApiResponse response = (ApiResponse) endpoint.getMethod().invoke(endpoint.getInstance(), parameters);
+
+      if (response == null) {
+        log.error("Endpoint {}.{} returned null, which is not allowed.", endpoint.getClazz().getName(), endpoint.getMethod().getName());
+        return new ApiResponse(ApiResponseStatus.INTERNAL_SERVER_ERROR);
+      }
+
+      return response;
     } catch (IllegalArgumentException e) {
       log.error("Endpoint {}.{} does not has the right parameters.", endpoint.getClazz().getName(), endpoint.getMethod().getName(), e);
     } catch (InvocationTargetException e) {

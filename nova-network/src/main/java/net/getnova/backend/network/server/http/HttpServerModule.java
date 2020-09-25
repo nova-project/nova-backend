@@ -18,18 +18,31 @@ import java.time.Duration;
 public class HttpServerModule {
 
   @Getter
+  private final HttpRoutes routes;
+  @Getter
   private final HttpServer server;
 
   public HttpServerModule(
     final Bootstrap bootstrap,
     final HttpConfig config
   ) {
+    this.routes = new HttpRoutes();
     if (!config.getCrtPath().isBlank() && !config.getKeyPath().isBlank()) {
-      this.server = new HttpServer("http",
-        new InetSocketAddress(config.getHost(), config.getPort()), Duration.ofSeconds(10),
-        new File(config.getCrtPath()), new File(config.getKeyPath()));
+      this.server = new HttpServer(
+        "http",
+        new InetSocketAddress(config.getHost(), config.getPort()),
+        Duration.ofSeconds(10),
+        this.routes,
+        new File(config.getCrtPath()),
+        new File(config.getKeyPath())
+      );
     } else {
-      this.server = new HttpServer("http", new InetSocketAddress(config.getHost(), config.getPort()), Duration.ofSeconds(10));
+      this.server = new HttpServer(
+        "http",
+        new InetSocketAddress(config.getHost(), config.getPort()),
+        Duration.ofSeconds(10),
+        this.routes
+      );
     }
   }
 

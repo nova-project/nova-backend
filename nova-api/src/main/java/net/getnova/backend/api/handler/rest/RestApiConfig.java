@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 @Config
 @Getter(AccessLevel.PACKAGE)
-public final class RestApiConfig {
+final class RestApiConfig {
 
   @Value("${REST_API_PATH:api}")
   private String path;

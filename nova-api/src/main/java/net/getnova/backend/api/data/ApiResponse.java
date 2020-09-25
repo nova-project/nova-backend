@@ -7,7 +7,6 @@ import lombok.Setter;
 import net.getnova.backend.json.JsonUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.core.io.Resource;
 
 @Getter
 @EqualsAndHashCode
@@ -20,7 +19,7 @@ public final class ApiResponse {
   private final String message;
 
   @Nullable
-  private final Data data;
+  private final JsonElement json;
 
   @Setter
   @Nullable
@@ -29,53 +28,18 @@ public final class ApiResponse {
   public ApiResponse(@NotNull final ApiResponseStatus responseCode) {
     this.responseCode = responseCode;
     this.message = null;
-    this.data = null;
+    this.json = null;
   }
 
   public ApiResponse(@NotNull final ApiResponseStatus responseCode, @NotNull final String message) {
     this.responseCode = responseCode;
     this.message = message;
-    this.data = null;
-  }
-
-  public ApiResponse(@NotNull final ApiResponseStatus responseCode, @NotNull final Resource resource) {
-    this.responseCode = responseCode;
-    this.message = null;
-    this.data = new Data(resource);
+    this.json = null;
   }
 
   public ApiResponse(@NotNull final ApiResponseStatus responseCode, @NotNull final Object json) {
     this.responseCode = responseCode;
     this.message = null;
-    this.data = new Data(JsonUtils.toJson(json));
-  }
-
-  @Getter
-  @Setter
-  @EqualsAndHashCode
-  public static class Data {
-
-    @Nullable
-    private final JsonElement json;
-    @Nullable
-    private final Resource resource;
-
-    public Data(@NotNull final JsonElement json) {
-      this.json = json;
-      this.resource = null;
-    }
-
-    public Data(@NotNull final Resource resource) {
-      this.json = null;
-      this.resource = resource;
-    }
-
-    public boolean isJson() {
-      return this.json != null;
-    }
-
-    public boolean isResource() {
-      return this.resource != null;
-    }
+    this.json = JsonUtils.toJson(json);
   }
 }
