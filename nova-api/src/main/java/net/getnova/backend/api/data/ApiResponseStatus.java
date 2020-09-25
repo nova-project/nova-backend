@@ -1,18 +1,15 @@
 package net.getnova.backend.api.data;
 
-import com.google.gson.JsonElement;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import net.getnova.backend.json.JsonBuilder;
-import net.getnova.backend.json.JsonSerializable;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
 @ToString
 @RequiredArgsConstructor
-public enum ApiResponseStatus implements JsonSerializable {
+public enum ApiResponseStatus {
 
   // Information responses 1xx
 
@@ -41,15 +38,5 @@ public enum ApiResponseStatus implements JsonSerializable {
 
   ApiResponseStatus(@NotNull final HttpResponseStatus status, final boolean error) {
     this(status.code(), status.reasonPhrase(), error);
-  }
-
-  @NotNull
-  @Override
-  public JsonElement serialize() {
-    return JsonBuilder
-      .create("code", this.code)
-      .add("name", this.name)
-      .add("error", this.error)
-      .build();
   }
 }

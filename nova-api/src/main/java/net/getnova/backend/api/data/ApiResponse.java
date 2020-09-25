@@ -1,66 +1,81 @@
 package net.getnova.backend.api.data;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import net.getnova.backend.json.JsonBuilder;
-import net.getnova.backend.json.JsonSerializable;
 import net.getnova.backend.json.JsonUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.core.io.Resource;
 
 @Getter
 @EqualsAndHashCode
-public final class ApiResponse implements JsonSerializable {
+public final class ApiResponse {
 
   @NotNull
   private final ApiResponseStatus responseCode;
+
   @Nullable
   private final String message;
+
   @Nullable
-  private final JsonElement data;
+  private final Data data;
+
   @Setter
   @Nullable
   private String tag;
 
   public ApiResponse(@NotNull final ApiResponseStatus responseCode) {
-    this(responseCode, null, null);
+    this.responseCode = responseCode;
+    this.message = null;
+    this.data = null;
   }
 
-  public ApiResponse(@NotNull final ApiResponseStatus responseCode, @Nullable final String message) {
-    this(responseCode, message, null);
-  }
-
-  public ApiResponse(@NotNull final ApiResponseStatus responseCode, @Nullable final Object data) {
-    this(responseCode, null, data);
-  }
-
-  public ApiResponse(@NotNull final ApiResponseStatus responseCode, @Nullable final String message, @Nullable final Object data) {
+  public ApiResponse(@NotNull final ApiResponseStatus responseCode, @NotNull final String message) {
     this.responseCode = responseCode;
     this.message = message;
-    this.data = JsonUtils.toJson(data);
+    this.data = null;
   }
 
-  @NotNull
-  @Override
-  public JsonElement serialize() {
-    return this.serialize(false);
+  public ApiResponse(@NotNull final ApiResponseStatus responseCode, @NotNull final Resource resource) {
+    this.responseCode = responseCode;
+    this.message = null;
+    this.data = new Data(resource);
   }
 
-  @NotNull
-  public JsonElement serialize(final boolean small) {
-    final JsonBuilder info = small
-      ? JsonBuilder.create("error", this.responseCode.isError())
-      .add("message", this.message != null, () -> this.message)
-      : JsonBuilder.create("tag", this.getTag())
-      .add("status", this.getResponseCode())
-      .add("message", this.message != null, this::getMessage);
+  public ApiResponse(@NotNull final ApiResponseStatus responseCode, @NotNull final Object json) {
+    this.responseCode = responseCode;
+    this.message = null;
+    this.data = new Data(JsonUtils.toJson(json));
+  }
 
-    return JsonBuilder
-      .create("info", info)
-      .add("data", !(this.data instanceof JsonNull), this::getData)
-      .build();
+  @Getter
+  @Setter
+  @EqualsAndHashCode
+  public static class Data {
+
+    @Nullable
+    private final JsonElement json;
+    @Nullable
+    private final Resource resource;
+
+    public Data(@NotNull final JsonElement json) {
+      this.json = json;
+      this.resource = null;
+    }
+
+    public Data(@NotNull final Resource resource) {
+      this.json = null;
+      this.resource = resource;
+    }
+
+    public boolean isJson() {
+      return this.json != null;
+    }
+
+    public boolean isResource() {
+      return this.resource != null;
+    }
   }
 }
