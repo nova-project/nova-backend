@@ -49,9 +49,7 @@ public final class WebsocketApiLocation implements WebsocketRoute {
           apiResponse = ApiExecutor.execute(this.endpoints, request);
         }
 
-        if (apiResponse != null) {
-          apiResponse.setTag(request.getTag());
-        }
+        apiResponse.setTag(request.getTag());
 
         return Mono.justOrEmpty(apiResponse);
       })
