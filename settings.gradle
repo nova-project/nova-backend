@@ -5,3 +5,5 @@ include 'nova-data-jpa'
 include 'nova-json'
 include 'nova-network'
 include 'nova-starter'
+include 'nova-cdn'
+

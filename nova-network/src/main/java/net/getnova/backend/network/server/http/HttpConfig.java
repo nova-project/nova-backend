@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 @Config
 @Getter(AccessLevel.PACKAGE)
-public class HttpConfig {
+class HttpConfig {
 
   @Value("${HTTP_HOST:0.0.0.0}")
   private String host;
