@@ -1,0 +1,11 @@
+plugins {
+    id 'java'
+    id 'java-library'
+}
+
+dependencies {
+    compileOnly(project(':nova-boot'))
+    implementation(project(':nova-network'))
+    implementation(project(':nova-data-jpa'))
+    annotationProcessor('org.springframework:spring-context-indexer:5.2.9.RELEASE')
+}
