@@ -42,6 +42,7 @@ public class Bootstrap {
 
     this.moduleHandler = new ModuleHandler(this, new File(this.workingDir, "modules"));
     this.contextHandler = new ContextHandler(Bootstrap.class, this);
+    this.contextHandler.register(ModuleHandler.class, this.moduleHandler);
 
     this.moduleHandler.loadModules();
     this.moduleHandler.loadDebugModules(args);
