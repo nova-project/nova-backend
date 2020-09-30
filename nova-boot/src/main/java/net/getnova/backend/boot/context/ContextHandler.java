@@ -18,6 +18,10 @@ public class ContextHandler {
     if (classes.length != 0) this.applicationContext.register(classes);
   }
 
+  public <T> void register(final Class<T> clazz, final T instance) {
+    this.applicationContext.registerBean(clazz, () -> instance);
+  }
+
   public boolean refresh() {
     try {
       this.applicationContext.refresh();

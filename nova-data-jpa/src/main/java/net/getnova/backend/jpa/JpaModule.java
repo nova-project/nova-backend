@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.boot.Bootstrap;
 import net.getnova.backend.boot.module.Module;
+import net.getnova.backend.boot.module.ModuleHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -48,7 +49,7 @@ public class JpaModule {
   }
 
   @Bean
-  LocalContainerEntityManagerFactoryBean entityManagerFactory(final JpaConfig config, final DataSource dataSource) {
+  LocalContainerEntityManagerFactoryBean entityManagerFactory(final ModuleHandler moduleHandler, final JpaConfig config, final DataSource dataSource) {
     final HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
     jpaVendorAdapter.setShowSql(config.isShowStatements());
     jpaVendorAdapter.setGenerateDdl(true);
@@ -56,7 +57,7 @@ public class JpaModule {
     final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
 //    entityManagerFactoryBean.setJpaProperties(new SqlProperties(StandardCharsets.UTF_8));
     entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
-    entityManagerFactoryBean.setPackagesToScan("net.getnova");
+    entityManagerFactoryBean.setPackagesToScan(moduleHandler.getPackages().toArray(new String[0]));
     entityManagerFactoryBean.setDataSource(dataSource);
 
     return entityManagerFactoryBean;

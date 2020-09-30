@@ -8,7 +8,10 @@ import net.getnova.backend.boot.context.ContextHandler;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Slf4j
 public class ModuleHandler {
@@ -18,6 +21,8 @@ public class ModuleHandler {
   private final boolean loadModules;
   @Getter
   private ClassLoader loader;
+  @Getter
+  private Set<String> packages;
 
   public ModuleHandler(final Bootstrap bootstrap, final File moduleFolder) {
     this.bootstrap = bootstrap;
@@ -40,6 +45,7 @@ public class ModuleHandler {
     }
 
     this.loadModules = true;
+    this.packages = new HashSet<>(Collections.singleton("net.getnova.backend"));
   }
 
   public void loadModules() {
@@ -50,7 +56,7 @@ public class ModuleHandler {
       final ModuleLoader.Result result = ModuleLoader.loadModules(this.moduleFolder);
       Thread.currentThread().setContextClassLoader(result.getLoader());
       this.loader = result.getLoader();
-      result.getModules().forEach(module -> contextHandler.register(ModuleLoader.loadModules(module.getMainClass()).toArray(new Class[0])));
+      result.getModules().forEach(module -> this.addModule(contextHandler, module));
     } catch (ModuleException e) {
       if (e.getCause() != null) log.error(e.getMessage(), e.getCause());
       else log.error(e.getMessage());
@@ -75,5 +81,10 @@ public class ModuleHandler {
           .toArray(Class[]::new)
       ).toArray(new Class<?>[0])
     );
+  }
+
+  private void addModule(final ContextHandler contextHandler, final ModuleData module) {
+    contextHandler.register(ModuleLoader.loadModules(module.getMainClass()).toArray(new Class[0]));
+    this.packages.add(module.getMainClass().getPackageName());
   }
 }
