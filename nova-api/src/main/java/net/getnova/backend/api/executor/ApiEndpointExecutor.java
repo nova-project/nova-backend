@@ -1,8 +1,8 @@
 package net.getnova.backend.api.executor;
 
 import lombok.extern.slf4j.Slf4j;
-import net.getnova.backend.api.data.ApiContext;
 import net.getnova.backend.api.data.ApiEndpointData;
+import net.getnova.backend.api.data.ApiRequest;
 import net.getnova.backend.api.data.ApiResponse;
 import net.getnova.backend.api.data.ApiResponseStatus;
 import net.getnova.backend.api.exception.ApiInternalParameterException;
@@ -19,13 +19,13 @@ final class ApiEndpointExecutor {
   }
 
   @NotNull
-  static ApiResponse execute(@NotNull final ApiContext context, @NotNull final ApiEndpointData endpoint) {
+  static ApiResponse execute(@NotNull final ApiRequest request, @NotNull final ApiEndpointData endpoint) {
     if (!endpoint.isEnabled()) return new ApiResponse(ApiResponseStatus.SERVICE_UNAVAILABLE, "ENDPOINT_DISABLED");
 
-    Object[] parameters;
+    final Object[] parameters;
 
     try {
-      parameters = ApiParameterExecutor.parseParameters(context, endpoint.getParameters());
+      parameters = ApiParameterExecutor.parseParameters(request, endpoint.getParameters());
     } catch (ApiInternalParameterException e) {
       log.error("Unable to parse parameters.", e);
       return new ApiResponse(ApiResponseStatus.INTERNAL_SERVER_ERROR);
@@ -37,19 +37,23 @@ final class ApiEndpointExecutor {
       final ApiResponse response = (ApiResponse) endpoint.getMethod().invoke(endpoint.getInstance(), parameters);
 
       if (response == null) {
-        log.error("Endpoint {}.{} returned null, which is not allowed.", endpoint.getClazz().getName(), endpoint.getMethod().getName());
+        log.error("Endpoint {} returned null, which is not allowed.", getMethodPath(endpoint));
         return new ApiResponse(ApiResponseStatus.INTERNAL_SERVER_ERROR);
       }
 
       return response;
     } catch (IllegalArgumentException e) {
-      log.error("Endpoint {}.{} does not has the right parameters.", endpoint.getClazz().getName(), endpoint.getMethod().getName(), e);
+      log.error("Endpoint {} does not has the right parameters.", getMethodPath(endpoint), e);
     } catch (InvocationTargetException e) {
-      log.error("An exception was thrown in endpoint {}.{}.", endpoint.getClazz().getName(), endpoint.getMethod().getName(), e.getTargetException());
+      log.error("An exception was thrown in endpoint {}.", getMethodPath(endpoint), e.getTargetException());
     } catch (Throwable e) {
-      log.error("Unable to execute endpoint {}.{}.", endpoint.getClazz().getName(), endpoint.getMethod().getName(), e);
+      log.error("Unable to execute endpoint {}.", getMethodPath(endpoint), e);
     }
 
     return new ApiResponse(ApiResponseStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  private static String getMethodPath(final ApiEndpointData endpoint) {
+    return endpoint.getClazz().getName() + "." + endpoint.getMethod().getName();
   }
 }

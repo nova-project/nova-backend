@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -31,7 +32,7 @@ public final class ApiEndpointCollectionParser {
   public static Map<String, ApiEndpointData> getEndpoints(@NotNull final Set<ApiEndpointCollectionData> collections) {
     final Map<String, ApiEndpointData> endpoints = new HashMap<>();
     collections.forEach(collection -> collection.getEndpoints().forEach((key, value) -> endpoints.put(collection.getId() + "/" + key, value)));
-    return endpoints;
+    return Collections.unmodifiableMap(endpoints);
   }
 
   @Nullable

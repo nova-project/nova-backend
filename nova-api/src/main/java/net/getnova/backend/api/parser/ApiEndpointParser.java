@@ -10,8 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -19,6 +17,8 @@ import java.util.stream.Collectors;
 
 @Slf4j
 final class ApiEndpointParser {
+
+  private static final ApiParameterData[] EMPTY_PARAMETERS = new ApiParameterData[0];
 
   private ApiEndpointParser() {
     throw new UnsupportedOperationException();
@@ -49,18 +49,23 @@ final class ApiEndpointParser {
     }
 
     if (!method.getReturnType().equals(ApiResponse.class)) {
-      log.error("Endpoint {}.{} cannot be parsed because it does not have the return type {}.", clazz.getName(), method.getName(), ApiResponse.class.getName());
+      log.error("Endpoint {}.{} cannot be parsed because it does not have the return type {}.",
+        clazz.getName(), method.getName(), ApiResponse.class.getName());
       if (!hasAccess) method.setAccessible(false);
       return null;
     }
 
     final ApiEndpoint endpointAnnotation = method.getAnnotation(ApiEndpoint.class);
-    final List<ApiParameterData> parameters = ApiParameterParser.parseParameters(clazz, method);
+    final ApiParameterData[] parameters = ApiParameterParser.parseParameters(clazz, method);
 
-    return new ApiEndpointData(endpointAnnotation.id(),
+    return new ApiEndpointData(
+      endpointAnnotation.id(),
       String.join("\n", endpointAnnotation.description()),
-      parameters == null ? Collections.emptyList() : parameters,
+      parameters == null || parameters.length == 0 ? EMPTY_PARAMETERS : parameters,
       parameters != null,
-      instance, clazz, method);
+      instance,
+      clazz,
+      method
+    );
   }
 }
