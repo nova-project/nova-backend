@@ -25,7 +25,6 @@ dependencies {
 
   runtimeOnly('org.postgresql:postgresql:42.2.16')
   runtimeOnly('org.mariadb.jdbc:mariadb-java-client:2.7.0')
-  runtimeOnly('com.h2database:h2:1.4.200')
 
   /* Util */
   compileOnly('org.jetbrains:annotations:20.1.0')
