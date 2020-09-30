@@ -7,7 +7,7 @@ import net.getnova.backend.json.JsonSerializable;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Data
@@ -18,7 +18,7 @@ public final class ApiEndpointData implements JsonSerializable, Comparable<ApiEn
   @NotNull
   private final String description;
   @NotNull
-  private final List<ApiParameterData> parameters;
+  private final ApiParameterData[] parameters;
   private final boolean enabled;
 
   @NotNull
@@ -34,9 +34,9 @@ public final class ApiEndpointData implements JsonSerializable, Comparable<ApiEn
     return JsonBuilder
       .create("id", this.id)
       .add("description", this.description)
-      .add("parameters", this.parameters.stream()
+      .add("parameters", Arrays.stream(this.parameters)
         .filter(parameter -> parameter.getType().equals(ApiParameterType.NORMAL))
-        .collect(Collectors.toUnmodifiableList()))
+        .collect(Collectors.toList()))
       .add("enabled", this.enabled)
       .build();
   }

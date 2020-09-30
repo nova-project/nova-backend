@@ -1,13 +1,10 @@
 package net.getnova.backend.api.data;
 
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Setter;
 import net.getnova.backend.json.JsonTransient;
 import org.jetbrains.annotations.NotNull;
 
 @Data
-@Setter(AccessLevel.NONE)
 public final class ApiParameterData {
 
   @NotNull

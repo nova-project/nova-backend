@@ -1,6 +1,5 @@
 package net.getnova.backend.api.executor;
 
-import net.getnova.backend.api.data.ApiContext;
 import net.getnova.backend.api.data.ApiEndpointData;
 import net.getnova.backend.api.data.ApiRequest;
 import net.getnova.backend.api.data.ApiResponse;
@@ -20,6 +19,6 @@ public final class ApiExecutor {
     final ApiEndpointData endpoint = endpoints.get(request.getEndpoint());
     return endpoint == null
       ? new ApiResponse(ApiResponseStatus.NOT_FOUND, "ENDPOINT")
-      : ApiEndpointExecutor.execute(new ApiContext(request), endpoint);
+      : ApiEndpointExecutor.execute(request, endpoint);
   }
 }

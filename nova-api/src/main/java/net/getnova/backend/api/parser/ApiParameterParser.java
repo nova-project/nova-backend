@@ -8,8 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.LinkedList;
-import java.util.List;
 
 @Slf4j
 final class ApiParameterParser {
@@ -19,18 +17,19 @@ final class ApiParameterParser {
   }
 
   @Nullable
-  static List<ApiParameterData> parseParameters(@NotNull final Class<?> clazz, @NotNull final Method method) {
-    final List<ApiParameterData> parameterData = new LinkedList<>();
-    for (final Parameter parameter : method.getParameters()) {
+  static ApiParameterData[] parseParameters(@NotNull final Class<?> clazz, @NotNull final Method method) {
+    final Parameter[] methodParameters = method.getParameters();
+    final ApiParameterData[] parameterData = new ApiParameterData[methodParameters.length];
 
-      final ApiParameterData currentParameterData = parseParameter(parameter);
+    for (int i = 0; i < methodParameters.length; i++) {
+      final ApiParameterData currentParameterData = parseParameter(methodParameters[i]);
       if (currentParameterData == null) {
         log.error("Parameter {}.{}.{} missing Annotation {}.",
-          clazz.getName(), method.getName(), parameter.getName(), ApiParameter.class.getName());
+          clazz.getName(), method.getName(), methodParameters[i].getName(), ApiParameter.class.getName());
         return null;
-      } else parameterData.add(currentParameterData);
-
+      } else parameterData[i] = currentParameterData;
     }
+
     return parameterData;
   }
 
@@ -39,10 +38,12 @@ final class ApiParameterParser {
     if (!parameter.isAnnotationPresent(ApiParameter.class)) return null;
     final ApiParameter parameterAnnotation = parameter.getAnnotation(ApiParameter.class);
 
-    return new ApiParameterData(parameterAnnotation.id(),
+    return new ApiParameterData(
+      parameterAnnotation.id(),
       parameterAnnotation.required(),
       parameterAnnotation.type(),
       String.join("\n", parameterAnnotation.description()),
-      parameter.getType());
+      parameter.getType()
+    );
   }
 }
