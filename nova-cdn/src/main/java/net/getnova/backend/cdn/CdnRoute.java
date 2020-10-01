@@ -16,16 +16,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CdnRoute implements HttpRoute {
 
-    private final CdnFileResolver resolver;
+  private final CdnFileResolver resolver;
 
-    @Override
-    public Publisher<Void> execute(final HttpServerRequest request, final HttpServerResponse response) {
-        final CdnFileResolver.Result result = this.resolver.resolve(UUID.fromString(request.path().substring(4)));
+  @Override
+  public Publisher<Void> execute(final HttpServerRequest request, final HttpServerResponse response) {
+    final CdnFileResolver.Result result = this.resolver.resolve(UUID.fromString(request.path().substring(4)));
 
-        if (result == null) return HttpUtils.sendStatus(response, HttpResponseStatus.NOT_FOUND);
+    if (result == null) return HttpUtils.sendStatus(response, HttpResponseStatus.NOT_FOUND);
 
-        response.header(HttpHeaderNames.CONTENT_DISPOSITION,
-                HttpHeaderValues.ATTACHMENT + "; " + HttpHeaderValues.FILENAME + "=\"" + result.getCdnFile().getName() + "\"");
-        return response.sendFile(result.getFile().toPath());
-    }
+    response.header(HttpHeaderNames.CONTENT_DISPOSITION,
+      HttpHeaderValues.ATTACHMENT + "; " + HttpHeaderValues.FILENAME + "=\"" + result.getCdnFile().getName() + "\"");
+    return response.sendFile(result.getFile().toPath());
+  }
 }
