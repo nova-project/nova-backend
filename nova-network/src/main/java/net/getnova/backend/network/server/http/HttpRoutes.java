@@ -49,9 +49,10 @@ public class HttpRoutes {
 
     @Override
     public Publisher<Void> apply(final HttpServerRequest request, final HttpServerResponse response) {
+      final String path = request.path();
       for (final Entry entry : this.routes) {
         if ((entry.getMethod() == null || entry.getMethod().equals(request.method()))
-          && (request.path() + "/").startsWith(entry.getPath())) {
+          && (path + "/").startsWith(entry.getPath())) {
           return this.executeRoute(request, response, entry.getRoute());
         }
       }
