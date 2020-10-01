@@ -22,7 +22,7 @@ public class ModuleHandler {
   @Getter
   private ClassLoader loader;
   @Getter
-  private Set<String> packages;
+  private final Set<String> packages;
 
   public ModuleHandler(final Bootstrap bootstrap, final File moduleFolder) {
     this.bootstrap = bootstrap;
@@ -34,6 +34,7 @@ public class ModuleHandler {
     if (!moduleFolder.canRead()) {
       log.error("Missing read permissions for module folder. (\"{}\")", this.moduleFolder.getPath());
       this.loadModules = false;
+      this.packages = Collections.emptySet();
       return;
     }
 
@@ -41,6 +42,7 @@ public class ModuleHandler {
     if (files.length == 0) {
       log.info("Module folder (\"{}\") is empty, no modules were loaded.", this.moduleFolder.getPath());
       this.loadModules = false;
+      this.packages = Collections.emptySet();
       return;
     }
 
