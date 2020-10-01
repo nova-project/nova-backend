@@ -25,6 +25,7 @@ public class Bootstrap {
   );
 
   private final long startUpTime;
+  private final String[] debugModules;
   private final File workingDir;
   private final LoggingHandler loggingHandler;
   private final ModuleHandler moduleHandler;
@@ -35,6 +36,7 @@ public class Bootstrap {
   public Bootstrap(final long startUpTime, final String[] args) {
     this.startUpTime = startUpTime;
     this.workingDir = new File(System.getProperty("user.dir")).getAbsoluteFile();
+    this.debugModules = args;
 
     this.loggingHandler = new LogbackHandler(LogLevel.INFO, BANNER, null);
     log.info("Starting in working directory \"{}\"...", this.workingDir.getPath());
@@ -45,7 +47,7 @@ public class Bootstrap {
     this.contextHandler.register(ModuleHandler.class, this.moduleHandler);
 
     this.moduleHandler.loadModules();
-    this.moduleHandler.loadDebugModules(args);
+    this.moduleHandler.loadDebugModules(this.debugModules);
     this.contextHandler.setClassLoader(this.moduleHandler.getLoader());
 
     Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown, "shutdown"));

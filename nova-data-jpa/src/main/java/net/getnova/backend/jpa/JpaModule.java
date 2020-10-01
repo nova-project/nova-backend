@@ -16,6 +16,9 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 @Slf4j
 @Module
 @ComponentScan
@@ -49,7 +52,7 @@ public class JpaModule {
   }
 
   @Bean
-  LocalContainerEntityManagerFactoryBean entityManagerFactory(final ModuleHandler moduleHandler, final JpaConfig config, final DataSource dataSource) {
+  LocalContainerEntityManagerFactoryBean entityManagerFactory(final Bootstrap bootstrap, final ModuleHandler moduleHandler, final JpaConfig config, final DataSource dataSource) {
     final HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
     jpaVendorAdapter.setShowSql(config.isShowStatements());
     jpaVendorAdapter.setGenerateDdl(true);
@@ -57,7 +60,12 @@ public class JpaModule {
     final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
 //    entityManagerFactoryBean.setJpaProperties(new SqlProperties(StandardCharsets.UTF_8));
     entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
-    entityManagerFactoryBean.setPackagesToScan(moduleHandler.getPackages().toArray(new String[0]));
+    entityManagerFactoryBean.setPackagesToScan(
+      Stream.concat(
+        moduleHandler.getPackages().stream(),
+        Arrays.stream(bootstrap.getDebugModules()).map(module -> module.substring(module.lastIndexOf('.')))
+      ).toArray(String[]::new)
+    );
     entityManagerFactoryBean.setDataSource(dataSource);
 
     return entityManagerFactoryBean;
