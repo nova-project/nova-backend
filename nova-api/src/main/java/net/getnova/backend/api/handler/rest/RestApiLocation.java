@@ -28,6 +28,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public final class RestApiLocation implements HttpRoute {
 
+  private static final String EMPTY_RESPONSE = "{}";
   private final Map<String, ApiEndpointData> endpoints;
 
   @Override
@@ -55,7 +56,7 @@ public final class RestApiLocation implements HttpRoute {
         final boolean hasData = apiResponse.getJson() != null;
         final boolean hasMessage = apiResponse.getMessage() != null;
 
-        if (!(hasData || hasMessage)) return Mono.empty();
+        if (!(hasData || hasMessage)) return Mono.just(EMPTY_RESPONSE);
 
         final JsonElement jsonResponse = hasData
           ? apiResponse.getJson()
