@@ -18,14 +18,14 @@ public final class DurationTypeAdapter implements JsonSerializer<Duration>, Json
 
   @Override
   public JsonElement serialize(final Duration src, final Type typeOfSrc, final JsonSerializationContext context) {
-    return JsonUtils.toJson(src.toMillis());
+    return JsonUtils.toJson(src.toSeconds());
   }
 
   @Override
   public Duration deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
     try {
       if (json.isJsonPrimitive()) {
-        return Duration.ofMillis(JsonUtils.fromJson(json, long.class));
+        return Duration.ofSeconds(JsonUtils.fromJson(json, long.class));
       } else {
         throw new JsonParseException("Unable to parse a non \"" + JsonPrimitive.class.getName() + "\" into a \"" + Instant.class.getName() + "\".");
       }
