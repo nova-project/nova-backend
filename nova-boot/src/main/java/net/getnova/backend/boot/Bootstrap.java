@@ -38,7 +38,7 @@ public class Bootstrap {
     this.workingDir = new File(System.getProperty("user.dir")).getAbsoluteFile();
     this.debugModules = args;
 
-    this.loggingHandler = new LogbackHandler(LogLevel.INFO, BANNER, null);
+    this.loggingHandler = new LogbackHandler(LogLevel.INFO, BANNER, System.getenv("SENTRY_DSN"));
     log.info("Starting in working directory \"{}\"...", this.workingDir.getPath());
     this.loadConfig();
 
