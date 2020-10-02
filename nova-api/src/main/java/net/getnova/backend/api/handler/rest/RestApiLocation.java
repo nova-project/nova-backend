@@ -36,15 +36,9 @@ public final class RestApiLocation implements HttpRoute {
     return response.sendString(request.receive()
       .aggregate()
       .asString()
-      .defaultIfEmpty("{}")
-      .map(content -> {
-        final ApiRequest apiRequest = new ApiRequest(
-          request.path().substring(request.path().indexOf('/') + 1),
-          content.isBlank() ? JsonUtils.EMPTY_OBJECT : JsonUtils.fromJson(JsonParser.parseString(content), JsonObject.class),
-          null
-        );
-        return ApiExecutor.execute(this.endpoints, apiRequest);
-      })
+      .map(content -> content.isBlank() ? JsonUtils.EMPTY_OBJECT : JsonUtils.fromJson(JsonParser.parseString(content), JsonObject.class))
+      .defaultIfEmpty(JsonUtils.EMPTY_OBJECT)
+      .map(json -> ApiExecutor.execute(this.endpoints, new ApiRequest(request.path().substring(request.path().indexOf('/') + 1), json, null)))
       .onErrorReturn(cause -> cause instanceof JsonSyntaxException || cause.getCause() instanceof JsonSyntaxException,
         new ApiResponse(ApiResponseStatus.BAD_REQUEST, "JSON_SYNTAX"))
       .flatMap(apiResponse -> {
