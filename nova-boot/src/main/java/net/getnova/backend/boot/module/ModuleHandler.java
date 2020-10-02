@@ -20,9 +20,9 @@ public class ModuleHandler {
   private final File moduleFolder;
   private final boolean loadModules;
   @Getter
-  private ClassLoader loader;
-  @Getter
   private final Set<String> packages;
+  @Getter
+  private ClassLoader loader;
 
   public ModuleHandler(final Bootstrap bootstrap, final File moduleFolder) {
     this.bootstrap = bootstrap;
