@@ -21,7 +21,7 @@ public abstract class TableModelAutoId extends TableModel {
   @Id
   @Type(type = "uuid-char")
   @GeneratedValue(generator = "UUID")
-  @Column(name = "id", updatable = false, nullable = false)
+  @Column(name = "id", updatable = false, nullable = false, unique = true)
   @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
   private UUID id;
 }
