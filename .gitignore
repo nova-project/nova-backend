@@ -290,3 +290,4 @@ gradle-app.setting
 nova-starter
 lombok.config
 tmp
+!nova-starter/build.gradle
