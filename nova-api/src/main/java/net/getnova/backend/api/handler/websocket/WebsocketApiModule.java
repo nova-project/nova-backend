@@ -22,6 +22,6 @@ public class WebsocketApiModule {
                             final ApplicationContext context) {
     final Collection<Object> collections = context.getBeansWithAnnotation(ApiEndpointCollection.class).values();
     final Map<String, ApiEndpointData> endpoints = ApiEndpointCollectionParser.getEndpoints(ApiEndpointCollectionParser.parseCollections(collections));
-    httpServerModule.getRoutes().addRoute(config.getPath(), new WebsocketApiLocation(endpoints));
+    httpServerModule.getRoutes().addRoute(config.getPath(), new WebsocketApiRoute(endpoints));
   }
 }

@@ -20,7 +20,7 @@ public class RestApiModule {
                        final ApplicationContext context) {
     final Collection<Object> collections = context.getBeansWithAnnotation(ApiEndpointCollection.class).values();
     final Map<String, ApiEndpointData> endpoints = ApiEndpointCollectionParser.getEndpoints(ApiEndpointCollectionParser.parseCollections(collections));
-    final RestApiLocation handler = new RestApiLocation(endpoints);
+    final RestApiRoute handler = new RestApiRoute(endpoints);
     httpServerModule.getRoutes().addRoute(config.getPath(), handler);
   }
 }

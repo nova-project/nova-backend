@@ -26,7 +26,7 @@ import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
-public final class RestApiLocation implements HttpRoute {
+public final class RestApiRoute implements HttpRoute {
 
   private static final String EMPTY_RESPONSE = "{}";
   private final Map<String, ApiEndpointData> endpoints;
