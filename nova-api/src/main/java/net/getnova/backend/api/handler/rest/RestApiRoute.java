@@ -38,7 +38,7 @@ public final class RestApiRoute implements HttpRoute {
       .asString()
       .map(content -> content.isBlank() ? JsonUtils.EMPTY_OBJECT : JsonUtils.fromJson(JsonParser.parseString(content), JsonObject.class))
       .defaultIfEmpty(JsonUtils.EMPTY_OBJECT)
-      .map(json -> ApiExecutor.execute(this.endpoints, new ApiRequest(request.path().substring(request.path().indexOf('/') + 1), json)))
+      .flatMap(json -> ApiExecutor.execute(this.endpoints, new ApiRequest(request.path().substring(request.path().indexOf('/') + 1), json)))
       .onErrorReturn(cause -> cause instanceof JsonSyntaxException || cause.getCause() instanceof JsonSyntaxException,
         new ApiResponse(ApiResponseStatus.BAD_REQUEST, "JSON_SYNTAX"))
       .flatMap(apiResponse -> {
