@@ -15,4 +15,9 @@ public final class ApiRequest {
   private final JsonObject data;
   @Nullable
   private String tag;
+
+  public ApiRequest(final @Nullable String endpoint, final @Nullable JsonObject data) {
+    this.endpoint = endpoint;
+    this.data = data;
+  }
 }
