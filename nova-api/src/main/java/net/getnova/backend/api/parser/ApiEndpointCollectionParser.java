@@ -44,7 +44,8 @@ public final class ApiEndpointCollectionParser {
     return new ApiEndpointCollectionData(
       endpointCollectionAnnotation.id(),
       String.join("\n", endpointCollectionAnnotation.description()),
-      ApiEndpointParser.parseEndpoints(instance, clazz)
+      endpointCollectionAnnotation.disabled(),
+      ApiEndpointParser.parseEndpoints(instance, clazz, endpointCollectionAnnotation.disabled())
     );
   }
 }

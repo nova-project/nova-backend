@@ -18,4 +18,6 @@ public @interface ApiEndpointCollection {
 
   @NotNull
   String[] description();
+
+  boolean disabled() default false;
 }
