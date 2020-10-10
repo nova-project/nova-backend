@@ -14,8 +14,19 @@ public final class HttpUtils {
   }
 
   public static Publisher<Void> sendStatus(final HttpServerResponse response, final HttpResponseStatus status) {
+    return sendStatus(response, status, true);
+  }
+
+  public static Publisher<Void> sendStatus(final HttpServerResponse response, final HttpResponseStatus status, final boolean body) {
+    response.status(status);
+    return body
+      ? response.header(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_PLAIN).sendString(Mono.just(status.toString()))
+      : response.send();
+  }
+
+  public static Publisher<Void> sendStatus(final HttpServerResponse response, final HttpResponseStatus status, final String message) {
     return response.status(status)
       .header(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_PLAIN)
-      .sendString(Mono.just(status.toString()));
+      .sendString(Mono.just(status.toString() + ": " + message));
   }
 }

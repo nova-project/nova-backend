@@ -2,7 +2,6 @@ package net.getnova.backend.cdn.data;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import net.getnova.backend.cdn.CdnModule;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -13,18 +12,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CdnFileResolver {
 
-  private final CdnModule cdnModule;
+  //  private final CdnModule cdnModule;
   private final CdnFileRepository cdnFileRepository;
 
-  public Result resolve(final UUID id) {
-    final Optional<CdnFile> cdnFile = this.cdnFileRepository.findById(id);
-    if (cdnFile.isEmpty()) return null;
+  public Optional<Result> resolve(final UUID id) {
+    return this.cdnFileRepository.findById(id)
+      .map(file -> new Result(new File(new File("data"), getPath(id.toString())), file));
+  }
 
-    final String idString = id.toString();
-    return new Result(
-      new File(this.cdnModule.getDataDir(), idString.substring(0, 2) + File.separatorChar + idString),
-      cdnFile.get()
-    );
+  private static String getPath(final String id) {
+    return id.substring(0, 2) + File.separatorChar + id;
   }
 
   @Data
