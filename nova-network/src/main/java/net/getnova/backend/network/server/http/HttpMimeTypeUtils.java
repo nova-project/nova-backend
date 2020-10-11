@@ -16,16 +16,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-public final class HttpMimeType {
+public final class HttpMimeTypeUtils {
 
   private static final String MIME_TYPES_FILE_NAME = "/mime.types";
   private static final MultiValueMap<String, MimeType> fileExtensionToMediaTypes = parseMimeTypes();
 
-  private HttpMimeType() {
+  private HttpMimeTypeUtils() {
+    throw new UnsupportedOperationException();
   }
 
   private static MultiValueMap<String, MimeType> parseMimeTypes() {
-    final InputStream is = HttpMimeType.class.getResourceAsStream(MIME_TYPES_FILE_NAME);
+    final InputStream is = HttpMimeTypeUtils.class.getResourceAsStream(MIME_TYPES_FILE_NAME);
     try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.US_ASCII))) {
       final MultiValueMap<String, MimeType> result = new LinkedMultiValueMap<>();
       String line;

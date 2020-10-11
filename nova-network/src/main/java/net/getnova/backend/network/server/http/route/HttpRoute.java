@@ -6,5 +6,5 @@ import reactor.netty.http.server.HttpServerResponse;
 
 public interface HttpRoute {
 
-  Publisher<Void> execute(final HttpServerRequest request, final HttpServerResponse response);
+  Publisher<Void> execute(HttpServerRequest request, HttpServerResponse response);
 }

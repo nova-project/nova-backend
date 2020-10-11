@@ -5,7 +5,7 @@ import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import lombok.RequiredArgsConstructor;
 import net.getnova.backend.cdn.data.CdnFileResolver;
-import net.getnova.backend.network.server.http.HttpMimeType;
+import net.getnova.backend.network.server.http.HttpMimeTypeUtils;
 import net.getnova.backend.network.server.http.HttpUtils;
 import net.getnova.backend.network.server.http.route.HttpRoute;
 import org.reactivestreams.Publisher;
@@ -47,7 +47,7 @@ public class CdnRoute implements HttpRoute {
 
     response.header(HttpHeaderNames.DATE, OffsetDateTime.now(ZoneOffset.UTC).format(HTTP_DATE_TIME_FORMATTER));
     response.header(HttpHeaderNames.CONTENT_DISPOSITION, "inline; " + HttpHeaderValues.FILENAME + "=\"" + result.getCdnFile().getName() + "\"");
-    HttpMimeType.getMediaType(result.getCdnFile().getName()).ifPresentOrElse(
+    HttpMimeTypeUtils.getMediaType(result.getCdnFile().getName()).ifPresentOrElse(
       mediaType -> response.header(HttpHeaderNames.CONTENT_TYPE, mediaType.toString()),
       () -> response.header(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_OCTET_STREAM)
     );

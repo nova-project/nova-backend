@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiFunction;
 
-public class HttpRoutes {
+public final class HttpRoutes {
 
   private final Set<Entry> routes;
 
