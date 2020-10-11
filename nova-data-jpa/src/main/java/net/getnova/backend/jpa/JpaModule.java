@@ -52,7 +52,12 @@ public class JpaModule {
   }
 
   @Bean
-  LocalContainerEntityManagerFactoryBean entityManagerFactory(final Bootstrap bootstrap, final ModuleHandler moduleHandler, final JpaConfig config, final DataSource dataSource) {
+  LocalContainerEntityManagerFactoryBean entityManagerFactory(
+    final Bootstrap bootstrap,
+    final ModuleHandler moduleHandler,
+    final JpaConfig config,
+    final DataSource dataSource
+  ) {
     final HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
     jpaVendorAdapter.setShowSql(config.isShowStatements());
     jpaVendorAdapter.setGenerateDdl(true);
