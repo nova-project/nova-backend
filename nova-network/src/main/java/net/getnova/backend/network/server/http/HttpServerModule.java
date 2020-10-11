@@ -4,7 +4,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import net.getnova.backend.boot.Bootstrap;
 import net.getnova.backend.boot.module.Module;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -22,28 +21,19 @@ public class HttpServerModule {
   @Getter
   private final HttpServer server;
 
-  public HttpServerModule(
-    final Bootstrap bootstrap,
-    final HttpConfig config
-  ) {
+  public HttpServerModule(final HttpConfig config) {
     this.routes = new HttpRoutes();
-    if (!config.getCrtPath().isBlank() && !config.getKeyPath().isBlank()) {
-      this.server = new HttpServer(
-        "http",
-        new InetSocketAddress(config.getHost(), config.getPort()),
-        Duration.ofSeconds(10),
-        this.routes,
-        new File(config.getCrtPath()),
-        new File(config.getKeyPath())
-      );
-    } else {
-      this.server = new HttpServer(
-        "http",
-        new InetSocketAddress(config.getHost(), config.getPort()),
-        Duration.ofSeconds(10),
-        this.routes
-      );
-    }
+    this.server = !config.getCertPath().isBlank() && !config.getKeyPath().isBlank()
+      ? this.createSecureHttpServer(config.getHost(), config.getPort(), config.getCertPath(), config.getKeyPath())
+      : this.createHttpServer(config.getHost(), config.getPort());
+  }
+
+  private HttpServer createHttpServer(final String host, final int port) {
+    return new HttpServer("http", new InetSocketAddress(host, port), Duration.ofSeconds(10), this.routes);
+  }
+
+  private HttpServer createSecureHttpServer(final String host, final int port, final String certPath, final String keyPath) {
+    return new HttpServer("http", new InetSocketAddress(host, port), Duration.ofSeconds(10), this.routes, new File(certPath), new File(keyPath));
   }
 
   @PostConstruct
