@@ -1,5 +1,6 @@
 package net.getnova.backend.api.annotations;
 
+import net.getnova.backend.api.data.ApiType;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,9 @@ public @interface ApiEndpointCollection {
 
   @NotNull
   String[] description();
+
+  @NotNull
+  ApiType type();
 
   boolean disabled() default false;
 }

@@ -20,6 +20,7 @@ final class ApiEndpointExecutor {
   }
 
   @NotNull
+  @SuppressWarnings({"unchecked"})
   static Mono<ApiResponse> execute(@NotNull final ApiRequest request, @NotNull final ApiEndpointData endpoint) {
     if (!endpoint.isEnabled())
       return Mono.just(new ApiResponse(ApiResponseStatus.SERVICE_UNAVAILABLE, "ENDPOINT_DISABLED"));

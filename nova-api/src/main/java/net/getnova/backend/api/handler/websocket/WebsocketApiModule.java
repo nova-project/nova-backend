@@ -1,27 +1,32 @@
 package net.getnova.backend.api.handler.websocket;
 
 import lombok.extern.slf4j.Slf4j;
-import net.getnova.backend.api.annotations.ApiEndpointCollection;
+import net.getnova.backend.api.ApiModule;
+import net.getnova.backend.api.data.ApiEndpointCollectionData;
 import net.getnova.backend.api.data.ApiEndpointData;
+import net.getnova.backend.api.data.ApiType;
 import net.getnova.backend.api.parser.ApiEndpointCollectionParser;
 import net.getnova.backend.boot.module.Module;
 import net.getnova.backend.network.server.http.HttpServerModule;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
-import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @ComponentScan
-@Module(HttpServerModule.class)
+@Module({HttpServerModule.class})
 public class WebsocketApiModule {
 
-  public WebsocketApiModule(final WebsocketApiConfig config,
-                            final HttpServerModule httpServerModule,
-                            final ApplicationContext context) {
-    final Collection<Object> collections = context.getBeansWithAnnotation(ApiEndpointCollection.class).values();
-    final Map<String, ApiEndpointData> endpoints = ApiEndpointCollectionParser.getEndpoints(ApiEndpointCollectionParser.parseCollections(collections));
-    httpServerModule.getRoutes().addRoute(config.getPath(), new WebsocketApiRoute(endpoints));
+  public WebsocketApiModule(
+    final ApiModule apiModule,
+    final WebsocketApiConfig config,
+    final HttpServerModule httpServerModule
+  ) {
+    final Set<ApiEndpointCollectionData> collections = apiModule.getCollections(ApiType.WEBSOCKET);
+    final Map<String, ApiEndpointData> endpoints = ApiEndpointCollectionParser.getEndpoints(collections);
+    if (!endpoints.isEmpty()) {
+      httpServerModule.getRoutes().addRoute(config.getPath(), new WebsocketApiRoute(endpoints));
+    }
   }
 }

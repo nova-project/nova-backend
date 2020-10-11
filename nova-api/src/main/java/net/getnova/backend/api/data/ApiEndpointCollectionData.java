@@ -16,6 +16,8 @@ public final class ApiEndpointCollectionData implements JsonSerializable, Compar
   private final String id;
   @NotNull
   private final String description;
+  @NotNull
+  private final ApiType type;
   private final boolean enabled;
   @NotNull
   private final Map<String, ApiEndpointData> endpoints;
