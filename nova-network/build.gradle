@@ -12,7 +12,4 @@ dependencies {
   api('io.projectreactor.netty:reactor-netty')
 //  api('io.projectreactor.addons:reactor-extra')
   runtimeOnly('io.netty:netty-tcnative-boringssl-static:2.0.34.Final')
-
-  /* Util */
-  compileOnly('org.jetbrains:annotations:20.1.0')
 }

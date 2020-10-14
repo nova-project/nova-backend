@@ -9,7 +9,4 @@ dependencies {
   implementation(project(':nova-network'))
   annotationProcessor("org.springframework:spring-context-indexer:5.2.9.RELEASE")
   api('io.projectreactor:reactor-core')
-
-  /* Util */
-  compileOnly('org.jetbrains:annotations:20.1.0')
 }
