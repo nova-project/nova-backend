@@ -1,12 +1,11 @@
 package net.getnova.backend.api.parser;
 
 import lombok.extern.slf4j.Slf4j;
+import net.getnova.backend.api.ApiAuthenticator;
 import net.getnova.backend.api.annotations.ApiEndpoint;
 import net.getnova.backend.api.data.ApiEndpointData;
 import net.getnova.backend.api.data.ApiParameterData;
 import net.getnova.backend.api.data.ApiResponse;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Method;
@@ -25,16 +24,15 @@ final class ApiEndpointParser {
     throw new UnsupportedOperationException();
   }
 
-  @NotNull
-  static Map<String, ApiEndpointData> parseEndpoints(@NotNull final Object object, @NotNull final Class<?> clazz, final boolean disabled) {
+  static Map<String, ApiEndpointData> parseEndpoints(final Object object, final Class<?> clazz, final boolean disabled, final ApiAuthenticator authenticator) {
     return Arrays.stream(clazz.getDeclaredMethods())
-      .map(method -> parseEndpoint(object, clazz, method, disabled))
+      .parallel()
+      .map(method -> parseEndpoint(object, clazz, method, disabled, authenticator))
       .filter(Objects::nonNull)
       .collect(Collectors.toUnmodifiableMap(ApiEndpointData::getId, Function.identity()));
   }
 
-  @Nullable
-  private static ApiEndpointData parseEndpoint(@NotNull final Object instance, @NotNull final Class<?> clazz, @NotNull final Method method, final boolean disabled) {
+  private static ApiEndpointData parseEndpoint(final Object instance, final Class<?> clazz, final Method method, final boolean disabled, final ApiAuthenticator authenticator) {
     final boolean hasAccess;
     try {
       hasAccess = method.canAccess(instance);
@@ -64,7 +62,9 @@ final class ApiEndpointParser {
       endpointAnnotation.id(),
       String.join("\n", endpointAnnotation.description()),
       parameters == null || parameters.length == 0 ? EMPTY_PARAMETERS : parameters,
-      endpointAnnotation.disabled() || parameters != null,
+      endpointAnnotation.authentication(),
+      endpointAnnotation.disabled() || parameters != null || disabled,
+      authenticator,
       instance,
       clazz,
       method

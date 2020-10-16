@@ -1,7 +1,8 @@
 package net.getnova.backend.api.annotations;
 
+import net.getnova.backend.api.ApiAuthenticator;
+import net.getnova.backend.api.ApiModule;
 import net.getnova.backend.api.data.ApiType;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.ElementType;
@@ -14,14 +15,13 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiEndpointCollection {
 
-  @NotNull
   String id();
 
-  @NotNull
   String[] description();
 
-  @NotNull
   ApiType type();
 
   boolean disabled() default false;
+
+  Class<? extends ApiAuthenticator> authenticator() default ApiModule.DefaultApiAuthenticator.class;
 }

@@ -2,14 +2,12 @@ package net.getnova.backend.api.executor;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
+import com.google.gson.JsonSyntaxException;
 import net.getnova.backend.api.data.ApiParameterData;
 import net.getnova.backend.api.data.ApiRequest;
 import net.getnova.backend.api.exception.ApiInternalParameterException;
 import net.getnova.backend.api.exception.ApiParameterException;
-import net.getnova.backend.json.JsonTypeMappingException;
 import net.getnova.backend.json.JsonUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 final class ApiParameterExecutor {
 
@@ -19,9 +17,8 @@ final class ApiParameterExecutor {
     throw new UnsupportedOperationException();
   }
 
-  @NotNull
-  static Object[] parseParameters(@NotNull final ApiRequest request, @NotNull final ApiParameterData[] parameters) throws ApiParameterException {
-    if (request.getData() == null) return EMPTY_PARAMETERS;
+  static Object[] parseParameters(final ApiRequest request, final ApiParameterData[] parameters) throws ApiParameterException {
+    if (parameters.length == 0) return EMPTY_PARAMETERS;
 
     final Object[] values = new Object[parameters.length];
     for (int i = 0; i < parameters.length; i++) {
@@ -31,25 +28,24 @@ final class ApiParameterExecutor {
     return values;
   }
 
-  @Nullable
-  private static Object getParameter(@NotNull final ApiRequest request, @NotNull final ApiParameterData parameter) throws ApiParameterException {
+  private static Object getParameter(final ApiRequest request, final ApiParameterData parameter) throws ApiParameterException {
     return switch (parameter.getType()) {
-      case NORMAL -> {
-        final JsonElement jsonValue = request.getData().get(parameter.getId()); // NullPointerException: See line 24
-        if (parameter.isRequired() && (jsonValue == null || jsonValue instanceof JsonNull)) {
-          throw new ApiParameterException("The parameter \"" + parameter.getId() + "\" was not found.");
-        }
-
-        try {
-          yield JsonUtils.fromJson(jsonValue, parameter.getClassType());
-        } catch (JsonTypeMappingException e) {
-          throw new ApiInternalParameterException("Unable to parse parameter \"" + parameter.getId()
-            + "\" in endpoint \"" + request.getEndpoint() + "\": " + e.getMessage(), e);
-        }
-      }
-      case ENDPOINT -> request.getEndpoint();
-      case TAG -> request.getTag();
-      case DATA -> request.getData();
+      case NORMAL -> parseNormalParameter(request, parameter);
+      case REQUEST -> request;
     };
+  }
+
+  private static Object parseNormalParameter(final ApiRequest request, final ApiParameterData parameter) throws ApiParameterException {
+    final JsonElement jsonValue = request.getData().get(parameter.getId());
+    if (parameter.isRequired() && (jsonValue == null || jsonValue instanceof JsonNull)) {
+      throw new ApiParameterException(String.format("PARAMETER_%s_MISSING", parameter.getId()));
+    }
+
+    try {
+      return JsonUtils.fromJson(jsonValue, parameter.getClassType());
+    } catch (JsonSyntaxException e) {
+      throw new ApiInternalParameterException(String.format("Unable to parse parameter \"%s\" in endpoint \"%s\": %s",
+        parameter.getId(), request.getEndpoint(), e.getMessage()), e);
+    }
   }
 }

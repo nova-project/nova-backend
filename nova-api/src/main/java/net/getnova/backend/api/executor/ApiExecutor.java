@@ -1,10 +1,9 @@
 package net.getnova.backend.api.executor;
 
+import io.netty.handler.codec.http.HttpResponseStatus;
 import net.getnova.backend.api.data.ApiEndpointData;
 import net.getnova.backend.api.data.ApiRequest;
 import net.getnova.backend.api.data.ApiResponse;
-import net.getnova.backend.api.data.ApiResponseStatus;
-import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -15,11 +14,10 @@ public final class ApiExecutor {
     throw new UnsupportedOperationException();
   }
 
-  @NotNull
-  public static Mono<ApiResponse> execute(@NotNull final Map<String, ApiEndpointData> endpoints, @NotNull final ApiRequest request) {
+  public static Mono<ApiResponse> execute(final Map<String, ApiEndpointData> endpoints, final ApiRequest request) {
     final ApiEndpointData endpoint = endpoints.get(request.getEndpoint());
     return endpoint == null
-      ? Mono.just(new ApiResponse(ApiResponseStatus.NOT_FOUND, "ENDPOINT"))
+      ? Mono.just(new ApiResponse(HttpResponseStatus.NOT_FOUND, "ENDPOINT"))
       : ApiEndpointExecutor.execute(request, endpoint);
   }
 }

@@ -3,8 +3,7 @@ package net.getnova.backend.api.parser;
 import net.getnova.backend.api.annotations.ApiEndpointCollection;
 import net.getnova.backend.api.data.ApiEndpointCollectionData;
 import net.getnova.backend.api.data.ApiEndpointData;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.getnova.backend.api.data.AuthenticatorSupplier;
 
 import java.util.AbstractMap;
 import java.util.Collection;
@@ -19,34 +18,34 @@ public final class ApiEndpointCollectionParser {
     throw new UnsupportedOperationException();
   }
 
-  @NotNull
-  public static Set<ApiEndpointCollectionData> parseCollections(@NotNull final Collection<Object> instances) {
-    return instances.stream()
-      .map(ApiEndpointCollectionParser::parseCollection)
+  public static Set<ApiEndpointCollectionData> parseCollections(final Collection<Object> instances, final AuthenticatorSupplier authenticatorSupplier) {
+    return instances.parallelStream()
+      .map(instance -> parseCollection(instance, authenticatorSupplier))
       .filter(Objects::nonNull)
       .collect(Collectors.toUnmodifiableSet());
   }
 
-  @NotNull
-  public static Map<String, ApiEndpointData> getEndpoints(@NotNull final Set<ApiEndpointCollectionData> collections) {
+  public static Map<String, ApiEndpointData> getEndpoints(final Set<ApiEndpointCollectionData> collections) {
     return collections.parallelStream()
       .flatMap(collection -> collection.getEndpoints().entrySet().parallelStream()
         .map(entry -> new AbstractMap.SimpleEntry<>(collection.getId() + "/" + entry.getKey(), entry.getValue())))
-      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+      .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
-  @Nullable
-  private static ApiEndpointCollectionData parseCollection(@NotNull final Object instance) {
+  private static ApiEndpointCollectionData parseCollection(final Object instance, final AuthenticatorSupplier authenticatorSupplier) {
     final Class<?> clazz = instance.getClass();
     if (!clazz.isAnnotationPresent(ApiEndpointCollection.class)) return null;
 
     final ApiEndpointCollection endpointCollectionAnnotation = clazz.getAnnotation(ApiEndpointCollection.class);
+    final Map<String, ApiEndpointData> parameters = ApiEndpointParser.parseEndpoints(instance, clazz,
+      endpointCollectionAnnotation.disabled(), authenticatorSupplier.apply(endpointCollectionAnnotation.authenticator()));
+
     return new ApiEndpointCollectionData(
       endpointCollectionAnnotation.id(),
       String.join("\n", endpointCollectionAnnotation.description()),
       endpointCollectionAnnotation.type(),
       endpointCollectionAnnotation.disabled(),
-      ApiEndpointParser.parseEndpoints(instance, clazz, endpointCollectionAnnotation.disabled())
+      parameters
     );
   }
 }

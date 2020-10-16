@@ -1,7 +1,6 @@
 package net.getnova.backend.json;
 
 import com.google.gson.JsonElement;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * This is an Interface to serialize any {@link Object} to an {@link JsonElement}.
@@ -37,6 +36,5 @@ public interface JsonSerializable {
    * @see JsonSerializable
    * @see JsonElement
    */
-  @NotNull
   JsonElement serialize();
 }
