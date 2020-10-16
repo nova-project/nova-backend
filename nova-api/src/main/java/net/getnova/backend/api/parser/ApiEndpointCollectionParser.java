@@ -19,7 +19,7 @@ public final class ApiEndpointCollectionParser {
   }
 
   public static Set<ApiEndpointCollectionData> parseCollections(final Collection<Object> instances, final AuthenticatorSupplier authenticatorSupplier) {
-    return instances.parallelStream()
+    return instances.stream()
       .map(instance -> parseCollection(instance, authenticatorSupplier))
       .filter(Objects::nonNull)
       .collect(Collectors.toUnmodifiableSet());
