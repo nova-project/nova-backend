@@ -1,4 +1,4 @@
-FROM adoptopenjdk:14-jdk-hotspot AS builder
+FROM adoptopenjdk:15-jdk-hotspot AS builder
 
 ARG GRADLE_USER=gradle
 ARG GRADLE_GROUP=gradle
@@ -18,7 +18,7 @@ WORKDIR /home/src
 USER ${GRADLE_USER}
 RUN chmod +x ./gradlew && ./gradlew :nova-starter:installDist --stacktrace --no-daemon
 
-FROM adoptopenjdk:14-jre-hotspot
+FROM adoptopenjdk:15-jre-hotspot
 
 ARG NOVA_USER=nova
 ARG NOVA_GROUP=nova
