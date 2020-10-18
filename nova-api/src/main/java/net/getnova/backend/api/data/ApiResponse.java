@@ -2,13 +2,11 @@ package net.getnova.backend.api.data;
 
 import com.google.gson.JsonElement;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.Setter;
 import net.getnova.backend.json.JsonUtils;
 
-@Getter
-@EqualsAndHashCode
+@Data
 public final class ApiResponse {
 
   private final HttpResponseStatus status;

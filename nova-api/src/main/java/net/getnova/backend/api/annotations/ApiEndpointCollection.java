@@ -1,7 +1,7 @@
 package net.getnova.backend.api.annotations;
 
 import net.getnova.backend.api.ApiAuthenticator;
-import net.getnova.backend.api.ApiModule;
+import net.getnova.backend.api.DefaultApiAuthenticator;
 import net.getnova.backend.api.data.ApiType;
 import org.springframework.stereotype.Component;
 
@@ -23,5 +23,5 @@ public @interface ApiEndpointCollection {
 
   boolean disabled() default false;
 
-  Class<? extends ApiAuthenticator> authenticator() default ApiModule.DefaultApiAuthenticator.class;
+  Class<? extends ApiAuthenticator> authenticator() default DefaultApiAuthenticator.class;
 }

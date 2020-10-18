@@ -19,7 +19,7 @@ final class ApiEndpointExecutor {
   }
 
   static Mono<ApiResponse> execute(final ApiRequest request, final ApiEndpointData endpoint) {
-    if (!endpoint.isEnabled()) {
+    if (endpoint.isDisabled()) {
       return Mono.just(new ApiResponse(HttpResponseStatus.SERVICE_UNAVAILABLE, "ENDPOINT_DISABLED"));
     }
 

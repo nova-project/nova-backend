@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
-public final class ApiEndpointData implements JsonSerializable {
+public final class ApiEndpointData implements JsonSerializable, Comparable<ApiEndpointData> {
 
   private final String id;
   private final String description;
   private final ApiParameterData[] parameters;
   private final int authentication;
-  private final boolean enabled;
+  private final boolean disabled;
 
   private final ApiAuthenticator authenticator;
 
@@ -31,7 +31,7 @@ public final class ApiEndpointData implements JsonSerializable {
     return JsonBuilder.create("id", this.id)
       .add("description", this.description)
       .add("parameters", this.getNotmalParameters())
-      .add("enabled", this.enabled)
+      .add("disabled", this.disabled)
       .build();
   }
 
@@ -39,5 +39,10 @@ public final class ApiEndpointData implements JsonSerializable {
     return Arrays.stream(this.parameters)
       .filter(parameter -> parameter.getType().equals(ApiParameterType.NORMAL))
       .collect(Collectors.toList());
+  }
+
+  @Override
+  public int compareTo(final ApiEndpointData other) {
+    return this.id.compareTo(other.id);
   }
 }

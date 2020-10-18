@@ -6,21 +6,28 @@ import net.getnova.backend.json.JsonBuilder;
 import net.getnova.backend.json.JsonSerializable;
 
 import java.util.Map;
+import java.util.TreeSet;
 
 @Data
-public final class ApiEndpointCollectionData implements JsonSerializable {
+public final class ApiEndpointCollectionData implements JsonSerializable, Comparable<ApiEndpointCollectionData> {
 
   private final String id;
   private final String description;
   private final ApiType type;
-  private final boolean enabled;
+  private final boolean disabled;
   private final Map<String, ApiEndpointData> endpoints;
 
   @Override
   public JsonElement serialize() {
     return JsonBuilder.create("id", this.id)
       .add("description", this.description)
-      .add("endpoints", this.endpoints.values())
+      .add("disabled", this.id)
+      .add("endpoints", new TreeSet<>(this.endpoints.values()))
       .build();
+  }
+
+  @Override
+  public int compareTo(final ApiEndpointCollectionData other) {
+    return this.id.compareTo(other.id);
   }
 }

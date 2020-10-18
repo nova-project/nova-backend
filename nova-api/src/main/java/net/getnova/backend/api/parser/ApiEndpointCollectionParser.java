@@ -18,7 +18,8 @@ public final class ApiEndpointCollectionParser {
     throw new UnsupportedOperationException();
   }
 
-  public static Set<ApiEndpointCollectionData> parseCollections(final Collection<Object> instances, final AuthenticatorSupplier authenticatorSupplier) {
+  public static Set<ApiEndpointCollectionData> parseCollections(final Collection<Object> instances,
+                                                                final AuthenticatorSupplier authenticatorSupplier) {
     return instances.stream()
       .map(instance -> parseCollection(instance, authenticatorSupplier))
       .filter(Objects::nonNull)
@@ -32,7 +33,8 @@ public final class ApiEndpointCollectionParser {
       .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
-  private static ApiEndpointCollectionData parseCollection(final Object instance, final AuthenticatorSupplier authenticatorSupplier) {
+  private static ApiEndpointCollectionData parseCollection(final Object instance,
+                                                           final AuthenticatorSupplier authenticatorSupplier) {
     final Class<?> clazz = instance.getClass();
     if (!clazz.isAnnotationPresent(ApiEndpointCollection.class)) return null;
 
