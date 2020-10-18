@@ -41,48 +41,46 @@ final class RestApiRoute implements HttpRoute {
       httpRequest.receive()
         .aggregate()
         .asString(CHARSET)
-        .flatMap(this::parse)
-        .defaultIfEmpty(JsonUtils.EMPTY_OBJECT)
-        .flatMap(json -> this.execute(httpRequest, json))
+        .defaultIfEmpty("")
+        .flatMap(content -> this.execute(httpRequest, content))
         .onErrorResume(this::handleError)
-        .flatMap(apiResponse -> this.parseResponse(httpResponse, apiResponse)),
+        .map(apiResponse -> this.parseResponse(httpResponse, apiResponse)),
       CHARSET
     );
   }
 
-  private Mono<String> parseResponse(final HttpServerResponse httpResponse, final ApiResponse apiResponse) {
-    httpResponse.status(apiResponse.getStatus());
-    httpResponse.header(HttpHeaderNames.CONTENT_TYPE, CONTENT_TYPE);
+  private Mono<ApiResponse> execute(final HttpServerRequest httpRequest, final String content) {
+    final JsonObject json;
+    try {
+      json = content.isEmpty() && content.isBlank() ? JsonUtils.EMPTY_OBJECT : JsonUtils.fromJson(JsonParser.parseString(content), JsonObject.class);
+    } catch (JsonSyntaxException e) {
+      return Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, "JSON_SYNTAX"));
+    }
 
-    final boolean hasData = apiResponse.getJson() != null;
-    final boolean hasMessage = apiResponse.getMessage() != null;
-
-    if (!hasData && !hasMessage) return Mono.just(EMPTY_RESPONSE);
-
-    final JsonElement jsonResponse = hasData
-      ? apiResponse.getJson()
-      : JsonBuilder.create("message", apiResponse.getMessage()).build();
-
-    return Mono.just(jsonResponse.toString());
-  }
-
-  private Mono<JsonObject> parse(final String content) {
-    return content.isBlank() ? Mono.empty() : Mono.just(JsonUtils.fromJson(JsonParser.parseString(content), JsonObject.class));
-  }
-
-  private Mono<ApiResponse> execute(final HttpServerRequest httpRequest, final JsonObject json) {
     final String endpoint = httpRequest.path().substring(httpRequest.path().indexOf('/') + 1);
     final ApiRequest apiRequest = new RestApiRequest(endpoint, json, httpRequest);
 
     return ApiExecutor.execute(this.endpoints, apiRequest);
   }
 
+  private String parseResponse(final HttpServerResponse httpResponse, final ApiResponse apiResponse) {
+    httpResponse.status(apiResponse.getStatus());
+    httpResponse.header(HttpHeaderNames.CONTENT_TYPE, CONTENT_TYPE);
+
+    final boolean hasData = apiResponse.getJson() != null;
+    final boolean hasMessage = apiResponse.getMessage() != null;
+
+    if (!hasData && !hasMessage) return EMPTY_RESPONSE;
+
+    final JsonElement jsonResponse = hasData
+      ? apiResponse.getJson()
+      : JsonBuilder.create("message", apiResponse.getMessage()).build();
+
+    return jsonResponse.toString();
+  }
+
   private Mono<ApiResponse> handleError(final Throwable cause) {
-    if (cause instanceof JsonSyntaxException || (cause.getCause() != null && cause.getCause() instanceof JsonSyntaxException)) {
-      return Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, "JSON_SYNTAX"));
-    } else {
-      log.error("Error while handling rest api", cause);
-      return Mono.just(new ApiResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR));
-    }
+    log.error("Error while executing rest api pipeline.", cause);
+    return Mono.just(new ApiResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR));
   }
 }
