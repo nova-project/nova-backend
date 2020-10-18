@@ -1,5 +1,6 @@
 package net.getnova.backend.api.handler.websocket;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
@@ -34,36 +35,47 @@ public final class WebsocketApiRoute implements WebsocketRoute {
     return outbound.sendString(
       inbound.receive()
         .asString(CHARSET)
-        .filter(content -> !content.isBlank())
-        .map(content -> this.parseRequest(JsonUtils.fromJson(JsonParser.parseString(content), JsonObject.class), inbound))
-        .flatMap(this::execute)
+        .filter(content -> !(content.isEmpty() && content.isBlank()))
+        .flatMap(content -> this.execute(inbound, outbound, content))
         .onErrorResume(this::handleError)
         .map(this::parseResponse),
       CHARSET
     );
   }
 
-  private ApiRequest parseRequest(final JsonObject json, final WebsocketInbound websocketInbound) {
-    return new WebsocketApiRequest(
-      JsonUtils.fromJson(json.get("endpoint"), String.class),
-      JsonUtils.fromJson(json.get("data"), JsonObject.class) == null ? JsonUtils.EMPTY_OBJECT : JsonUtils.fromJson(json.get("data"), JsonObject.class),
-      JsonUtils.fromJson(json.get("tag"), String.class),
-      websocketInbound
-    );
-  }
-
-  private Mono<ApiResponse> execute(final ApiRequest request) {
-    final Mono<ApiResponse> apiResponse;
-
-    if (request.getTag() == null) {
-      apiResponse = Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, "MISSING_TAG"));
-    } else if (request.getEndpoint() == null) {
-      apiResponse = Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, "MISSING_ENDPOINT"));
-    } else {
-      apiResponse = ApiExecutor.execute(this.endpoints, request);
+  private Mono<ApiResponse> execute(final WebsocketInbound inbound, final WebsocketOutbound outbound, final String content) {
+    final JsonObject json;
+    try {
+      json = content.isEmpty() && content.isBlank() ? JsonUtils.EMPTY_OBJECT : JsonUtils.fromJson(JsonParser.parseString(content), JsonObject.class);
+    } catch (JsonSyntaxException e) {
+      return Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, "JSON_SYNTAX"));
     }
 
-    return apiResponse.doOnNext(response -> response.setTag(request.getTag()));
+    final String tag = JsonUtils.fromJson(json.get("tag"), String.class);
+    final JsonElement endpoint = json.get("endpoint");
+
+    final Mono<ApiResponse> response;
+
+    if (tag == null) {
+      response = Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, "MISSING_TAG"));
+    } else if (endpoint == null || endpoint.isJsonNull()) {
+      response = Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, "MISSING_ENDPOINT"));
+    } else {
+
+      final ApiRequest request = new WebsocketApiRequest(
+        tag,
+        JsonUtils.fromJson(endpoint, String.class),
+        JsonUtils.fromJson(json.get("data"), JsonObject.class) == null ? JsonUtils.EMPTY_OBJECT : JsonUtils.fromJson(json.get("data"), JsonObject.class),
+        inbound,
+        outbound
+      );
+
+      response = ApiExecutor.execute(this.endpoints, request);
+    }
+
+    return response.doOnNext(resp -> {
+      if (tag != null) resp.setTag(tag);
+    });
   }
 
   private String parseResponse(final ApiResponse response) {
@@ -81,11 +93,7 @@ public final class WebsocketApiRoute implements WebsocketRoute {
   }
 
   private Mono<ApiResponse> handleError(final Throwable cause) {
-    if (cause instanceof JsonSyntaxException) {
-      return Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, "JSON_SYNTAX"));
-    }
-
-    log.error("Error while executing websocket pipeline.", cause);
+    log.error("Error while executing websocket api pipeline.", cause);
     return Mono.just(new ApiResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR));
   }
 }
