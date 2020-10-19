@@ -22,6 +22,9 @@ public class CdnFile extends TableModelAutoId {
   @Column(name = "name", nullable = false, updatable = false, length = 128)
   private String name;
 
+  @Column(name = "size", nullable = false, updatable = false)
+  private long size;
+
   @Column(name = "uploaded", nullable = false, updatable = false)
   private OffsetDateTime uploaded;
 }

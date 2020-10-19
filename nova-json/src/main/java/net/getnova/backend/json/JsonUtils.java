@@ -6,7 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.JsonParseException;
 import lombok.Getter;
 import net.getnova.backend.json.types.DurationTypeAdapter;
 import net.getnova.backend.json.types.InstantTypeAdapter;
@@ -38,7 +38,7 @@ public final class JsonUtils {
     throw new UnsupportedOperationException();
   }
 
-  public static <T> T fromJson(final JsonElement jsonElement, final Class<T> type) throws JsonSyntaxException {
+  public static <T> T fromJson(final JsonElement jsonElement, final Class<T> type) throws JsonParseException {
     return GSON.fromJson(jsonElement, type);
   }
 

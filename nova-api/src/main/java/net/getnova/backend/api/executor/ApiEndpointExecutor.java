@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.api.data.ApiEndpointData;
 import net.getnova.backend.api.data.ApiRequest;
 import net.getnova.backend.api.data.ApiResponse;
-import net.getnova.backend.api.exception.ApiInternalParameterException;
 import net.getnova.backend.api.exception.ApiParameterException;
 import reactor.core.publisher.Mono;
 
@@ -31,9 +30,6 @@ final class ApiEndpointExecutor {
 
     try {
       parameters = ApiParameterExecutor.parseParameters(request, endpoint.getParameters());
-    } catch (ApiInternalParameterException e) {
-      log.error("Unable to parse parameters.", e);
-      return Mono.just(new ApiResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR));
     } catch (ApiParameterException e) {
       return Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, e.getMessage()));
     } catch (Throwable e) {

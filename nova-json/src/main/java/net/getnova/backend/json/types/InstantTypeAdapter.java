@@ -7,7 +7,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.google.gson.JsonSyntaxException;
 import net.getnova.backend.json.JsonUtils;
 
 import java.lang.reflect.Type;
@@ -28,7 +27,7 @@ public final class InstantTypeAdapter implements JsonSerializer<Instant>, JsonDe
       } else {
         throw new JsonParseException("Unable to parse a non \"" + JsonPrimitive.class.getName() + "\" into a \"" + Instant.class.getName() + "\".");
       }
-    } catch (JsonSyntaxException e) {
+    } catch (JsonParseException e) {
       throw new JsonParseException(e);
     }
   }
