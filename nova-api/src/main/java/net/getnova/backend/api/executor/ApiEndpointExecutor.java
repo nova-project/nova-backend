@@ -59,7 +59,7 @@ final class ApiEndpointExecutor {
       }
 
     } catch (IllegalArgumentException e) {
-      log.error("Endpoint {} does not has the right parameters.", getMethodPath(endpoint), e);
+      log.error("Endpoint {} does not have the right parameters.", getMethodPath(endpoint), e);
     } catch (InvocationTargetException e) {
       log.error("An exception was thrown in endpoint {}.", getMethodPath(endpoint), e.getTargetException());
     } catch (Throwable e) {
