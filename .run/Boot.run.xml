@@ -4,7 +4,8 @@
       <option name="env">
         <map>
           <entry key="DEBUG" value="true" />
-          <entry key="SQL_SERVER_LOCATION" value="mariadb://[::1]:3306" />
+          <entry key="SQL_SERVER_PASSWORD" value="root" />
+          <entry key="SQL_SERVER_USERNAME" value="root" />
         </map>
       </option>
       <option name="executionName" />

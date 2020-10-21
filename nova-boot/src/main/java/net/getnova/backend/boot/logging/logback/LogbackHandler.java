@@ -21,6 +21,7 @@ import net.getnova.backend.boot.ansi.AnsiStyle;
 import net.getnova.backend.boot.logging.LogLevel;
 import net.getnova.backend.boot.logging.LogLevelConverter;
 import net.getnova.backend.boot.logging.LoggingHandler;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.slf4j.impl.StaticLoggerBinder;
 
 import java.util.HashMap;
@@ -74,12 +75,15 @@ public final class LogbackHandler implements LoggingHandler {
 
   @Override
   public void cleanUp() {
+    if (SLF4JBridgeHandler.isInstalled()) SLF4JBridgeHandler.uninstall();
     this.context.reset();
     this.context.getStatusManager().clear();
   }
 
   @Override
   public void initialize(final LogLevel level, final String dsn) {
+    if (!SLF4JBridgeHandler.isInstalled()) SLF4JBridgeHandler.install();
+
     this.addConversionRule("clr", ColorConverter.class);
     this.addConversionRule("rExW", RootCauseFirstWhitespaceThrowableProxyConverter.class);
 
@@ -113,6 +117,7 @@ public final class LogbackHandler implements LoggingHandler {
 
   @Override
   public void close() {
+    if (SLF4JBridgeHandler.isInstalled()) SLF4JBridgeHandler.uninstall();
     this.context.stop();
   }
 
