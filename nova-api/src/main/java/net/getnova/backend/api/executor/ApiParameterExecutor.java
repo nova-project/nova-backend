@@ -2,7 +2,6 @@ package net.getnova.backend.api.executor;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
-import com.google.gson.JsonParseException;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.api.data.ApiParameterData;
 import net.getnova.backend.api.data.ApiRequest;
@@ -44,10 +43,10 @@ final class ApiParameterExecutor {
 
     try {
       return JsonUtils.fromJson(jsonValue, parameter.getClassType());
-    } catch (JsonParseException e) {
+    } catch (Throwable cause) {
       if (log.isInfoEnabled()) {
         log.info("Unable to parse parameter \"{}\" in endpoint \"{}\": {}",
-          parameter.getId(), request.getEndpoint(), e.getMessage(), e);
+          parameter.getId(), request.getEndpoint(), cause.getMessage(), cause);
       }
       throw new ApiParameterException(String.format("INVALID_PARAMETER_%s", parameter.getId()));
     }
