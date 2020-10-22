@@ -6,6 +6,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
+import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.AsciiString;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import net.getnova.backend.api.data.ApiResponse;
 import net.getnova.backend.api.executor.ApiExecutor;
 import net.getnova.backend.json.JsonBuilder;
 import net.getnova.backend.json.JsonUtils;
+import net.getnova.backend.network.server.http.HttpUtils;
 import net.getnova.backend.network.server.http.route.HttpRoute;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
@@ -37,16 +39,19 @@ final class RestApiRoute implements HttpRoute {
 
   @Override
   public Publisher<Void> execute(final HttpServerRequest httpRequest, final HttpServerResponse httpResponse) {
-    return httpResponse.sendString(
-      httpRequest.receive()
-        .aggregate()
-        .asString(CHARSET)
-        .defaultIfEmpty("")
-        .flatMap(content -> this.execute(httpRequest, content))
-        .onErrorResume(this::handleError)
-        .map(apiResponse -> this.parseResponse(httpResponse, apiResponse)),
-      CHARSET
-    );
+    return HttpUtils.checkMethod(httpRequest, httpResponse, HttpMethod.GET, HttpMethod.POST)
+      .orElseGet(() ->
+        httpResponse.sendString(
+          httpRequest.receive()
+            .aggregate()
+            .asString(CHARSET)
+            .defaultIfEmpty("")
+            .flatMap(content -> this.execute(httpRequest, content))
+            .onErrorResume(this::handleError)
+            .map(apiResponse -> this.parseResponse(httpResponse, apiResponse)),
+          CHARSET
+        )
+      );
   }
 
   private Mono<ApiResponse> execute(final HttpServerRequest httpRequest, final String content) {
@@ -57,9 +62,7 @@ final class RestApiRoute implements HttpRoute {
       return Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, "JSON_SYNTAX"));
     }
 
-    final String endpoint = httpRequest.path().substring(httpRequest.path().indexOf('/') + 1);
-    final ApiRequest apiRequest = new RestApiRequest(endpoint, json, httpRequest);
-
+    final ApiRequest apiRequest = new RestApiRequest(httpRequest.path(), json, httpRequest);
     return ApiExecutor.execute(this.endpoints, apiRequest);
   }
 

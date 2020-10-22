@@ -74,4 +74,12 @@ public class CdnRoute implements HttpRoute {
 
     return response.sendFile(file.toPath());
   }
+
+//  private Publisher<Void> handleUpload(final HttpServerRequest request, final HttpServerResponse response) {
+
+//  }
+
+//  private Publisher<Void> handleFile(final HttpServerRequest request, final HttpServerResponse response) {
+
+//  }
 }

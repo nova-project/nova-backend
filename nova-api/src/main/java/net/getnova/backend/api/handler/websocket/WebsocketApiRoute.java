@@ -22,6 +22,7 @@ import reactor.netty.http.websocket.WebsocketOutbound;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,21 +30,26 @@ public final class WebsocketApiRoute implements WebsocketRoute {
 
   private static final Charset CHARSET = StandardCharsets.UTF_8;
   private final Map<String, ApiEndpointData> endpoints;
+  private final Set<WebsocketApiContext> contexts;
 
   @Override
   public Publisher<Void> apply(final WebsocketInbound inbound, final WebsocketOutbound outbound) {
+    final WebsocketApiContext context = new WebsocketApiContext(inbound, outbound);
+    this.contexts.add(context);
+    inbound.receiveCloseStatus().subscribe(staus -> this.contexts.remove(context));
+
     return outbound.sendString(
       inbound.receive()
         .asString(CHARSET)
         .filter(content -> !(content.isEmpty() && content.isBlank()))
-        .flatMap(content -> this.execute(inbound, outbound, content))
+        .flatMap(content -> this.execute(context, content))
         .onErrorResume(this::handleError)
         .map(this::parseResponse),
       CHARSET
     );
   }
 
-  private Mono<ApiResponse> execute(final WebsocketInbound inbound, final WebsocketOutbound outbound, final String content) {
+  private Mono<ApiResponse> execute(final WebsocketApiContext context, final String content) {
     final JsonObject json;
     try {
       json = content.isEmpty() && content.isBlank() ? JsonUtils.EMPTY_OBJECT : JsonUtils.fromJson(JsonParser.parseString(content), JsonObject.class);
@@ -66,8 +72,7 @@ public final class WebsocketApiRoute implements WebsocketRoute {
         tag,
         JsonUtils.fromJson(endpoint, String.class),
         JsonUtils.fromJson(json.get("data"), JsonObject.class) == null ? JsonUtils.EMPTY_OBJECT : JsonUtils.fromJson(json.get("data"), JsonObject.class),
-        inbound,
-        outbound
+        context
       );
 
       response = ApiExecutor.execute(this.endpoints, request);
