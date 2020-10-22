@@ -27,6 +27,7 @@ import org.slf4j.impl.StaticLoggerBinder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 
@@ -105,13 +106,19 @@ public final class LogbackHandler implements LoggingHandler {
 
   @Override
   public LogLevel getLogLevel(final String loggerName) {
-    final Logger logger = loggerName == null ? this.getRootLogger() : this.context.getLogger(loggerName);
+    final Logger logger = Optional.ofNullable(loggerName)
+      .map(this.context::getLogger)
+      .orElse(this.getRootLogger());
+
     return logger == null ? null : LEVELS.convertNativeToSystem(logger.getLevel());
   }
 
   @Override
   public void setLogLevel(final String loggerName, final LogLevel level) {
-    final Logger logger = loggerName == null ? this.getRootLogger() : this.context.getLogger(loggerName);
+    final Logger logger = Optional.ofNullable(loggerName)
+      .map(this.context::getLogger)
+      .orElse(this.getRootLogger());
+
     if (logger != null) logger.setLevel(LEVELS.convertSystemToNative(level));
   }
 

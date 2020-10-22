@@ -9,7 +9,10 @@ import net.getnova.backend.boot.logging.logback.LogbackHandler;
 import net.getnova.backend.boot.module.ModuleHandler;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Getter
@@ -62,20 +65,26 @@ public class Bootstrap {
   }
 
   private void loadConfig() {
-    this.debug = Boolean.parseBoolean(System.getenv("DEBUG"));
-
-    if (this.debug) {
+    if (this.debug = Boolean.parseBoolean(System.getenv("DEBUG"))) {
       this.loggingHandler.setLogLevel(LogLevel.INFO);
       log.info("Running in debug mode...");
     }
 
-    final String levelString = System.getenv("LOG_LEVEL");
     try {
-      final LogLevel level = levelString == null ? LogLevel.WARN : LogLevel.valueOf(levelString.toUpperCase());
+      final LogLevel level = Optional.ofNullable(System.getenv("LOG_LEVEL"))
+        .map(levelString -> LogLevel.valueOf(levelString.toUpperCase()))
+        .orElse(LogLevel.WARN);
+
       if (!this.debug || !(level == LogLevel.OFF || level == LogLevel.ERROR || level == LogLevel.WARN))
         this.loggingHandler.setLogLevel(level);
+
     } catch (IllegalArgumentException e) {
-      log.error("The log level \"{}\" could not be found.", levelString);
+      log.error(
+        "The selected log level could not be found. ({})",
+        Arrays.stream(LogLevel.values())
+          .map(Enum::toString)
+          .collect(Collectors.joining(", "))
+      );
     }
   }
 

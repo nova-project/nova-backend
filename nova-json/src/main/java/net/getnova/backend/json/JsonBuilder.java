@@ -4,7 +4,8 @@ import com.google.gson.JsonObject;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.Callable;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * The {@link JsonBuilder} is a tool to create {@link JsonObject}
@@ -92,38 +93,38 @@ public final class JsonBuilder implements JsonSerializable {
   /**
    * Creates a {@link JsonBuilder} with one Key, Value pair.
    *
-   * @param key        the key of the pair
-   * @param value      the value of the pair
-   * @param value2Call a alternative value if @{code value} is {@code null}
+   * @param key           the key of the pair
+   * @param value         the value of the pair
+   * @param valueSupplier a alternative value if @{code value} is {@code null}
    * @return the JsonBuilder
    */
-  public static JsonBuilder create(final String key, final Object value, final Callable<Object> value2Call) {
-    return JsonBuilder.create().add(key, value, value2Call);
+  public static JsonBuilder create(final String key, final Object value, final Supplier<Object> valueSupplier) {
+    return JsonBuilder.create().add(key, value, valueSupplier);
   }
 
   /**
    * Creates a {@link JsonBuilder} with one Key, Value pair.
    *
-   * @param key       the key of the pair
-   * @param condition witch value shuld be added
-   * @param valueCall the value of the pair
+   * @param key           the key of the pair
+   * @param condition     witch value should be added
+   * @param valueSupplier the value of the pair
    * @return the JsonBuilder
    */
-  public static JsonBuilder create(final String key, final boolean condition, final Callable<Object> valueCall) {
-    return JsonBuilder.create().add(key, condition, valueCall);
+  public static JsonBuilder create(final String key, final boolean condition, final Supplier<Object> valueSupplier) {
+    return JsonBuilder.create().add(key, condition, valueSupplier);
   }
 
   /**
    * Creates a {@link JsonBuilder} with one Key, Value pair.
    *
-   * @param key        the key of the pair
-   * @param condition  if the value should be added
-   * @param value1Call the value of the pair
-   * @param value2Call the alternative value of the pair
+   * @param key            the key of the pair
+   * @param condition      if the value should be added
+   * @param value1Supplier the value of the pair
+   * @param value2Supplier the alternative value of the pair
    * @return the JsonBuilder
    */
-  public static JsonBuilder create(final String key, final boolean condition, final Callable<Object> value1Call, final Callable<Object> value2Call) {
-    return JsonBuilder.create().add(key, condition, value1Call, value2Call);
+  public static JsonBuilder create(final String key, final boolean condition, final Supplier<Object> value1Supplier, final Supplier<Object> value2Supplier) {
+    return JsonBuilder.create().add(key, condition, value1Supplier, value2Supplier);
   }
 
   /**
@@ -140,27 +141,27 @@ public final class JsonBuilder implements JsonSerializable {
     return this;
   }
 
-  public JsonBuilder add(final String key, final Object value, final Callable<Object> value2Call) {
+  public JsonBuilder add(final String key, final Object value, final Supplier<Object> valueSupplier) {
     try {
-      return this.add(key, value != null ? value : value2Call.call());
+      return this.add(key, Optional.ofNullable(value).orElseGet(valueSupplier));
     } catch (Exception e) {
       log.error("Error while calling second value.", e);
     }
     return this;
   }
 
-  public JsonBuilder add(final String key, final boolean condition, final Callable<Object> valueCall) {
+  public JsonBuilder add(final String key, final boolean condition, final Supplier<Object> valueSupplier) {
     if (condition) try {
-      return this.add(key, valueCall.call());
+      return this.add(key, valueSupplier.get());
     } catch (Exception e) {
       log.error("Error while calling value.", e);
     }
     return this;
   }
 
-  public JsonBuilder add(final String key, final boolean condition, final Callable<Object> value1Call, final Callable<Object> value2Call) {
+  public JsonBuilder add(final String key, final boolean condition, final Supplier<Object> value1Supplier, final Supplier<Object> value2Supplier) {
     try {
-      return this.add(key, condition ? value1Call.call() : value2Call.call());
+      return this.add(key, condition ? value1Supplier.get() : value2Supplier.get());
     } catch (Exception e) {
       log.error("Error while calling second value.", e);
     }

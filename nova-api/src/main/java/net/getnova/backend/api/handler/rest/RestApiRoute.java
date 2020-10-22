@@ -12,7 +12,6 @@ import io.netty.util.AsciiString;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.api.data.ApiEndpointData;
-import net.getnova.backend.api.data.ApiRequest;
 import net.getnova.backend.api.data.ApiResponse;
 import net.getnova.backend.api.executor.ApiExecutor;
 import net.getnova.backend.json.JsonBuilder;
@@ -62,8 +61,10 @@ final class RestApiRoute implements HttpRoute {
       return Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, "JSON_SYNTAX"));
     }
 
-    final ApiRequest apiRequest = new RestApiRequest(httpRequest.path(), json, httpRequest);
-    return ApiExecutor.execute(this.endpoints, apiRequest);
+    return ApiExecutor.execute(
+      this.endpoints,
+      new RestApiRequest(httpRequest.path(), json, httpRequest)
+    );
   }
 
   private String parseResponse(final HttpServerResponse httpResponse, final ApiResponse apiResponse) {

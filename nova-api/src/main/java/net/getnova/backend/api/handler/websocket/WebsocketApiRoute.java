@@ -8,7 +8,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.backend.api.data.ApiEndpointData;
-import net.getnova.backend.api.data.ApiRequest;
 import net.getnova.backend.api.data.ApiResponse;
 import net.getnova.backend.api.executor.ApiExecutor;
 import net.getnova.backend.json.JsonBuilder;
@@ -22,6 +21,7 @@ import reactor.netty.http.websocket.WebsocketOutbound;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -67,15 +67,15 @@ public final class WebsocketApiRoute implements WebsocketRoute {
     } else if (endpoint == null || endpoint.isJsonNull()) {
       response = Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, "MISSING_ENDPOINT"));
     } else {
-
-      final ApiRequest request = new WebsocketApiRequest(
-        tag,
-        JsonUtils.fromJson(endpoint, String.class),
-        JsonUtils.fromJson(json.get("data"), JsonObject.class) == null ? JsonUtils.EMPTY_OBJECT : JsonUtils.fromJson(json.get("data"), JsonObject.class),
-        context
+      response = ApiExecutor.execute(
+        this.endpoints,
+        new WebsocketApiRequest(
+          tag,
+          JsonUtils.fromJson(endpoint, String.class),
+          Optional.ofNullable(JsonUtils.fromJson(json.get("data"), JsonObject.class)).orElse(JsonUtils.EMPTY_OBJECT),
+          context
+        )
       );
-
-      response = ApiExecutor.execute(this.endpoints, request);
     }
 
     return response.doOnNext(resp -> {

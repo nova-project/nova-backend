@@ -10,6 +10,7 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -24,7 +25,7 @@ public final class ModuleLoader {
   }
 
   static Result loadModules(final File moduleFolder) throws IOException {
-    if (!moduleFolder.exists()) {
+    if (!moduleFolder.exists() || !moduleFolder.isDirectory()) {
       throw new ModuleException(String.format("Module folder \"%s\" not found.", moduleFolder.getAbsolutePath()));
     }
 
@@ -66,10 +67,10 @@ public final class ModuleLoader {
   private static ModuleData loadModule(final ClassLoader loader, final File file) throws IOException {
     try (JarFile jarFile = new JarFile(file)) {
 
-      final Manifest manifest = jarFile.getManifest();
-      if (manifest == null) {
-        throw new ModuleException(String.format("Missing manifest in jar file \"%s\".", jarFile.getName()));
-      }
+      final Manifest manifest = Optional.ofNullable(jarFile.getManifest())
+        .orElseThrow(() -> new ModuleException(
+          String.format("Missing manifest in jar file \"%s\".", jarFile.getName())
+        ));
 
       final Attributes attributes = manifest.getMainAttributes();
       final String moduleName = loadValue(jarFile, attributes, "Module-Name");
@@ -94,12 +95,10 @@ public final class ModuleLoader {
   }
 
   private static String loadValue(final JarFile jarFile, final Attributes attributes, final String name) throws ModuleException {
-    final String value = attributes.getValue(name);
-    if (value == null) {
-      throw new ModuleException(String.format("Missing manifest attribute \"%s\" in jar file \"%s\".",
-        name, jarFile.getName()));
-    }
-    return value;
+    return Optional.ofNullable(attributes.getValue(name))
+      .orElseThrow(() -> new ModuleException(
+        String.format("Missing manifest attribute \"%s\" in jar file \"%s\".", name, jarFile.getName())
+      ));
   }
 
   @Data
