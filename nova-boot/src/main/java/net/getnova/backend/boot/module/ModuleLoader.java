@@ -18,7 +18,7 @@ import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
 @Slf4j
-public final class ModuleLoader {
+final class ModuleLoader {
 
   private ModuleLoader() {
     throw new UnsupportedOperationException();
@@ -64,7 +64,7 @@ public final class ModuleLoader {
     return configurations;
   }
 
-  private static ModuleData loadModule(final ClassLoader loader, final File file) throws IOException {
+  static ModuleData loadModule(final ClassLoader loader, final File file) throws IOException {
     try (JarFile jarFile = new JarFile(file)) {
 
       final Manifest manifest = Optional.ofNullable(jarFile.getManifest())

@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import reactor.netty.http.server.HttpServerRequest;
 
 @RequiredArgsConstructor
-public class CdnHttpRequest implements HttpRequest {
+class CdnHttpRequest implements HttpRequest {
 
   private final HttpServerRequest request;
 
@@ -24,7 +24,7 @@ public class CdnHttpRequest implements HttpRequest {
   }
 
   @Override
-  public HttpRequest setMethod(HttpMethod method) {
+  public HttpRequest setMethod(final HttpMethod method) {
     throw new UnsupportedOperationException();
   }
 
@@ -39,7 +39,7 @@ public class CdnHttpRequest implements HttpRequest {
   }
 
   @Override
-  public HttpRequest setUri(String uri) {
+  public HttpRequest setUri(final String uri) {
     throw new UnsupportedOperationException();
   }
 
@@ -54,7 +54,7 @@ public class CdnHttpRequest implements HttpRequest {
   }
 
   @Override
-  public HttpRequest setProtocolVersion(HttpVersion version) {
+  public HttpRequest setProtocolVersion(final HttpVersion version) {
     throw new UnsupportedOperationException();
   }
 
@@ -69,12 +69,12 @@ public class CdnHttpRequest implements HttpRequest {
   }
 
   @Override
-  public DecoderResult decoderResult() {
+  public void setDecoderResult(final DecoderResult result) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public void setDecoderResult(DecoderResult result) {
+  public DecoderResult decoderResult() {
     throw new UnsupportedOperationException();
   }
 }

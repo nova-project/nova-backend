@@ -33,7 +33,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run checks with Gradle
-        run: ./gradlew check --no-daemon
+        run: ./gradlew check :nova-starter:aggregateJavadoc --no-daemon
 
   build:
     needs: check

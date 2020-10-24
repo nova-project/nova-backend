@@ -61,7 +61,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build JavaDocs with Gradle
-        run: ./gradlew aggregateJavadoc --no-daemon
+        run: ./gradlew clean :nova-starter:aggregateJavadoc --no-daemon
 
       - name: Create Version
         id: version
@@ -79,7 +79,7 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: build/docs/aggregateJavadoc
+          FOLDER: nova-starter/build/docs/javadoc
           TARGET_FOLDER: javadoc/${{ steps.version.outputs.version }}
           CLEAN: true
           DEBUG: true

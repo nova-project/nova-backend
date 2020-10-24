@@ -1,10 +1,11 @@
 plugins {
   id 'java'
   id 'java-library'
+  id 'io.spring.javadoc'
 }
 
 dependencies {
-  compileOnly(project(':nova-boot'))
+  api(project(':nova-boot'))
   api(project(':nova-json'))
   api(project(':nova-network'))
   annotationProcessor("org.springframework:spring-context-indexer:5.2.9.RELEASE")

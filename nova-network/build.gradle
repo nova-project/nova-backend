@@ -1,10 +1,11 @@
 plugins {
   id 'java'
   id 'java-library'
+  id 'io.spring.javadoc'
 }
 
 dependencies {
-  compileOnly(project(':nova-boot'))
+  api(project(':nova-boot'))
   annotationProcessor('org.springframework:spring-context-indexer:5.2.9.RELEASE')
 
   api(platform('io.projectreactor:reactor-bom:Dysprosium-SR12'))
