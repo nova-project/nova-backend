@@ -8,7 +8,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import net.getnova.backend.json.JsonUtils;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
@@ -19,19 +18,14 @@ public final class OffsetDateTimeAdapter implements JsonSerializer<OffsetDateTim
 
   @Override
   public JsonElement serialize(final OffsetDateTime src, final Type typeOfSrc, final JsonSerializationContext context) {
-    return JsonUtils.toJson(src.toInstant());
+    return new JsonPrimitive(src.toEpochSecond());
   }
 
   @Override
   public OffsetDateTime deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
-    try {
-      if (json.isJsonPrimitive()) {
-        return OffsetDateTime.ofInstant(JsonUtils.fromJson(json, Instant.class), ZoneOffset.UTC);
-      } else {
-        throw new JsonParseException("Unable to parse a non \"" + JsonPrimitive.class.getName() + "\" into a \"" + OffsetDateTime.class.getName() + "\".");
-      }
-    } catch (JsonParseException e) {
-      throw new JsonParseException(e);
+    if (!json.isJsonPrimitive()) {
+      throw new JsonParseException("Unable to parse a non \"" + JsonPrimitive.class.getName() + "\" into a \"" + OffsetDateTime.class.getName() + "\".");
     }
+    return Instant.ofEpochSecond(json.getAsLong()).atOffset(ZoneOffset.UTC);
   }
 }

@@ -14,6 +14,7 @@ class CdnHttpRequest implements HttpRequest {
   private final HttpServerRequest request;
 
   @Override
+  @Deprecated
   public HttpMethod getMethod() {
     return this.request.method();
   }
@@ -29,6 +30,7 @@ class CdnHttpRequest implements HttpRequest {
   }
 
   @Override
+  @Deprecated
   public String getUri() {
     return this.request.uri();
   }
@@ -44,6 +46,7 @@ class CdnHttpRequest implements HttpRequest {
   }
 
   @Override
+  @Deprecated
   public HttpVersion getProtocolVersion() {
     return this.request.version();
   }
@@ -64,6 +67,7 @@ class CdnHttpRequest implements HttpRequest {
   }
 
   @Override
+  @Deprecated
   public DecoderResult getDecoderResult() {
     throw new UnsupportedOperationException();
   }

@@ -14,15 +14,13 @@ import java.util.function.Supplier;
  * Example:
  *
  * <pre>{@code
- * final JsonObject json = JsonBuilder
- *    .create("name", "Max")
+ * final JsonObject json = JsonBuilder.create("name", "Max")
  *    .add("age", 43)
  *    .build();
  * }</pre>
  * or
  * <pre>{@code
- * final String json = JsonBuilder
- *    .create("name", "Max")
+ * final String json = JsonBuilder.create("name", "Max")
  *    .add("age", 43)
  *    .toString();
  * }</pre>
@@ -36,11 +34,6 @@ public final class JsonBuilder implements JsonSerializable {
 
   private final JsonObject json;
 
-  /**
-   * This creates a new instance of {@link JsonBuilder}.
-   *
-   * @param json the existing {@link JsonObject}
-   */
   private JsonBuilder(final JsonObject json) {
     this.json = json;
   }
@@ -50,10 +43,8 @@ public final class JsonBuilder implements JsonSerializable {
    *
    * @return the JsonBuilder
    * @see JsonBuilder#create(String, Object)
-   * @deprecated use {@link JsonBuilder#create(String, Object)}
    */
-  @Deprecated
-  public static JsonBuilder create() {
+  private static JsonBuilder create() {
     return create(new JsonObject());
   }
 
@@ -76,7 +67,7 @@ public final class JsonBuilder implements JsonSerializable {
    * @see JsonBuilder#create(String, Object)
    */
   public static JsonBuilder create(final Object object) {
-    return new JsonBuilder(JsonUtils.fromJson(JsonUtils.toJson(object), JsonObject.class));
+    return new JsonBuilder(JsonUtils.toJson(object).getAsJsonObject());
   }
 
   /**

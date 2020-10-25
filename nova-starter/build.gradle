@@ -27,6 +27,7 @@ aggregateJavadoc {
     'https://docs.spring.io/spring-framework/docs/current/javadoc-api/',
     'https://jakarta.ee/specifications/persistence/2.2/apidocs/',
     'https://www.reactive-streams.org/reactive-streams-1.0.3-javadoc/',
+    'https://www.javadoc.io/static/com.google.code.gson/gson/2.8.6',
     'http://logback.qos.ch/apidocs/'
   ]
   options.stylesheetFile = file("$rootDir/gradle/javadoc/stylesheet.css")
