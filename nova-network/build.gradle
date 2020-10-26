@@ -8,7 +8,7 @@ dependencies {
   api(project(':nova-boot'))
   annotationProcessor('org.springframework:spring-context-indexer:5.2.9.RELEASE')
 
-  api(platform('io.projectreactor:reactor-bom:Dysprosium-SR13'))
+  api(platform('io.projectreactor:reactor-bom:2020.0.0'))
   api('io.projectreactor:reactor-core')
   api('io.projectreactor.netty:reactor-netty')
 //  api('io.projectreactor.addons:reactor-extra')
