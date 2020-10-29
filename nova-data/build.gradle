@@ -8,5 +8,5 @@ dependencies {
   api(project(':nova-boot'))
   annotationProcessor('org.springframework:spring-context-indexer:5.3.0')
   api(platform('org.springframework.data:spring-data-releasetrain:Neumann-SR4'))
-  api('org.springframework.data:spring-data-commons:2.3.4.RELEASE')
+  api('org.springframework.data:spring-data-commons:2.4.0')
 }
