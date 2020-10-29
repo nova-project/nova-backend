@@ -17,6 +17,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -56,7 +57,8 @@ public class JpaModule {
     final Bootstrap bootstrap,
     final ModuleHandler moduleHandler,
     final JpaConfig config,
-    final DataSource dataSource
+    final DataSource dataSource,
+    final Optional<JpaConfigurator> configurator
   ) {
     final HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
     jpaVendorAdapter.setShowSql(config.isShowStatements());
@@ -65,6 +67,7 @@ public class JpaModule {
     final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
     entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
     entityManagerFactoryBean.setDataSource(dataSource);
+    configurator.ifPresent(configurator1 -> entityManagerFactoryBean.setJpaProperties(configurator1.jpaProperties()));
     entityManagerFactoryBean.setPackagesToScan(
       Stream.concat(
         moduleHandler.getPackages().stream(),
