@@ -1,5 +1,6 @@
 package net.getnova.backend.json;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -160,13 +161,23 @@ public final class JsonBuilder implements JsonSerializable {
   }
 
   /**
+   * Removes the {@code property} from this {@link JsonObject}.
+   *
+   * @param key name of the member that should be removed.
+   * @return the {@link JsonElement} object that is being removed.
+   */
+  public JsonElement remove(final String key) {
+    return this.json.remove(key);
+  }
+
+  /**
    * Converts this to an {@link JsonObject}.
    *
    * @return an {@link JsonObject} with the values from this
    * @see JsonBuilder#toString()
    */
   public JsonObject build() {
-    return this.json;
+    return this.json.deepCopy();
   }
 
   /**
