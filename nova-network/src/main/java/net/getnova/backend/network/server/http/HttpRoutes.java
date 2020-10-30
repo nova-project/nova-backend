@@ -43,11 +43,11 @@ public final class HttpRoutes {
       return this.routes.stream()
         .filter(entry -> path.startsWith(entry.getKey()))
         .findFirst()
-        .map(entry -> {
-          final HttpServerRequest request0 = entry.getKey().equals("/") ? request
-            : new CustomPathHttpServerRequest(request.fullPath().substring(entry.getKey().length()), request);
-          return this.executeRoute(request0, response, entry.getValue());
-        })
+        .map(entry -> this.executeRoute(
+          !entry.getKey().equals("/")
+            ? new CustomPathHttpServerRequest(request.fullPath().substring(entry.getKey().length()), request)
+            : request, response, entry.getValue()
+        ))
         .orElseGet(() -> HttpUtils.sendStatus(response, HttpResponseStatus.NOT_FOUND));
     }
 
