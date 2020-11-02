@@ -4,6 +4,7 @@ import net.getnova.backend.api.annotations.ApiEndpointCollection;
 import net.getnova.backend.api.data.ApiEndpointCollectionData;
 import net.getnova.backend.api.data.ApiEndpointData;
 import net.getnova.backend.api.data.AuthenticatorSupplier;
+import org.springframework.aop.framework.AopProxyUtils;
 
 import java.util.AbstractMap;
 import java.util.Collection;
@@ -35,7 +36,7 @@ public final class ApiEndpointCollectionParser {
 
   private static ApiEndpointCollectionData parseCollection(final Object instance,
                                                            final AuthenticatorSupplier authenticatorSupplier) {
-    final Class<?> clazz = instance.getClass();
+    final Class<?> clazz = AopProxyUtils.ultimateTargetClass(instance);
     if (!clazz.isAnnotationPresent(ApiEndpointCollection.class)) return null;
 
     final ApiEndpointCollection endpointCollectionAnnotation = clazz.getAnnotation(ApiEndpointCollection.class);
