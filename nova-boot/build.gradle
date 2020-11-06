@@ -16,7 +16,7 @@ dependencies {
   /* Bootstrapping & Dependency Injection */
   api('org.springframework:spring-context')
   annotationProcessor('org.springframework:spring-context-indexer:5.3.0')
-  api('jakarta.annotation:jakarta.annotation-api:1.3.5')
+  api('jakarta.annotation:jakarta.annotation-api:2.0.0')
 
   /* Util */
   //  compileOnlyApi('org.jetbrains:annotations:20.1.0')
