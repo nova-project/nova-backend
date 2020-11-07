@@ -85,14 +85,17 @@ public class Bootstrap {
           .map(Enum::toString)
           .collect(Collectors.joining(", "))
       );
+      this.shutdown();
     }
   }
 
   public void shutdown() {
-    System.exit(0);
+    new Thread(() -> System.exit(0), "exit").start();
   }
 
   private void shutdown0() {
+    log.info("Shutting down...");
+
     final double before = System.currentTimeMillis();
     this.contextHandler.close();
     final double seconds = (System.currentTimeMillis() - before) / 1000D;
