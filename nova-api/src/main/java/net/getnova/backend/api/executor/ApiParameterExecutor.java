@@ -8,6 +8,9 @@ import net.getnova.backend.api.data.ApiRequest;
 import net.getnova.backend.api.exception.ApiParameterException;
 import net.getnova.backend.json.JsonUtils;
 
+import java.io.IOException;
+import java.util.Optional;
+
 @Slf4j
 final class ApiParameterExecutor {
 
@@ -42,7 +45,8 @@ final class ApiParameterExecutor {
     }
 
     try {
-      return JsonUtils.fromJson(jsonValue, parameter.getClassType());
+      return Optional.ofNullable(JsonUtils.fromJson(jsonValue, parameter.getClassType()))
+        .orElseThrow(IOException::new); // Enum witch not exist returns null (Developer has "FE" and "BE"; FULL_STACK returns null)
     } catch (Throwable cause) {
       if (log.isInfoEnabled()) {
         log.info("Unable to parse parameter \"{}\" in endpoint \"{}\": {}",
