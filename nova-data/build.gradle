@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
   api(project(':nova-boot'))
-  annotationProcessor('org.springframework:spring-context-indexer:5.3.0')
+  annotationProcessor('org.springframework:spring-context-indexer:5.3.1')
   api(platform('org.springframework.data:spring-data-releasetrain:Neumann-SR4'))
   api('org.springframework.data:spring-data-commons')
 }
