@@ -1,4 +1,4 @@
-apply plugin: 'com.jfrog.bintray'
+apply(plugin: 'com.jfrog.bintray')
 
 bintray {
   user = System.getenv('BINTRAY_USERNAME') == null ? '' : System.getenv('BINTRAY_USERNAME')

@@ -1,10 +1,11 @@
 rootProject.name = 'nova-backend'
-include 'nova-api'
-include 'nova-boot'
-include 'nova-data'
-include 'nova-data-jpa'
-include 'nova-json'
-include 'nova-network'
-include 'nova-starter'
-include 'nova-cdn'
-
+include(
+  'nova-api',
+  'nova-boot',
+  'nova-cdn',
+  'nova-data',
+  'nova-data-jpa',
+  'nova-json',
+  'nova-network',
+  'nova-starter'
+)

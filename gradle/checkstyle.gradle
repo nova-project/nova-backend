@@ -1,11 +1,12 @@
-apply plugin: "checkstyle"
+apply(plugin: "checkstyle")
 
 def checkstyleDir = "${rootDir}/config/checkstyle"
 
 tasks.withType(Checkstyle) {
+  exclude('**/module-info.java')
   reports {
-    xml.enabled false
-    html.enabled true
+    xml.enabled(false)
+    html.enabled(true)
   }
 }
 

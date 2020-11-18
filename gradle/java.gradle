@@ -1,5 +1,4 @@
-apply plugin: 'java'
-apply plugin: 'name.remal.module-info-generator'
+apply(plugin: 'java')
 
 repositories {
   jcenter()
@@ -8,17 +7,18 @@ repositories {
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_15
 
 jar {
-  manifest {
-    attributes([
-      'Specification-Title'     : project.name,
-      'Specification-Vendor'    : 'Nova Project (https://github.com/getnova)',
-      'Specification-Version'   : project.version,
-      'Implementation-Vendor'   : 'Nova Project (https://github.com/getnova)',
-      'Implementation-Timestamp': new Date().format('yyyy-MM-dd\'T\'HH:mm:ssZ')
-    ])
-  }
+  manifest.attributes([
+    'Specification-Title'     : project.name,
+    'Specification-Vendor'    : 'Nova Project (https://github.com/getnova)',
+    'Specification-Version'   : project.version,
+    'Implementation-Vendor'   : 'Nova Project (https://github.com/getnova)',
+    'Implementation-Timestamp': new Date().format('yyyy-MM-dd\'T\'HH:mm:ssZ')
+  ])
 }
 
 tasks.withType(JavaCompile) {
-  options.encoding = 'UTF-8'
+  doFirst {
+    options.encoding = 'UTF-8'
+    options.compilerArgs.addAll(['--module-path', classpath.asPath])
+  }
 }
