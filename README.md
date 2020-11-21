@@ -1,19 +1,19 @@
 <h1 align="center">
-    Nova Backend
+    Nova Framework
 </h1>
 <p align="center">
-    <a style="text-decoration:none" href="https://github.com/getnova/nova-backend/releases">
-        <img alt="Releases" src="https://img.shields.io/github/v/tag/getnova/nova-backend?label=latest%20version&style=flat-square">
+    <a style="text-decoration:none" href="https://github.com/getnova/nova-framework/releases">
+        <img alt="Releases" src="https://img.shields.io/github/v/tag/getnova/nova-framework?label=latest%20version&style=flat-square">
     </a>
-    <a style="text-decoration:none" href="https://github.com/getnova/nova-backend/actions">
-        <img alt="Build" src="https://img.shields.io/github/workflow/status/getnova/nova-backend/Main%20Build?label=Main%20Build&style=flat-square">
+    <a style="text-decoration:none" href="https://github.com/getnova/nova-framework/actions">
+        <img alt="Build" src="https://img.shields.io/github/workflow/status/getnova/nova-framework/Main%20Build?label=Main%20Build&style=flat-square">
     </a>
-    <a style="text-decoration:none" href="https://hub.docker.com/r/getnova/nova-backend">
-        <img alt="DockerHub" src="https://img.shields.io/docker/pulls/getnova/nova-backend?style=flat-square">
+    <a style="text-decoration:none" href="https://hub.docker.com/r/getnova/nova-framework">
+        <img alt="DockerHub" src="https://img.shields.io/docker/pulls/getnova/nova-framework?style=flat-square">
     </a>
 </p>
 <p align="center">
-    This is the Backend of the Nova Project.
+    This is the framework of the Nova Project.
 </p>
 
 ## Getting Started
@@ -33,7 +33,7 @@ What things you need to install the software and how to install them
 A step by step series of examples that tell you how to get a development env running
 
 ```sh
-git clone https://github.com/getnova/nova-backend
+git clone https://github.com/getnova/nova-framework.git
 ```
 
 Then you can open it with you IDE and start contributing.
@@ -48,7 +48,7 @@ Then you can open it with you IDE and start contributing.
 | Licenses                                                                                                              |
 |-----------------------------------------------------------------------------------------------------------------------|
 | From 08.08.2020 [AGPL v3](LICENSE)                                                                                    |
-| Upto 07.08.2020 [MIT](https://github.com/getnova/nova-backend/blob/9988969fdfdf69540b3cb54a04cd70b21457f1fc/LICENSE)  |
+| Upto 07.08.2020 [MIT](https://github.com/getnova/nova-framework/blob/9988969fdfdf69540b3cb54a04cd70b21457f1fc/LICENSE)  |
 
 # Third Party Licenses
 [THIRD-PARTY-NOTICES](THIRD-PARTY-NOTICES)

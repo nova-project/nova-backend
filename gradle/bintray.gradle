@@ -12,14 +12,14 @@ bintray {
   pkg {
     repo = 'maven'
     userOrg = 'getnova'
-    name = 'nova-backend'
+    name = 'nova-framework'
 
-    websiteUrl = 'https://github.com/getnova/nova-backend'
-    issueTrackerUrl = 'https://github.com/getnova/nova-backend/issues'
-    vcsUrl = 'https://github.com/getnova/nova-backend.git'
-    githubRepo = 'getnova/nova-backend'
+    websiteUrl = 'https://github.com/getnova/nova-framework'
+    issueTrackerUrl = 'https://github.com/getnova/nova-framework/issues'
+    vcsUrl = 'https://github.com/getnova/nova-framework.git'
+    githubRepo = 'getnova/nova-framework'
 
     licenses = ['AGPL-V3']
-    labels = ['getnova', 'nova-backend']
+    labels = ['getnova', 'nova-framework']
   }
 }
