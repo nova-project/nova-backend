@@ -10,8 +10,11 @@ open module nova.network {
   requires lombok;
   requires nova.boot;
   requires spring.beans;
+  requires io.netty.handler;
+  requires java.annotation;
+  requires io.netty.transport;
 
-  exports net.getnova.backend.network.server;
-  exports net.getnova.backend.network.server.http;
-  exports net.getnova.backend.network.server.http.route;
+  exports net.getnova.framework.network.server;
+  exports net.getnova.framework.network.server.http;
+  exports net.getnova.framework.network.server.http.route;
 }

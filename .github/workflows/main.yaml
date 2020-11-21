@@ -9,7 +9,7 @@ on:
     paths-ignore: [ '**.md' ]
 
 env:
-  IMAGE_NAME: getnova/nova-backend
+  IMAGE_NAME: getnova/nova-framework
   DOCKER_PLATFORMS: linux/amd64,linux/arm/v7,linux/arm64/v8 #linux/s390x,linux/ppc64le
 
 jobs:

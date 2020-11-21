@@ -10,11 +10,11 @@ open module nova.boot {
   requires static sentry;
   requires static sentry.logback;
 
-  exports net.getnova.backend.boot;
-  exports net.getnova.backend.boot.ansi;
-  exports net.getnova.backend.boot.config;
-  exports net.getnova.backend.boot.context;
-  exports net.getnova.backend.boot.logging;
-  exports net.getnova.backend.boot.logging.logback;
-  exports net.getnova.backend.boot.module;
+  exports net.getnova.framework.boot;
+  exports net.getnova.framework.boot.ansi;
+  exports net.getnova.framework.boot.config;
+  exports net.getnova.framework.boot.context;
+  exports net.getnova.framework.boot.logging;
+  exports net.getnova.framework.boot.logging.logback;
+  exports net.getnova.framework.boot.module;
 }

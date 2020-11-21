@@ -14,6 +14,6 @@ open module nova.cdn {
   requires nova.data.jpa;
   requires nova.network;
 
-  exports net.getnova.backend.cdn;
-  exports net.getnova.backend.cdn.data;
+  exports net.getnova.framework.cdn;
+  exports net.getnova.framework.cdn.data;
 }

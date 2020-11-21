@@ -13,13 +13,13 @@ open module nova.api {
   requires java.annotation;
   requires nova.network;
 
-  exports net.getnova.backend.api;
-  exports net.getnova.backend.api.annotations;
-  exports net.getnova.backend.api.data;
-  exports net.getnova.backend.api.exception;
-  exports net.getnova.backend.api.executor;
-  exports net.getnova.backend.api.handler.playground;
-  exports net.getnova.backend.api.handler.rest;
-  exports net.getnova.backend.api.handler.websocket;
-  exports net.getnova.backend.api.parser;
+  exports net.getnova.framework.api;
+  exports net.getnova.framework.api.annotations;
+  exports net.getnova.framework.api.data;
+  exports net.getnova.framework.api.exception;
+  exports net.getnova.framework.api.executor;
+  exports net.getnova.framework.api.handler.playground;
+  exports net.getnova.framework.api.handler.rest;
+  exports net.getnova.framework.api.handler.websocket;
+  exports net.getnova.framework.api.parser;
 }

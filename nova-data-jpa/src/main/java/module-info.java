@@ -11,6 +11,6 @@ open module nova.data.jpa {
   requires java.sql;
   requires nova.json;
 
-  exports net.getnova.backend.jpa;
-  exports net.getnova.backend.jpa.model;
+  exports net.getnova.framework.jpa;
+  exports net.getnova.framework.jpa.model;
 }

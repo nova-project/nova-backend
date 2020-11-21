@@ -13,7 +13,7 @@ version(version.toString().startsWith('v') ? version.toString().substring(1) : v
 version(version.toString() == 'master-SNAPSHOT' ? "edge" : version)
 
 allprojects {
-  group('net.getnova.backend')
+  group('net.getnova.framework')
 }
 
 subprojects {
