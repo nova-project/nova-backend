@@ -1,4 +1,4 @@
-FROM adoptopenjdk:15-jre-hotspot
+FROM adoptopenjdk:15-jre-hotspot-bionic
 
 ARG NOVA_USER=nova
 ARG NOVA_GROUP=nova
