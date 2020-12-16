@@ -6,7 +6,7 @@
         <img alt="Releases" src="https://img.shields.io/github/v/tag/getnova/nova-framework?label=latest%20version&style=flat-square">
     </a>
     <a style="text-decoration:none" href="https://github.com/getnova/nova-framework/actions">
-        <img alt="Build" src="https://img.shields.io/github/workflow/status/getnova/nova-framework/Main%20Build?label=Main%20Build&style=flat-square">
+        <img alt="Build" src="https://img.shields.io/github/workflow/status/getnova/nova-framework/CI?label=CI&style=flat-square">
     </a>
     <a style="text-decoration:none" href="https://hub.docker.com/r/getnova/nova-framework">
         <img alt="DockerHub" src="https://img.shields.io/docker/pulls/getnova/nova-framework?style=flat-square">
