@@ -12,7 +12,7 @@
         <img alt="DockerHub" src="https://img.shields.io/docker/pulls/getnova/nova-framework?style=flat-square">
     </a>
 </p>
-<p align="center">
+<p align="center">few
     This is the framework of the Nova Project.
 </p>
 
