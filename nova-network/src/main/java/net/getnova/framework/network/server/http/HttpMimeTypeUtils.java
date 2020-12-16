@@ -19,7 +19,7 @@ import java.util.Optional;
 public final class HttpMimeTypeUtils {
 
   private static final String MIME_TYPES_FILE_NAME = "/mime.types";
-  private static final MultiValueMap<String, MimeType> fileExtensionToMediaTypes = parseMimeTypes();
+  private static final MultiValueMap<String, MimeType> FILE_EXTENSION_TO_MEDIA_TYPES = parseMimeTypes();
 
   private HttpMimeTypeUtils() {
     throw new UnsupportedOperationException();
@@ -48,7 +48,7 @@ public final class HttpMimeTypeUtils {
 
   public static List<MimeType> getMediaTypes(final String filename) {
     return Optional.ofNullable(StringUtils.getFilenameExtension(filename))
-      .map(s -> fileExtensionToMediaTypes.get(s.toLowerCase(Locale.ENGLISH)))
+      .map(s -> FILE_EXTENSION_TO_MEDIA_TYPES.get(s.toLowerCase(Locale.ENGLISH)))
       .orElse(Collections.emptyList());
   }
 }

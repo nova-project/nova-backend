@@ -65,7 +65,9 @@ public class Bootstrap {
   }
 
   private void loadConfig() {
-    if (this.debug = Boolean.parseBoolean(System.getenv("DEBUG"))) {
+    this.debug = Boolean.parseBoolean(System.getenv("DEBUG"));
+
+    if (this.debug) {
       this.loggingHandler.setLogLevel(LogLevel.INFO);
       log.info("Running in debug mode...");
     }
