@@ -18,7 +18,8 @@
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing
+purposes. See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
 
@@ -51,4 +52,5 @@ Then you can open it with you IDE and start contributing.
 | Upto 07.08.2020 [MIT](https://github.com/getnova/nova-framework/blob/9988969fdfdf69540b3cb54a04cd70b21457f1fc/LICENSE)  |
 
 # Third Party Licenses
+
 [THIRD-PARTY-NOTICES](THIRD-PARTY-NOTICES)
