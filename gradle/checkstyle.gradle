@@ -10,6 +10,10 @@ tasks.withType(Checkstyle) {
   }
 }
 
+checkstyle {
+  toolVersion = '8.38'
+}
+
 checkstyleMain {
   configFile = file("${checkstyleDir}/main.xml")
 }

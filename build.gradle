@@ -10,7 +10,7 @@ plugins {
 }
 
 version(version.toString().startsWith('v') ? version.toString().substring(1) : version)
-version(version.toString() == 'master-SNAPSHOT' ? "edge" : version)
+version(version.toString() == 'main-SNAPSHOT' ? "edge" : version)
 
 allprojects {
   group('net.getnova.framework')
@@ -23,7 +23,7 @@ subprojects {
   apply(from: "${rootDir}/gradle/java.gradle")
   apply(from: "${rootDir}/gradle/lombok.gradle")
   apply(from: "${rootDir}/gradle/test.gradle")
-  // apply(from: "${rootDir}/gradle/checkstyle.gradle")
+  apply(from: "${rootDir}/gradle/checkstyle.gradle")
   apply(from: "${rootDir}/gradle/javadoc.gradle")
   apply(from: "${rootDir}/gradle/bintray.gradle")
 }
