@@ -65,7 +65,7 @@ jobs:
       - name: Run tests with Gradle
         run: ./gradlew test --no-daemon
 
-  codeql: # DON'T CACHE GRADLE STUFF WITH CodeQL!
+  codeql:
     needs: [ lint, test ]
     runs-on: ubuntu-latest
     if: 'false' # Since Java 15 is not yet supported, it is disabled.
@@ -87,15 +87,10 @@ jobs:
           languages: java
 
       - name: Build with Gradle
-        run: ./gradlew :nova-starter:installDist --no-daemon -Dorg.gradle.caching=false
+        run: ./gradlew assable --no-daemon -Dorg.gradle.caching=false # DON'T CACHE GRADLE STUFF WITH CodeQL!
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: nova-framework
-          path: nova-starter/build/install/nova-starter
 
   bintary:
     needs: [ lint, test ]
