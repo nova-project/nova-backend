@@ -39,6 +39,21 @@ git clone https://github.com/getnova/nova-framework.git
 
 Then you can open it with you IDE and start contributing.
 
+### Environment
+
+| Name                  | Default Value                 | Description                                                                                                                                                         |
+|-----------------------|-------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `DEBUG`               | `false`                       | This sets the min `LOG_LEVEL` to `INFO` and adds some additional debugging features.                                                                                |
+| `LOG_LEVEL`           | `WARN`                        | Defines the log level: `ALL`, `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`, `FATAL`, `OFF`                                                                             |
+| `REST_API_PAT`        | `api`                         | The web path where the rest api is accessible.                                                                                                                      |
+| `WEBSOCKET_API_PATH`  | `ws`                          | The web path where the websocket api is accessible.                                                                                                                 |
+| `CDN_DATA_DIR`        | `data`                        | The file system path where the files for the cdn is stored.                                                                                                         |
+| `SQL_SERVER_LOCATION` | `postgresql://localhost:5432` | The uri where the database server is accessible. `<database>://<host>:<port>` (Currently only postgresql is supported; you can add you if you compile it yourself.) |
+| `SQL_SERVER_DATABASE` | `nova`                        | The database where the tables should be created.                                                                                                                    |
+| `SQL_SERVER_USERNAME` | `nova`                        | The database user witch should be used to accessed the database.                                                                                                    |
+| `SQL_SERVER_PASSWORD` | `nova`                        | The database password witch should be used to accessed the database.                                                                                                |
+| `SQL_SHOW_STATEMENTS` | `false`                       | `true`: all executed sql statements will be logged; `false`: no statements will be logged                                                                           |
+
 ## Built With
 
 * [Gradle](https://gradle.org/) - The build tool
