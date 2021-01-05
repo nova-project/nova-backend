@@ -19,6 +19,7 @@ jar {
 tasks.withType(JavaCompile) {
   doFirst {
     options.encoding = 'UTF-8'
-    options.compilerArgs.addAll(['--module-path', classpath.asPath])
+    // Java Modularity:
+    // options.compilerArgs.addAll(['--module-path', classpath.asPath])
   }
 }
