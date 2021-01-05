@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Getter
-public class Bootstrap {
+public final class Bootstrap {
 
   private static final List<String> BANNER = List.of(
     " _   _                     ____             _                  _",
@@ -36,7 +36,7 @@ public class Bootstrap {
 
   private boolean debug;
 
-  public Bootstrap(final long startUpTime, final String[] args) {
+  private Bootstrap(final long startUpTime, final String[] args) {
     this.startUpTime = startUpTime;
     this.workingDir = new File(System.getProperty("user.dir")).getAbsoluteFile();
     this.debugModules = args;
