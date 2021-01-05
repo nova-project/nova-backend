@@ -2,7 +2,7 @@ name: CI
 
 on:
   schedule:
-    - cron: '0 0 * * *' # everyday at 00:00 UTC
+    - cron: '0 10 * * 1' # every monday at 10 am UTC
   push:
     branches: [ main ]
     tags: [ 'v*' ]
@@ -37,7 +37,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Lint with Gradle
-        run: ./gradlew checkstyleMain checkstyleTest spotbugsMain spotbugsTest :nova-starter:aggregateJavadoc --stacktrace --no-daemon
+        run: ./gradlew checkstyleMain checkstyleTest spotbugsMain spotbugsTest pmdMain pmdTest :nova-starter:aggregateJavadoc --stacktrace --no-daemon
 
       - name: Annotate Checkstyle Issues
         uses: jwgmeligmeyling/checkstyle-github-action@master
@@ -48,6 +48,11 @@ jobs:
         uses: jwgmeligmeyling/spotbugs-github-action@master
         with:
           path: '**/build/reports/spotbugs/*.xml'
+
+      - name: Annotate PMD Issues
+        uses: jwgmeligmeyling/pmd-github-action@master
+        with:
+          path: '**/build/reports/pmd/*.xml'
 
   test:
     runs-on: ubuntu-latest

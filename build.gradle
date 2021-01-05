@@ -26,6 +26,7 @@ subprojects {
   apply(from: "${rootDir}/gradle/test.gradle")
   apply(from: "${rootDir}/gradle/checkstyle.gradle")
   apply(from: "${rootDir}/gradle/spotbugs.gradle")
+  apply(from: "${rootDir}/gradle/pmd.gradle")
   apply(from: "${rootDir}/gradle/javadoc.gradle")
   apply(from: "${rootDir}/gradle/bintray.gradle")
 }
