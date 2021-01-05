@@ -37,7 +37,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Lint with Gradle
-        run: ./gradlew checkstyleMain checkstyleTest :nova-starter:aggregateJavadoc --no-daemon
+        run: ./gradlew checkstyleMain checkstyleTest :nova-starter:aggregateJavadoc --stacktrace --no-daemon
 
       - name: Annotate Checkstyle Issues
         uses: jwgmeligmeyling/checkstyle-github-action@master
@@ -68,7 +68,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run tests with Gradle
-        run: ./gradlew test --no-daemon
+        run: ./gradlew test --stacktrace --no-daemon
 
   bintary:
     needs: [ lint, test ]
@@ -96,7 +96,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Upload with Gradle
-        run: ./gradlew bintrayUpload --no-daemon
+        run: ./gradlew bintrayUpload --stacktrace --no-daemon
         env:
           BINTRAY_USERNAME: ${{ secrets.BINTRAY_USERNAME }}
           BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
@@ -126,7 +126,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew :nova-starter:installDist --no-daemon
+        run: ./gradlew :nova-starter:installDist --stacktrace --no-daemon
 
       - uses: actions/upload-artifact@v2
         with:
