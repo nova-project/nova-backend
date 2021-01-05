@@ -18,6 +18,7 @@ import reactor.netty.http.server.HttpServerResponse;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -66,7 +67,7 @@ public class CdnRoute implements HttpRoute {
         if (httpData.getHttpDataType().equals(InterfaceHttpData.HttpDataType.FileUpload)) {
           final FileUpload httpData1 = (FileUpload) httpData;
           try {
-            System.out.println(new String(httpData1.get()));
+            System.out.println(new String(httpData1.get(), StandardCharsets.UTF_8));
           } catch (IOException e) {
             e.printStackTrace();
           }

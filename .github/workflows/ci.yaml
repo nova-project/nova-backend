@@ -37,12 +37,17 @@ jobs:
         run: chmod +x gradlew
 
       - name: Lint with Gradle
-        run: ./gradlew checkstyleMain checkstyleTest :nova-starter:aggregateJavadoc --stacktrace --no-daemon
+        run: ./gradlew checkstyleMain checkstyleTest spotbugsMain spotbugsTest :nova-starter:aggregateJavadoc --stacktrace --no-daemon
 
       - name: Annotate Checkstyle Issues
         uses: jwgmeligmeyling/checkstyle-github-action@master
         with:
           path: '**/build/reports/checkstyle/*.xml'
+
+      - name: Annotate SpotBugs Issues
+        uses: jwgmeligmeyling/spotbugs-github-action@master
+        with:
+          path: '**/build/reports/spotbugs/*.xml'
 
   test:
     runs-on: ubuntu-latest
