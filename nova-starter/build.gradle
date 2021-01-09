@@ -4,7 +4,7 @@ plugins {
 }
 
 application {
-  mainClassName = 'net.getnova.framework.boot.Bootstrap'
+  mainClass.set('net.getnova.framework.boot.Bootstrap')
 }
 
 dependencies {
