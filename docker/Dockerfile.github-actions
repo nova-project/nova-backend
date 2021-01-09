@@ -14,7 +14,7 @@ RUN set -o errexit -o nounset \
     && chown --recursive ${NOVA_USER}:${NOVA_GROUP} /home/${NOVA_USER}
 
 WORKDIR ${DATA_DIR}
-COPY --chown=${NOVA_USER}:${NOVA_GROUP} ./nova-framrwork/ ${NOVA_HOME}/
+COPY --chown=${NOVA_USER}:${NOVA_GROUP} ./nova-framework/ ${NOVA_HOME}/
 
 RUN ln --symbolic ${NOVA_HOME}/bin/nova-starter /usr/bin/nova \
   && chmod +x /usr/bin/nova

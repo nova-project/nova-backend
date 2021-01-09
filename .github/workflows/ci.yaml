@@ -188,7 +188,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: nova-framework
-          path: nova-framrwork
+          path: nova-framework
 
       - name: Build
         uses: docker/build-push-action@v2
