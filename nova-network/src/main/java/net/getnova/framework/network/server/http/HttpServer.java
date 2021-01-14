@@ -61,6 +61,10 @@ public final class HttpServer implements Server {
     server = server.handle(this.routes.toHandler());
 
     try {
+      // https://projectreactor.io/docs/netty/release/reference/index.html#_eager_initialization
+      // Initialize and load the event loop groups, the native transport libraries and the native libraries for the security
+      server.warmup().block();
+
       this.server = server.bindNow(this.lifecycleTimeout);
 
       log.info("Http Server {} is now listening on {}.", this.id, this.getAddress());
