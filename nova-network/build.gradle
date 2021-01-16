@@ -13,5 +13,5 @@ dependencies {
   api('io.projectreactor.netty:reactor-netty-core')
   api('io.projectreactor.netty:reactor-netty-http')
 //  api('io.projectreactor.addons:reactor-extra')
-  runtimeOnly('io.netty:netty-tcnative-boringssl-static:2.0.35.Final')
+  runtimeOnly('io.netty:netty-tcnative-boringssl-static:2.0.36.Final')
 }
