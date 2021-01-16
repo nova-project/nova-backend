@@ -5,8 +5,7 @@ public interface LoggingHandler {
   void cleanUp();
 
   /**
-   * Initializes the logging engine and configures
-   * the root logger with the specified {@link LogLevel}.
+   * Initializes the logging engine and configures the root logger with the specified {@link LogLevel}.
    *
    * @param level the {@link LogLevel} for the root logger
    * @param dsn   the sentry dsn to log errors

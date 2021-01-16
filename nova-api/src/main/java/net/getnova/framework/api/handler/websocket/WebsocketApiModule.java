@@ -1,5 +1,9 @@
 package net.getnova.framework.api.handler.websocket;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.api.ApiModule;
@@ -10,11 +14,6 @@ import net.getnova.framework.api.parser.ApiEndpointCollectionParser;
 import net.getnova.framework.boot.module.Module;
 import net.getnova.framework.network.server.http.HttpServerModule;
 import org.springframework.context.annotation.ComponentScan;
-
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Getter

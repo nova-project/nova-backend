@@ -1,10 +1,5 @@
 package net.getnova.framework.boot.module;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import net.getnova.framework.boot.Bootstrap;
-import net.getnova.framework.boot.context.ContextHandler;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -12,6 +7,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import net.getnova.framework.boot.Bootstrap;
+import net.getnova.framework.boot.context.ContextHandler;
 
 @Slf4j
 public class ModuleHandler {
@@ -28,8 +27,9 @@ public class ModuleHandler {
     this.bootstrap = bootstrap;
     this.moduleFolder = moduleFolder;
 
-    if (!moduleFolder.exists() && moduleFolder.mkdirs())
+    if (!moduleFolder.exists() && moduleFolder.mkdirs()) {
       log.info("Created module folder \"{}\".", this.moduleFolder.getPath());
+    }
 
     if (!moduleFolder.canRead()) {
       log.error("Missing read permissions for module folder. (\"{}\")", this.moduleFolder.getPath());
@@ -51,7 +51,9 @@ public class ModuleHandler {
   }
 
   public void loadModules() {
-    if (!this.loadModules) return;
+    if (!this.loadModules) {
+      return;
+    }
 
     final ContextHandler contextHandler = this.bootstrap.getContextHandler();
     try {
@@ -59,10 +61,16 @@ public class ModuleHandler {
       Thread.currentThread().setContextClassLoader(result.getLoader());
       this.loader = result.getLoader();
       result.getModules().forEach(module -> this.addModule(contextHandler, module));
-    } catch (ModuleException e) {
-      if (e.getCause() != null) log.error(e.getMessage(), e.getCause());
-      else log.error(e.getMessage());
-    } catch (IOException e) {
+    }
+    catch (ModuleException e) {
+      if (e.getCause() != null) {
+        log.error(e.getMessage(), e.getCause());
+      }
+      else {
+        log.error(e.getMessage());
+      }
+    }
+    catch (IOException e) {
       log.error("Unable to load modules.", e);
     }
   }
@@ -74,7 +82,8 @@ public class ModuleHandler {
           .map(clazz -> {
             try {
               return Class.forName(clazz);
-            } catch (ClassNotFoundException e) {
+            }
+            catch (ClassNotFoundException e) {
               log.error("Unable to load debug module {}: {}", clazz, e.toString());
               return null;
             }

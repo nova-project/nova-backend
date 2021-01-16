@@ -7,15 +7,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.multipart.FileUpload;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
-import lombok.RequiredArgsConstructor;
-import net.getnova.framework.cdn.data.CdnFileResolver;
-import net.getnova.framework.network.server.http.HttpMimeTypeUtils;
-import net.getnova.framework.network.server.http.HttpUtils;
-import net.getnova.framework.network.server.http.route.HttpRoute;
-import org.reactivestreams.Publisher;
-import reactor.netty.http.server.HttpServerRequest;
-import reactor.netty.http.server.HttpServerResponse;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -26,6 +17,14 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import net.getnova.framework.cdn.data.CdnFileResolver;
+import net.getnova.framework.network.server.http.HttpMimeTypeUtils;
+import net.getnova.framework.network.server.http.HttpUtils;
+import net.getnova.framework.network.server.http.route.HttpRoute;
+import org.reactivestreams.Publisher;
+import reactor.netty.http.server.HttpServerRequest;
+import reactor.netty.http.server.HttpServerResponse;
 
 @RequiredArgsConstructor
 public class CdnRoute implements HttpRoute {
@@ -52,12 +51,14 @@ public class CdnRoute implements HttpRoute {
   private Optional<UUID> parseUuid(final String uuid) {
     try {
       return Optional.of(UUID.fromString(uuid));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       return Optional.empty();
     }
   }
 
-  private Publisher<Void> handleUpload(final HttpServerRequest request, final HttpServerResponse response, final UUID uuid) {
+  private Publisher<Void> handleUpload(final HttpServerRequest request, final HttpServerResponse response,
+    final UUID uuid) {
     final HttpPostRequestDecoder decoder = new HttpPostRequestDecoder(new CdnHttpRequest(request));
 
     return request.receiveContent()
@@ -68,7 +69,8 @@ public class CdnRoute implements HttpRoute {
           final FileUpload httpData1 = (FileUpload) httpData;
           try {
             System.out.println(new String(httpData1.get(), StandardCharsets.UTF_8));
-          } catch (IOException e) {
+          }
+          catch (IOException e) {
             e.printStackTrace();
           }
         }
@@ -76,11 +78,13 @@ public class CdnRoute implements HttpRoute {
       .thenEmpty(HttpUtils.sendStatus(response, HttpResponseStatus.OK));
   }
 
-  private Publisher<Void> handleFile(final HttpServerRequest request, final HttpServerResponse response, final UUID uuid) {
+  private Publisher<Void> handleFile(final HttpServerRequest request, final HttpServerResponse response,
+    final UUID uuid) {
     return this.resolver.resolve(uuid)
       .map(result -> {
         response.header(HttpHeaderNames.DATE, OffsetDateTime.now(ZoneOffset.UTC).format(HTTP_DATE_TIME_FORMATTER));
-        response.header(HttpHeaderNames.CONTENT_DISPOSITION, "inline; " + HttpHeaderValues.FILENAME + "=\"" + result.getCdnFile().getName() + "\"");
+        response.header(HttpHeaderNames.CONTENT_DISPOSITION,
+          "inline; " + HttpHeaderValues.FILENAME + "=\"" + result.getCdnFile().getName() + "\"");
 
         HttpMimeTypeUtils.getMediaType(result.getCdnFile().getName())
           .ifPresentOrElse(
@@ -96,9 +100,11 @@ public class CdnRoute implements HttpRoute {
         // working with seconds, because the http date time format does not has milliseconds
         final long lastModified = file.lastModified() / 1000;
 
-        final boolean isModified = Optional.ofNullable(request.requestHeaders().get(HttpHeaderNames.IF_MODIFIED_SINCE))
+        final boolean isModified = Optional
+          .ofNullable(request.requestHeaders().get(HttpHeaderNames.IF_MODIFIED_SINCE))
           .filter(ifModifiedSince -> !ifModifiedSince.isEmpty())
-          .map(ifModifiedSince -> lastModified == OffsetDateTime.parse(ifModifiedSince, HTTP_DATE_TIME_FORMATTER).toEpochSecond())
+          .map(ifModifiedSince -> lastModified == OffsetDateTime.parse(ifModifiedSince, HTTP_DATE_TIME_FORMATTER)
+            .toEpochSecond())
           .orElse(false);
 
         if (isModified) {
@@ -106,7 +112,8 @@ public class CdnRoute implements HttpRoute {
         }
 
         response.header(HttpHeaderNames.CACHE_CONTROL, "private, max-age=" + HTTP_CACHE_SECONDS);
-        response.header(HttpHeaderNames.LAST_MODIFIED, Instant.ofEpochSecond(lastModified).atOffset(ZoneOffset.UTC).format(HTTP_DATE_TIME_FORMATTER));
+        response.header(HttpHeaderNames.LAST_MODIFIED,
+          Instant.ofEpochSecond(lastModified).atOffset(ZoneOffset.UTC).format(HTTP_DATE_TIME_FORMATTER));
 
         return response.sendFile(file.toPath());
       })

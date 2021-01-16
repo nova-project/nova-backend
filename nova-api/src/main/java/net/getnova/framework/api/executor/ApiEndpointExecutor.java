@@ -1,14 +1,13 @@
 package net.getnova.framework.api.executor;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
+import java.lang.reflect.InvocationTargetException;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.api.data.ApiEndpointData;
 import net.getnova.framework.api.data.ApiRequest;
 import net.getnova.framework.api.data.ApiResponse;
 import net.getnova.framework.api.exception.ApiParameterException;
 import reactor.core.publisher.Mono;
-
-import java.lang.reflect.InvocationTargetException;
 
 @Slf4j
 final class ApiEndpointExecutor {
@@ -30,9 +29,11 @@ final class ApiEndpointExecutor {
 
     try {
       parameters = ApiParameterExecutor.parseParameters(request, endpoint.getParameters());
-    } catch (ApiParameterException e) {
+    }
+    catch (ApiParameterException e) {
       return Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, e.getMessage()));
-    } catch (Throwable e) {
+    }
+    catch (Throwable e) {
       log.error("Unable to parse parameters of endpoint {}.", getMethodPath(endpoint), e);
       return Mono.just(new ApiResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR));
     }
@@ -47,18 +48,23 @@ final class ApiEndpointExecutor {
 
       if (response instanceof ApiResponse) {
         return Mono.just((ApiResponse) response);
-      } else if (response instanceof Mono) {
+      }
+      else if (response instanceof Mono) {
         return ((Mono<?>) response).cast(ApiResponse.class);
-      } else {
+      }
+      else {
         throw new UnsupportedOperationException(String.format("Neither a %s nor a %s was returned by endpoint %s.",
           ApiResponse.class.getName(), Mono.class.getName(), getMethodPath(endpoint)));
       }
 
-    } catch (IllegalArgumentException e) {
+    }
+    catch (IllegalArgumentException e) {
       log.error("Endpoint {} does not have the right parameters.", getMethodPath(endpoint), e);
-    } catch (InvocationTargetException e) {
+    }
+    catch (InvocationTargetException e) {
       log.error("An exception was thrown in endpoint {}.", getMethodPath(endpoint), e.getTargetException());
-    } catch (Throwable e) {
+    }
+    catch (Throwable e) {
       log.error("Unable to execute endpoint {}.", getMethodPath(endpoint), e);
     }
 

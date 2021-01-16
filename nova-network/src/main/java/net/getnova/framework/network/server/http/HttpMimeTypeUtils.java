@@ -1,11 +1,5 @@
 package net.getnova.framework.network.server.http;
 
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MimeType;
-import org.springframework.util.MimeTypeUtils;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +9,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MimeType;
+import org.springframework.util.MimeTypeUtils;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 
 public final class HttpMimeTypeUtils {
 
@@ -31,13 +30,18 @@ public final class HttpMimeTypeUtils {
       final MultiValueMap<String, MimeType> result = new LinkedMultiValueMap<>();
       String line;
       while ((line = reader.readLine()) != null) {
-        if (line.isEmpty() || line.charAt(0) == '#') continue;
+        if (line.isEmpty() || line.charAt(0) == '#') {
+          continue;
+        }
         final String[] tokens = StringUtils.tokenizeToStringArray(line, " \t\n\r\f");
         final MimeType mediaType = MimeTypeUtils.parseMimeType(tokens[0]);
-        for (int i = 1; i < tokens.length; i++) result.add(tokens[i].toLowerCase(Locale.ENGLISH), mediaType);
+        for (int i = 1; i < tokens.length; i++) {
+          result.add(tokens[i].toLowerCase(Locale.ENGLISH), mediaType);
+        }
       }
       return result;
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new IllegalStateException("Unable to load mime types form file: " + MIME_TYPES_FILE_NAME, e);
     }
   }

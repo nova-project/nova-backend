@@ -1,10 +1,9 @@
 package net.getnova.framework.boot.context;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 @Slf4j
 public class ContextHandler {
@@ -15,7 +14,9 @@ public class ContextHandler {
     this.applicationContext = new AnnotationConfigApplicationContext();
     this.applicationContext.registerBean(ContextHandler.class, () -> this);
     this.applicationContext.registerBean(clazz, () -> instance);
-    if (beans.length != 0) this.applicationContext.register(beans);
+    if (beans.length != 0) {
+      this.applicationContext.register(beans);
+    }
   }
 
   public <T> T getBean(final Class<T> clazz) {
@@ -31,7 +32,9 @@ public class ContextHandler {
   }
 
   public void register(final Class<?>... classes) {
-    if (classes.length != 0) this.applicationContext.register(classes);
+    if (classes.length != 0) {
+      this.applicationContext.register(classes);
+    }
   }
 
   public <T> void register(final Class<T> clazz, final T instance) {
@@ -42,7 +45,8 @@ public class ContextHandler {
     try {
       this.applicationContext.refresh();
       return true;
-    } catch (Throwable cause) {
+    }
+    catch (Throwable cause) {
       log.error("Unable to bootstrap modules.", cause);
       return false;
     }

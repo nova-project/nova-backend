@@ -1,11 +1,10 @@
 package net.getnova.framework.api.handler.websocket;
 
+import java.nio.charset.StandardCharsets;
 import net.getnova.framework.json.JsonBuilder;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.websocket.WebsocketOutbound;
-
-import java.nio.charset.StandardCharsets;
 
 public class WebsocketApiNotification {
 

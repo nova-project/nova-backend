@@ -1,17 +1,16 @@
 package net.getnova.framework.api.parser;
 
-import net.getnova.framework.api.annotations.ApiEndpointCollection;
-import net.getnova.framework.api.data.ApiEndpointCollectionData;
-import net.getnova.framework.api.data.ApiEndpointData;
-import net.getnova.framework.api.data.AuthenticatorSupplier;
-import org.springframework.aop.framework.AopProxyUtils;
-
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import net.getnova.framework.api.annotations.ApiEndpointCollection;
+import net.getnova.framework.api.data.ApiEndpointCollectionData;
+import net.getnova.framework.api.data.ApiEndpointData;
+import net.getnova.framework.api.data.AuthenticatorSupplier;
+import org.springframework.aop.framework.AopProxyUtils;
 
 public final class ApiEndpointCollectionParser {
 
@@ -20,7 +19,7 @@ public final class ApiEndpointCollectionParser {
   }
 
   public static Set<ApiEndpointCollectionData> parseCollections(final Collection<Object> instances,
-                                                                final AuthenticatorSupplier authenticatorSupplier) {
+    final AuthenticatorSupplier authenticatorSupplier) {
     return instances.stream()
       .map(instance -> parseCollection(instance, authenticatorSupplier))
       .filter(Objects::nonNull)
@@ -35,13 +34,16 @@ public final class ApiEndpointCollectionParser {
   }
 
   private static ApiEndpointCollectionData parseCollection(final Object instance,
-                                                           final AuthenticatorSupplier authenticatorSupplier) {
+    final AuthenticatorSupplier authenticatorSupplier) {
     final Class<?> clazz = AopProxyUtils.ultimateTargetClass(instance);
-    if (!clazz.isAnnotationPresent(ApiEndpointCollection.class)) return null;
+    if (!clazz.isAnnotationPresent(ApiEndpointCollection.class)) {
+      return null;
+    }
 
     final ApiEndpointCollection endpointCollectionAnnotation = clazz.getAnnotation(ApiEndpointCollection.class);
     final Map<String, ApiEndpointData> parameters = ApiEndpointParser.parseEndpoints(instance, clazz,
-      endpointCollectionAnnotation.disabled(), authenticatorSupplier.apply(endpointCollectionAnnotation.authenticator()));
+      endpointCollectionAnnotation.disabled(),
+      authenticatorSupplier.apply(endpointCollectionAnnotation.authenticator()));
 
     return new ApiEndpointCollectionData(
       endpointCollectionAnnotation.id(),

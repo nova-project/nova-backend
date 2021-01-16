@@ -1,5 +1,7 @@
 package net.getnova.framework.api;
 
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import net.getnova.framework.api.annotations.ApiEndpointCollection;
@@ -11,9 +13,6 @@ import net.getnova.framework.api.parser.ApiEndpointCollectionParser;
 import net.getnova.framework.boot.context.ContextHandler;
 import net.getnova.framework.boot.module.Module;
 import org.springframework.context.annotation.ComponentScan;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @ComponentScan
 @RequiredArgsConstructor

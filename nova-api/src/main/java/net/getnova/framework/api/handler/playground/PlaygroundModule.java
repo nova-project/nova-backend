@@ -1,14 +1,13 @@
 package net.getnova.framework.api.handler.playground;
 
+import java.io.File;
+import java.util.Collection;
+import java.util.TreeSet;
 import net.getnova.framework.api.data.ApiEndpointCollectionData;
 import net.getnova.framework.boot.module.Module;
 import net.getnova.framework.network.server.http.HttpServerModule;
 import net.getnova.framework.network.server.http.route.FileHttpRoute;
 import org.springframework.context.annotation.ComponentScan;
-
-import java.io.File;
-import java.util.Collection;
-import java.util.TreeSet;
 
 @ComponentScan
 @Module(HttpServerModule.class)

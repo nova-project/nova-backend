@@ -1,5 +1,10 @@
 package net.getnova.framework.boot;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.boot.context.ContextHandler;
@@ -7,12 +12,6 @@ import net.getnova.framework.boot.logging.LogLevel;
 import net.getnova.framework.boot.logging.LoggingHandler;
 import net.getnova.framework.boot.logging.logback.LogbackHandler;
 import net.getnova.framework.boot.module.ModuleHandler;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Getter
@@ -54,7 +53,9 @@ public final class Bootstrap {
     this.contextHandler.setClassLoader(this.moduleHandler.getLoader());
 
     Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown0, "shutdown"));
-    if (!this.contextHandler.refresh()) this.shutdown();
+    if (!this.contextHandler.refresh()) {
+      this.shutdown();
+    }
   }
 
   public static void main(final String[] args) {
@@ -77,10 +78,12 @@ public final class Bootstrap {
         .map(levelString -> LogLevel.valueOf(levelString.toUpperCase()))
         .orElse(LogLevel.WARN);
 
-      if (!this.debug || !(level == LogLevel.OFF || level == LogLevel.ERROR || level == LogLevel.WARN))
+      if (!this.debug || !(level == LogLevel.OFF || level == LogLevel.ERROR || level == LogLevel.WARN)) {
         this.loggingHandler.setLogLevel(level);
+      }
 
-    } catch (IllegalArgumentException e) {
+    }
+    catch (IllegalArgumentException e) {
       log.error(
         "The selected log level could not be found. ({})",
         Arrays.stream(LogLevel.values())

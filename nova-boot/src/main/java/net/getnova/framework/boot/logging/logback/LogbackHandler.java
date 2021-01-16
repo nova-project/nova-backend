@@ -1,5 +1,7 @@
 package net.getnova.framework.boot.logging.logback;
 
+import static org.slf4j.Logger.ROOT_LOGGER_NAME;
+
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -16,6 +18,10 @@ import ch.qos.logback.core.spi.LifeCycle;
 import ch.qos.logback.core.util.OptionHelper;
 import io.sentry.SentryOptions;
 import io.sentry.logback.SentryAppender;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import net.getnova.framework.boot.ansi.AnsiColor;
 import net.getnova.framework.boot.ansi.AnsiStyle;
 import net.getnova.framework.boot.logging.LogLevel;
@@ -23,13 +29,6 @@ import net.getnova.framework.boot.logging.LogLevelConverter;
 import net.getnova.framework.boot.logging.LoggingHandler;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.slf4j.impl.StaticLoggerBinder;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 
 public final class LogbackHandler implements LoggingHandler {
 
@@ -66,8 +65,10 @@ public final class LogbackHandler implements LoggingHandler {
       + BANNER_SPACING + String.join(CoreConstants.LINE_SEPARATOR + BANNER_SPACING
       + ANSIConstants.ESC_START + AnsiStyle.BOLD + ";" + AnsiColor.BRIGHT_BLUE + ANSIConstants.ESC_END, banner)
       + CoreConstants.LINE_SEPARATOR
-      + BANNER_SPACING + ANSIConstants.ESC_START + AnsiStyle.BOLD + ";" + AnsiColor.BRIGHT_BLUE + ANSIConstants.ESC_END
-      + ":: Nova Backend (" + (version == null ? "development" : version) + ") :: Java Runtime: " + System.getProperty("java.version")
+      + BANNER_SPACING + ANSIConstants.ESC_START + AnsiStyle.BOLD + ";" + AnsiColor.BRIGHT_BLUE
+      + ANSIConstants.ESC_END
+      + ":: Nova Backend (" + (version == null ? "development" : version) + ") :: Java Runtime: " + System
+      .getProperty("java.version")
       + " (" + System.getProperty("java.vendor") + ") ::"
       + ANSIConstants.ESC_START + AnsiStyle.RESET + ANSIConstants.ESC_END
       + CoreConstants.LINE_SEPARATOR
@@ -76,14 +77,18 @@ public final class LogbackHandler implements LoggingHandler {
 
   @Override
   public void cleanUp() {
-    if (SLF4JBridgeHandler.isInstalled()) SLF4JBridgeHandler.uninstall();
+    if (SLF4JBridgeHandler.isInstalled()) {
+      SLF4JBridgeHandler.uninstall();
+    }
     this.context.reset();
     this.context.getStatusManager().clear();
   }
 
   @Override
   public void initialize(final LogLevel level, final String dsn) {
-    if (!SLF4JBridgeHandler.isInstalled()) SLF4JBridgeHandler.install();
+    if (!SLF4JBridgeHandler.isInstalled()) {
+      SLF4JBridgeHandler.install();
+    }
 
     this.addConversionRule("clr", ColorConverter.class);
     this.addConversionRule("rExW", RootCauseFirstWhitespaceThrowableProxyConverter.class);
@@ -91,7 +96,9 @@ public final class LogbackHandler implements LoggingHandler {
     this.setLogLevel(level);
     this.getRootLogger().addAppender(this.consoleAppender(PATTERN));
 
-    if (dsn != null) this.getRootLogger().addAppender(this.sentryAppender(dsn));
+    if (dsn != null) {
+      this.getRootLogger().addAppender(this.sentryAppender(dsn));
+    }
   }
 
   @Override
@@ -119,12 +126,16 @@ public final class LogbackHandler implements LoggingHandler {
       .map(this.context::getLogger)
       .orElse(this.getRootLogger());
 
-    if (logger != null) logger.setLevel(LEVELS.convertSystemToNative(level));
+    if (logger != null) {
+      logger.setLevel(LEVELS.convertSystemToNative(level));
+    }
   }
 
   @Override
   public void close() {
-    if (SLF4JBridgeHandler.isInstalled()) SLF4JBridgeHandler.uninstall();
+    if (SLF4JBridgeHandler.isInstalled()) {
+      SLF4JBridgeHandler.uninstall();
+    }
     this.context.stop();
   }
 
@@ -172,7 +183,9 @@ public final class LogbackHandler implements LoggingHandler {
   }
 
   private void start(final LifeCycle lifeCycle) {
-    if (lifeCycle instanceof ContextAware) ((ContextAware) lifeCycle).setContext(this.context);
+    if (lifeCycle instanceof ContextAware) {
+      ((ContextAware) lifeCycle).setContext(this.context);
+    }
     lifeCycle.start();
   }
 }

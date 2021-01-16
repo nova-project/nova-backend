@@ -15,7 +15,9 @@ public interface Server {
   SocketAddress getAddress();
 
   default void restart() {
-    if (this.isRunning()) this.stop();
+    if (this.isRunning()) {
+      this.stop();
+    }
     this.start();
   }
 }

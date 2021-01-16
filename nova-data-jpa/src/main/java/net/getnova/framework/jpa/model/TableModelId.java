@@ -1,5 +1,6 @@
 package net.getnova.framework.jpa.model;
 
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -7,8 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
-
-import java.util.UUID;
 
 @Getter
 @MappedSuperclass

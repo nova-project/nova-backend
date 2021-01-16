@@ -1,14 +1,13 @@
 package net.getnova.framework.api.handler.websocket;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import reactor.netty.http.websocket.WebsocketInbound;
-import reactor.netty.http.websocket.WebsocketOutbound;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import lombok.AccessLevel;
+import lombok.Getter;
+import reactor.netty.http.websocket.WebsocketInbound;
+import reactor.netty.http.websocket.WebsocketOutbound;
 
 public class WebsocketApiContext {
 
@@ -39,8 +38,12 @@ public class WebsocketApiContext {
 
   @Override
   public boolean equals(final Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     final WebsocketApiContext that = (WebsocketApiContext) o;
     return Objects.equals(this.inbound, that.inbound)
       && Objects.equals(this.outbound, that.outbound);

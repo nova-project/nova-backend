@@ -3,6 +3,9 @@ package net.getnova.framework.jpa;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.Stream;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +18,6 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
-
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 @Slf4j
 @Module
@@ -45,7 +44,8 @@ public class JpaModule {
 
     try {
       return new HikariDataSource(hikariConfig);
-    } catch (HikariPool.PoolInitializationException e) {
+    }
+    catch (HikariPool.PoolInitializationException e) {
       log.error("Unable to connect to database: {}", e.getMessage());
       bootstrap.shutdown();
       return null;
@@ -73,7 +73,9 @@ public class JpaModule {
         moduleHandler.getPackages().stream(),
         Arrays.stream(bootstrap.getDebugModules()).map(module -> {
           final int index = module.lastIndexOf('.');
-          if (index != -1) return module.substring(0, index);
+          if (index != -1) {
+            return module.substring(0, index);
+          }
           return module;
         })
       ).toArray(String[]::new)

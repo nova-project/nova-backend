@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.getnova.framework.json.JsonTransient;
 
 @Getter
 @Setter
@@ -17,7 +16,6 @@ import net.getnova.framework.json.JsonTransient;
 public abstract class TableModel {
 
   @Version
-  @JsonTransient
   @Column(name = "version", nullable = false)
   private long version;
 }

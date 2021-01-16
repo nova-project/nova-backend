@@ -2,6 +2,9 @@ package net.getnova.framework.network.server.http;
 
 import io.netty.handler.ssl.OpenSsl;
 import io.netty.handler.ssl.SslContextBuilder;
+import java.io.File;
+import java.net.SocketAddress;
+import java.time.Duration;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,10 +12,6 @@ import net.getnova.framework.network.server.Server;
 import org.springframework.util.unit.DataSize;
 import reactor.netty.DisposableServer;
 import reactor.netty.http.HttpProtocol;
-
-import java.io.File;
-import java.net.SocketAddress;
-import java.time.Duration;
 
 @Slf4j
 @Getter
@@ -29,7 +28,8 @@ public final class HttpServer implements Server {
 
   private DisposableServer server;
 
-  public HttpServer(final String id, final SocketAddress address, final Duration lifecycleTimeout, final HttpRoutes routes, final File certificateFile, final File keyFile) {
+  public HttpServer(final String id, final SocketAddress address, final Duration lifecycleTimeout,
+    final HttpRoutes routes, final File certificateFile, final File keyFile) {
     this.id = id;
     this.address = address;
     this.lifecycleTimeout = lifecycleTimeout;
@@ -45,12 +45,15 @@ public final class HttpServer implements Server {
       .compress((int) DataSize.ofKilobytes(5).toBytes())
       .forwarded(true);
 
-    if (this.certificateFile == null || this.keyFile == null)
+    if (this.certificateFile == null || this.keyFile == null) {
       server = server.protocol(HttpProtocol.HTTP11, HttpProtocol.H2C);
+    }
     else {
       log.info("Using certificate ({}) and private key ({}) for http server {} with SSL.",
         this.certificateFile.getAbsolutePath(), this.keyFile.getAbsolutePath(), this.id);
-      if (OpenSsl.isAvailable()) log.info("Using native SSL implementation.");
+      if (OpenSsl.isAvailable()) {
+        log.info("Using native SSL implementation.");
+      }
       server = server.protocol(HttpProtocol.HTTP11, HttpProtocol.H2)
         .secure(spec -> spec.sslContext(SslContextBuilder.forServer(this.certificateFile, this.keyFile)));
     }
@@ -67,13 +70,15 @@ public final class HttpServer implements Server {
         .subscribe();
 
       new Thread(this.server.onDispose()::block, "server-" + this.id).start();
-    } catch (Throwable cause) {
+    }
+    catch (Throwable cause) {
       log.error("Unable to start http server {}: {}", this.id, cause.getMessage());
       log.error("Retrying in 20 seconds...");
 
       try {
         Thread.sleep(20000L); // 10 seconds
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException e) {
         Thread.currentThread().interrupt();
       }
 
@@ -83,8 +88,9 @@ public final class HttpServer implements Server {
 
   @Override
   public void stop() {
-    if (!this.isRunning())
+    if (!this.isRunning()) {
       throw new IllegalStateException("Error while stopping server " + this.id + ", it is not running.");
+    }
 
     this.server.disposeNow(this.lifecycleTimeout);
   }

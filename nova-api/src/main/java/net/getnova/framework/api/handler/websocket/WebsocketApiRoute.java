@@ -5,6 +5,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.api.data.ApiEndpointData;
@@ -17,12 +22,6 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.websocket.WebsocketInbound;
 import reactor.netty.http.websocket.WebsocketOutbound;
-
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -52,8 +51,10 @@ public final class WebsocketApiRoute implements WebsocketRoute {
   private Mono<ApiResponse> execute(final WebsocketApiContext context, final String content) {
     final JsonObject json;
     try {
-      json = content.isEmpty() && content.isBlank() ? JsonUtils.EMPTY_OBJECT : JsonUtils.fromJson(JsonParser.parseString(content), JsonObject.class);
-    } catch (JsonParseException e) {
+      json = content.isEmpty() && content.isBlank() ? JsonUtils.EMPTY_OBJECT : JsonUtils
+        .fromJson(JsonParser.parseString(content), JsonObject.class);
+    }
+    catch (JsonParseException e) {
       return Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, "JSON_SYNTAX"));
     }
 
@@ -64,22 +65,27 @@ public final class WebsocketApiRoute implements WebsocketRoute {
 
     if (tag == null) {
       response = Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, "MISSING_TAG"));
-    } else if (endpoint == null || endpoint.isJsonNull()) {
+    }
+    else if (endpoint == null || endpoint.isJsonNull()) {
       response = Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, "MISSING_ENDPOINT"));
-    } else {
+    }
+    else {
       response = ApiExecutor.execute(
         this.endpoints,
         new WebsocketApiRequest(
           tag,
           JsonUtils.fromJson(endpoint, String.class),
-          Optional.ofNullable(JsonUtils.fromJson(json.get("data"), JsonObject.class)).orElse(JsonUtils.EMPTY_OBJECT),
+          Optional.ofNullable(JsonUtils.fromJson(json.get("data"), JsonObject.class))
+            .orElse(JsonUtils.EMPTY_OBJECT),
           context
         )
       );
     }
 
     return response.doOnNext(resp -> {
-      if (tag != null) resp.setTag(tag);
+      if (tag != null) {
+        resp.setTag(tag);
+      }
     });
   }
 
@@ -90,9 +96,15 @@ public final class WebsocketApiRoute implements WebsocketRoute {
 
     final JsonBuilder builder = JsonBuilder.create("status", status);
 
-    if (response.getTag() != null) builder.add("tag", response.getTag());
-    if (response.getMessage() != null) builder.add("message", response.getMessage());
-    if (response.getJson() != null) builder.add("data", response.getJson());
+    if (response.getTag() != null) {
+      builder.add("tag", response.getTag());
+    }
+    if (response.getMessage() != null) {
+      builder.add("message", response.getMessage());
+    }
+    if (response.getJson() != null) {
+      builder.add("data", response.getJson());
+    }
 
     return builder.build().toString();
   }

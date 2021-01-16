@@ -1,8 +1,5 @@
 package net.getnova.framework.boot.module;
 
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -16,6 +13,8 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 final class ModuleLoader {
@@ -32,17 +31,25 @@ final class ModuleLoader {
     final File[] files = moduleFolder.listFiles();
     final URL[] urls = new URL[files.length];
 
-    for (int i = 0; i < files.length; i++) urls[i] = files[i].toURI().toURL();
+    for (int i = 0; i < files.length; i++) {
+      urls[i] = files[i].toURI().toURL();
+    }
     final ClassLoader loader = URLClassLoader.newInstance(urls, ModuleLoader.class.getClassLoader());
 
     return new Result(loader, Arrays.stream(files)
       .map(file -> {
         try {
           return loadModule(loader, file);
-        } catch (ModuleException e) {
-          if (e.getCause() != null) log.error(e.getMessage(), e.getCause());
-          else log.error(e.getMessage());
-        } catch (IOException e) {
+        }
+        catch (ModuleException e) {
+          if (e.getCause() != null) {
+            log.error(e.getMessage(), e.getCause());
+          }
+          else {
+            log.error(e.getMessage());
+          }
+        }
+        catch (IOException e) {
           log.error("Unable to load module.", e);
         }
         return null;
@@ -55,7 +62,8 @@ final class ModuleLoader {
     final Set<Class<?>> configurations = new HashSet<>();
     for (final Class<?> clazz : classes) {
       if (!clazz.isAnnotationPresent(Module.class)) {
-        log.error("The requested configuration class {} does not have the Annotation {}.", clazz.getName(), Module.class.getName());
+        log.error("The requested configuration class {} does not have the Annotation {}.", clazz.getName(),
+          Module.class.getName());
         continue;
       }
       configurations.addAll(loadModules(clazz.getAnnotation(Module.class).value()));
@@ -80,7 +88,8 @@ final class ModuleLoader {
       Class<?> mainClass;
       try {
         mainClass = Class.forName(moduleMainClassName, true, loader);
-      } catch (ClassNotFoundException e) {
+      }
+      catch (ClassNotFoundException e) {
         throw new ModuleException(String.format("Module (\"%s\") main class \"%s\" can not found in jar file \"%s\".",
           moduleName, moduleMainClassName, jarFile.getName()));
       }
@@ -94,7 +103,8 @@ final class ModuleLoader {
     }
   }
 
-  private static String loadValue(final JarFile jarFile, final Attributes attributes, final String name) throws ModuleException {
+  private static String loadValue(final JarFile jarFile, final Attributes attributes, final String name)
+    throws ModuleException {
     return Optional.ofNullable(attributes.getValue(name))
       .orElseThrow(() -> new ModuleException(
         String.format("Missing manifest attribute \"%s\" in jar file \"%s\".", name, jarFile.getName())
@@ -103,6 +113,7 @@ final class ModuleLoader {
 
   @Data
   static final class Result {
+
     private final ClassLoader loader;
     private final Set<ModuleData> modules;
   }

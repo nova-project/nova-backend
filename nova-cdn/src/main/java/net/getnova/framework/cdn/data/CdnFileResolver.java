@@ -1,12 +1,11 @@
 package net.getnova.framework.cdn.data;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.io.File;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +25,7 @@ public class CdnFileResolver {
 
   @Data
   public static final class Result {
+
     private final File file;
     private final CdnFile cdnFile;
   }

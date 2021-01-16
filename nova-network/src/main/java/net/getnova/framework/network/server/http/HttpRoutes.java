@@ -1,18 +1,17 @@
 package net.getnova.framework.network.server.http;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.function.BiFunction;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.network.server.http.route.HttpRoute;
 import org.reactivestreams.Publisher;
 import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
-
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.function.BiFunction;
 
 public final class HttpRoutes {
 
@@ -51,10 +50,12 @@ public final class HttpRoutes {
         .orElseGet(() -> HttpUtils.sendStatus(response, HttpResponseStatus.NOT_FOUND));
     }
 
-    private Publisher<Void> executeRoute(final HttpServerRequest request, final HttpServerResponse response, final HttpRoute route) {
+    private Publisher<Void> executeRoute(final HttpServerRequest request, final HttpServerResponse response,
+      final HttpRoute route) {
       try {
         return route.execute(request, response);
-      } catch (Throwable cause) {
+      }
+      catch (Throwable cause) {
         log.error("Error while handling a http request.", cause);
         return HttpUtils.sendStatus(response, HttpResponseStatus.INTERNAL_SERVER_ERROR);
       }

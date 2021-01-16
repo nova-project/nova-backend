@@ -1,5 +1,11 @@
 package net.getnova.framework.api.parser;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.api.ApiAuthenticator;
 import net.getnova.framework.api.annotations.ApiEndpoint;
@@ -7,13 +13,6 @@ import net.getnova.framework.api.data.ApiEndpointData;
 import net.getnova.framework.api.data.ApiParameterData;
 import net.getnova.framework.api.data.ApiResponse;
 import reactor.core.publisher.Mono;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 final class ApiEndpointParser {
@@ -25,7 +24,7 @@ final class ApiEndpointParser {
   }
 
   static Map<String, ApiEndpointData> parseEndpoints(final Object object, final Class<?> clazz,
-                                                     final boolean disabled, final ApiAuthenticator authenticator) {
+    final boolean disabled, final ApiAuthenticator authenticator) {
     return Arrays.stream(clazz.getDeclaredMethods())
       .parallel()
       .map(method -> parseEndpoint(object, clazz, method, disabled, authenticator))
@@ -34,26 +33,34 @@ final class ApiEndpointParser {
   }
 
   private static ApiEndpointData parseEndpoint(final Object instance, final Class<?> clazz, final Method method,
-                                               final boolean disabled, final ApiAuthenticator authenticator) {
+    final boolean disabled, final ApiAuthenticator authenticator) {
     final boolean hasAccess;
     try {
       hasAccess = method.canAccess(instance);
-    } catch (IllegalArgumentException e) {
+    }
+    catch (IllegalArgumentException e) {
       return null;
     }
 
-    if (!hasAccess && !method.trySetAccessible()) return null;
+    if (!hasAccess && !method.trySetAccessible()) {
+      return null;
+    }
 
     if (!method.isAnnotationPresent(ApiEndpoint.class)) {
-      if (!hasAccess) method.setAccessible(false);
+      if (!hasAccess) {
+        method.setAccessible(false);
+      }
       return null;
     }
 
     final Class<?> returnType = method.getReturnType();
     if (!(returnType.equals(ApiResponse.class) || returnType.equals(Mono.class))) {
       log.error("Endpoint {}.{} cannot be parsed because it does not have the return type {} or {}<{}>.",
-        clazz.getName(), method.getName(), ApiResponse.class.getName(), Mono.class.getName(), ApiResponse.class.getName());
-      if (!hasAccess) method.setAccessible(false);
+        clazz.getName(), method.getName(), ApiResponse.class.getName(), Mono.class.getName(),
+        ApiResponse.class.getName());
+      if (!hasAccess) {
+        method.setAccessible(false);
+      }
       return null;
     }
 

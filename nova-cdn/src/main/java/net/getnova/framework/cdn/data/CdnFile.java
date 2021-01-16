@@ -1,5 +1,6 @@
 package net.getnova.framework.cdn.data;
 
+import java.time.OffsetDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -8,8 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.getnova.framework.jpa.model.TableModelAutoId;
-
-import java.time.OffsetDateTime;
 
 @Getter
 @Setter

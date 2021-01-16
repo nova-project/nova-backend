@@ -1,11 +1,10 @@
 package net.getnova.framework.api.parser;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.api.annotations.ApiParameter;
 import net.getnova.framework.api.data.ApiParameterData;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 
 @Slf4j
 final class ApiParameterParser {
@@ -24,14 +23,19 @@ final class ApiParameterParser {
         log.error("Parameter {}.{}.{} is missing Annotation {}.",
           clazz.getName(), method.getName(), methodParameters[i].getName(), ApiParameter.class.getName());
         return null;
-      } else parameterData[i] = currentParameterData;
+      }
+      else {
+        parameterData[i] = currentParameterData;
+      }
     }
 
     return parameterData;
   }
 
   private static ApiParameterData parseParameter(final Parameter parameter) {
-    if (!parameter.isAnnotationPresent(ApiParameter.class)) return null;
+    if (!parameter.isAnnotationPresent(ApiParameter.class)) {
+      return null;
+    }
     final ApiParameter parameterAnnotation = parameter.getAnnotation(ApiParameter.class);
 
     return new ApiParameterData(

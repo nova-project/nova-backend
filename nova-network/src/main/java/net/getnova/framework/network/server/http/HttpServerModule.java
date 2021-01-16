@@ -1,15 +1,14 @@
 package net.getnova.framework.network.server.http;
 
+import java.io.File;
+import java.net.InetSocketAddress;
+import java.time.Duration;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.boot.module.Module;
 import org.springframework.context.annotation.ComponentScan;
-
-import java.io.File;
-import java.net.InetSocketAddress;
-import java.time.Duration;
 
 @Slf4j
 @Module
@@ -32,8 +31,10 @@ public class HttpServerModule {
     return new HttpServer("http", new InetSocketAddress(host, port), Duration.ofSeconds(10), this.routes);
   }
 
-  private HttpServer createSecureHttpServer(final String host, final int port, final String certPath, final String keyPath) {
-    return new HttpServer("http", new InetSocketAddress(host, port), Duration.ofSeconds(10), this.routes, new File(certPath), new File(keyPath));
+  private HttpServer createSecureHttpServer(final String host, final int port, final String certPath,
+    final String keyPath) {
+    return new HttpServer("http", new InetSocketAddress(host, port), Duration.ofSeconds(10), this.routes,
+      new File(certPath), new File(keyPath));
   }
 
   @PostConstruct
@@ -43,6 +44,8 @@ public class HttpServerModule {
 
   @PreDestroy
   private void onDestroy() {
-    if (this.server != null) this.server.stop();
+    if (this.server != null) {
+      this.server.stop();
+    }
   }
 }
