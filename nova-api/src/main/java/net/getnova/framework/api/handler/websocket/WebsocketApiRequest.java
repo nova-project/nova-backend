@@ -1,6 +1,6 @@
 package net.getnova.framework.api.handler.websocket;
 
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -13,7 +13,7 @@ public class WebsocketApiRequest extends ApiRequest {
 
   private final WebsocketApiContext context;
 
-  public WebsocketApiRequest(final String tag, final String endpoint, final JsonObject data,
+  public WebsocketApiRequest(final String tag, final String endpoint, final JsonNode data,
     final WebsocketApiContext context) {
     super(endpoint, data, tag);
     this.context = context;

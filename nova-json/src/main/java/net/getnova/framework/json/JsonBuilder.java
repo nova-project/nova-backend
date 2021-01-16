@@ -1,16 +1,13 @@
 package net.getnova.framework.json;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.Optional;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Optional;
-import java.util.function.Supplier;
-
 /**
- * The {@link JsonBuilder} is a tool to create {@link JsonObject}
- * or a Json as a {@link String} without declaring any variables.
+ * The {@link JsonBuilder} is a tool to create a {@link ObjectNode}.
  * <br>
  * Example:
  *
@@ -26,17 +23,17 @@ import java.util.function.Supplier;
  *    .toString();
  * }</pre>
  *
- * @see JsonSerializable
- * @see JsonObject
+ * @see JsonUtils
+ * @see JsonWriter
  */
 @EqualsAndHashCode
 @Slf4j
-public final class JsonBuilder implements JsonSerializable {
+public final class JsonBuilder {
 
-  private final JsonObject json;
+  private final ObjectNode node;
 
-  private JsonBuilder(final JsonObject json) {
-    this.json = json;
+  private JsonBuilder(final ObjectNode node) {
+    this.node = node;
   }
 
   /**
@@ -46,29 +43,31 @@ public final class JsonBuilder implements JsonSerializable {
    * @see JsonBuilder#create(String, Object)
    */
   private static JsonBuilder create() {
-    return create(new JsonObject());
+    return create(JsonUtils.objectMapper.createObjectNode());
   }
 
   /**
    * Creates a {@link JsonBuilder} without any data.
    *
-   * @param json the existing {@link JsonObject}
+   * @param json the existing {@link JsonNode}
    * @return the JsonBuilder
+   * @see JsonBuilder#create(Object)
    * @see JsonBuilder#create(String, Object)
    */
-  public static JsonBuilder create(final JsonObject json) {
-    return new JsonBuilder(json);
+  public static JsonBuilder create(final ObjectNode json) {
+    return new JsonBuilder(json.deepCopy());
   }
 
   /**
    * Creates a {@link JsonBuilder} without any data.
    *
-   * @param object the data, represented in a {@link JsonObject}
+   * @param object the data
    * @return the JsonBuilder
+   * @see JsonBuilder#create(ObjectNode)
    * @see JsonBuilder#create(String, Object)
    */
   public static JsonBuilder create(final Object object) {
-    return new JsonBuilder(JsonUtils.toJson(object).getAsJsonObject());
+    return new JsonBuilder(JsonUtils.toJson(object).require());
   }
 
   /**
@@ -77,127 +76,49 @@ public final class JsonBuilder implements JsonSerializable {
    * @param key   the key of the pair
    * @param value the value of the pair
    * @return the JsonBuilder
+   * @see JsonBuilder#create(ObjectNode)
+   * @see JsonBuilder#create(Object)
    */
   public static JsonBuilder create(final String key, final Object value) {
     return JsonBuilder.create().add(key, value);
   }
 
   /**
-   * Creates a {@link JsonBuilder} with one Key, Value pair.
-   *
-   * @param key           the key of the pair
-   * @param value         the value of the pair
-   * @param valueSupplier a alternative value if @{code value} is {@code null}
-   * @return the JsonBuilder
-   */
-  public static JsonBuilder create(final String key, final Object value, final Supplier<Object> valueSupplier) {
-    return JsonBuilder.create().add(key, value, valueSupplier);
-  }
-
-  /**
-   * Creates a {@link JsonBuilder} with one Key, Value pair.
-   *
-   * @param key           the key of the pair
-   * @param condition     witch value should be added
-   * @param valueSupplier the value of the pair
-   * @return the JsonBuilder
-   */
-  public static JsonBuilder create(final String key, final boolean condition, final Supplier<Object> valueSupplier) {
-    return JsonBuilder.create().add(key, condition, valueSupplier);
-  }
-
-  /**
-   * Creates a {@link JsonBuilder} with one Key, Value pair.
-   *
-   * @param key            the key of the pair
-   * @param condition      if the value should be added
-   * @param value1Supplier the value of the pair
-   * @param value2Supplier the alternative value of the pair
-   * @return the JsonBuilder
-   */
-  public static JsonBuilder create(final String key, final boolean condition, final Supplier<Object> value1Supplier, final Supplier<Object> value2Supplier) {
-    return JsonBuilder.create().add(key, condition, value1Supplier, value2Supplier);
-  }
-
-  /**
-   * This adds a Key, Value pair to the Json,
-   * and return this instance to call other
-   * functions to manipulate the Json.
+   * This adds a Key, Value pair to the Json, and return this instance to call other functions to manipulate the Json.
    *
    * @param key   the key of the pair
    * @param value the value of the pair
    * @return a instance if this to call other functions without saving {@link JsonBuilder} to a variable
    */
   public JsonBuilder add(final String key, final Object value) {
-    this.json.add(key, JsonUtils.toJson(value));
-    return this;
-  }
-
-  public JsonBuilder add(final String key, final Object value, final Supplier<Object> valueSupplier) {
-    try {
-      return this.add(key, Optional.ofNullable(value).orElseGet(valueSupplier));
-    } catch (Exception e) {
-      log.error("Error while calling second value.", e);
-    }
-    return this;
-  }
-
-  public JsonBuilder add(final String key, final boolean condition, final Supplier<Object> valueSupplier) {
-    if (condition) try {
-      return this.add(key, valueSupplier.get());
-    } catch (Exception e) {
-      log.error("Error while calling value.", e);
-    }
-    return this;
-  }
-
-  public JsonBuilder add(final String key, final boolean condition, final Supplier<Object> value1Supplier, final Supplier<Object> value2Supplier) {
-    try {
-      return this.add(key, condition ? value1Supplier.get() : value2Supplier.get());
-    } catch (Exception e) {
-      log.error("Error while calling second value.", e);
-    }
+    this.node.set(key, JsonUtils.toJson(value));
     return this;
   }
 
   /**
-   * Removes the {@code property} from this {@link JsonObject}.
+   * Removes the {@code property} from this {@link JsonNode}.
    *
    * @param key name of the member that should be removed.
-   * @return the {@link JsonElement} object that is being removed.
+   * @return the {@link JsonNode} object that is being removed.
    */
-  public JsonElement remove(final String key) {
-    return this.json.remove(key);
+  public Optional<JsonNode> remove(final String key) {
+    return Optional.ofNullable(this.node.remove(key));
   }
 
   /**
-   * Converts this to an {@link JsonObject}.
+   * Converts this to an {@link JsonNode}.
    *
-   * @return an {@link JsonObject} with the values from this
+   * @return an {@link JsonNode} with the values from this
    * @see JsonBuilder#toString()
    */
-  public JsonObject build() {
-    return this.json.deepCopy();
-  }
-
-  /**
-   * Converts this to an {@link JsonObject}.
-   *
-   * @return an {@link JsonObject} with the values from this
-   * @see JsonBuilder#build()
-   * @deprecated use {@link JsonBuilder#build()}
-   */
-  @Override
-  @Deprecated
-  public JsonObject serialize() {
-    return this.build();
+  public ObjectNode build() {
+    return this.node;
   }
 
   /**
    * Converts this to a Json-{@link String}.
    *
    * @return a Json-{@link String} with the values from this
-   * @see JsonObject
    * @see JsonBuilder#build()
    */
   @Override

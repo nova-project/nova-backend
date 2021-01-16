@@ -1,6 +1,6 @@
 package net.getnova.framework.api.handler.rest;
 
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -14,7 +14,7 @@ public class RestApiRequest extends ApiRequest {
 
   private final HttpServerRequest httpRequest;
 
-  public RestApiRequest(final String endpoint, final JsonObject data, final HttpServerRequest httpRequest) {
+  public RestApiRequest(final String endpoint, final JsonNode data, final HttpServerRequest httpRequest) {
     super(endpoint, data);
     this.httpRequest = httpRequest;
   }

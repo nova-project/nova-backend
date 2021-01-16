@@ -1,12 +1,14 @@
 package net.getnova.framework.api.data;
 
-import com.google.gson.JsonElement;
-import lombok.Data;
-import net.getnova.framework.json.JsonBuilder;
-import net.getnova.framework.json.JsonSerializable;
-
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializable;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import java.io.IOException;
 import java.util.Map;
 import java.util.TreeSet;
+import lombok.Data;
+import net.getnova.framework.json.JsonWriter;
 
 @Data
 public final class ApiEndpointCollectionData implements JsonSerializable, Comparable<ApiEndpointCollectionData> {
@@ -18,16 +20,23 @@ public final class ApiEndpointCollectionData implements JsonSerializable, Compar
   private final Map<String, ApiEndpointData> endpoints;
 
   @Override
-  public JsonElement serialize() {
-    return JsonBuilder.create("id", this.id)
-      .add("description", this.description)
-      .add("disabled", this.id)
-      .add("endpoints", new TreeSet<>(this.endpoints.values()))
-      .build();
+  public int compareTo(final ApiEndpointCollectionData other) {
+    return this.id.compareTo(other.id);
   }
 
   @Override
-  public int compareTo(final ApiEndpointCollectionData other) {
-    return this.id.compareTo(other.id);
+  public void serialize(final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
+    JsonWriter.create(gen)
+      .write("id", this.id)
+      .write("description", this.description)
+      .write("disabled", this.id)
+      .write("endpoints", new TreeSet<>(this.endpoints.values()))
+      .close();
+  }
+
+  @Override
+  public void serializeWithType(JsonGenerator gen, SerializerProvider serializers,
+    TypeSerializer typeSer) throws IOException {
+
   }
 }

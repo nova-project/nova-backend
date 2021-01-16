@@ -1,5 +1,7 @@
 package net.getnova.framework.api.handler.rest;
 
+import java.util.Map;
+import java.util.Set;
 import net.getnova.framework.api.ApiModule;
 import net.getnova.framework.api.data.ApiEndpointCollectionData;
 import net.getnova.framework.api.data.ApiEndpointData;
@@ -8,9 +10,6 @@ import net.getnova.framework.api.parser.ApiEndpointCollectionParser;
 import net.getnova.framework.boot.module.Module;
 import net.getnova.framework.network.server.http.HttpServerModule;
 import org.springframework.context.annotation.ComponentScan;
-
-import java.util.Map;
-import java.util.Set;
 
 @ComponentScan
 @Module({HttpServerModule.class})

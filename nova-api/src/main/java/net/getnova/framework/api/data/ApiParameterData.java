@@ -1,9 +1,12 @@
 package net.getnova.framework.api.data;
 
-import com.google.gson.JsonElement;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializable;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import java.io.IOException;
 import lombok.Data;
-import net.getnova.framework.json.JsonBuilder;
-import net.getnova.framework.json.JsonSerializable;
+import net.getnova.framework.json.JsonWriter;
 
 @Data
 public final class ApiParameterData implements JsonSerializable {
@@ -15,10 +18,16 @@ public final class ApiParameterData implements JsonSerializable {
   private final Class<?> classType;
 
   @Override
-  public JsonElement serialize() {
-    return JsonBuilder.create("id", this.id)
-      .add("required", this.required)
-      .add("description", this.description)
-      .build();
+  public void serialize(final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
+    JsonWriter.create(gen)
+      .write("id", this.id)
+      .write("required", this.required)
+      .write("description", this.description)
+      .close();
+  }
+
+  @Override
+  public void serializeWithType(final JsonGenerator gen, final SerializerProvider serializers,
+    final TypeSerializer typeSer) {
   }
 }

@@ -1,14 +1,23 @@
 package net.getnova.framework.api.handler.rest;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpUtil;
 import io.netty.util.AsciiString;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.api.data.ApiEndpointData;
@@ -23,64 +32,76 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-
 @Slf4j
 @RequiredArgsConstructor
 final class RestApiRoute implements HttpRoute {
 
   private static final Charset CHARSET = StandardCharsets.UTF_8;
-  private static final AsciiString CONTENT_TYPE = AsciiString.of(HttpHeaderValues.APPLICATION_JSON + "; " + HttpHeaderValues.CHARSET + "=" + CHARSET.toString());
-  private static final String EMPTY_RESPONSE = "{}";
+  private static final AsciiString CONTENT_TYPE = AsciiString
+    .of(HttpHeaderValues.APPLICATION_JSON + "; " + HttpHeaderValues.CHARSET + "=" + CHARSET.toString());
   private final Map<String, ApiEndpointData> endpoints;
 
   @Override
   public Publisher<Void> execute(final HttpServerRequest httpRequest, final HttpServerResponse httpResponse) {
     return HttpUtils.checkMethod(httpRequest, httpResponse, HttpMethod.GET, HttpMethod.POST)
-      .orElseGet(() ->
-        httpResponse.sendString(
-          httpRequest.receive()
-            .aggregate()
-            .asString(CHARSET)
-            .defaultIfEmpty("")
-            .flatMap(content -> this.execute(httpRequest, content))
-            .onErrorResume(this::handleError)
-            .map(apiResponse -> this.parseResponse(httpResponse, apiResponse)),
-          CHARSET
-        )
+      .orElseGet(() -> httpRequest.receive()
+        .aggregate()
+        .defaultIfEmpty(Unpooled.EMPTY_BUFFER) // TODO: remove this
+        .flatMap(content -> this.execute(httpRequest, content))
+        .onErrorResume(this::handleError)
+        .flatMap(apiResponse -> Mono.justOrEmpty(this.parseResponse(httpResponse, apiResponse)))
+        .transform(json -> httpResponse.sendString(json, CHARSET))
       );
   }
 
-  private Mono<ApiResponse> execute(final HttpServerRequest httpRequest, final String content) {
-    final JsonObject json;
-    try {
-      json = content.isEmpty() && content.isBlank() ? JsonUtils.EMPTY_OBJECT : JsonUtils.fromJson(JsonParser.parseString(content), JsonObject.class);
-    } catch (JsonParseException e) {
+  private Mono<ApiResponse> execute(final HttpServerRequest httpRequest, final ByteBuf content) {
+    final JsonNode node;
+
+    final Charset charset = HttpUtil.getCharset(
+      httpRequest.requestHeaders().get(HttpHeaderNames.CONTENT_TYPE),
+      StandardCharsets.UTF_8
+    );
+
+    try (InputStream is = new ByteBufInputStream(content)) {
+      node = JsonUtils.read(is, charset);
+    }
+    catch (JsonProcessingException e) {
       return Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, "JSON_SYNTAX"));
+    }
+    catch (IOException e) {
+      log.error("Unable to read data form remote stream");
+      return Mono.just(new ApiResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR));
     }
 
     return ApiExecutor.execute(
       this.endpoints,
-      new RestApiRequest(httpRequest.path(), json, httpRequest)
+      new RestApiRequest(httpRequest.path(), node, httpRequest)
     );
   }
 
-  private String parseResponse(final HttpServerResponse httpResponse, final ApiResponse apiResponse) {
-    httpResponse.status(apiResponse.getStatus());
+  private Optional<String> parseResponse(final HttpServerResponse httpResponse, final ApiResponse apiResponse) {
     httpResponse.header(HttpHeaderNames.CONTENT_TYPE, CONTENT_TYPE);
 
-    final boolean hasData = apiResponse.getJson() != null;
-    final boolean hasMessage = apiResponse.getMessage() != null;
+    final AtomicReference<HttpResponseStatus> status = new AtomicReference<>();
 
-    if (!hasData && !hasMessage) return EMPTY_RESPONSE;
+    final Optional<String> json = apiResponse.getMessage()
+      .map(msg -> (JsonNode) JsonBuilder.create("message", msg).build())
+      .or(apiResponse::getJson)
+      .map(node -> {
+        try {
+          final String jsonData = JsonUtils.toString(node);
+          status.set(apiResponse.getStatus());
+          return jsonData;
+        }
+        catch (JsonProcessingException e) {
+          status.set(HttpResponseStatus.INTERNAL_SERVER_ERROR);
+          log.error("Unable to write json.", e);
+          return null;
+        }
+      });
 
-    final JsonElement jsonResponse = hasData
-      ? apiResponse.getJson()
-      : JsonBuilder.create("message", apiResponse.getMessage()).build();
-
-    return jsonResponse.toString();
+    httpResponse.status(status.get());
+    return json;
   }
 
   private Mono<ApiResponse> handleError(final Throwable cause) {

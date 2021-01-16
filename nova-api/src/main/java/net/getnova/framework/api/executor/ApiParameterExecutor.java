@@ -1,15 +1,13 @@
 package net.getnova.framework.api.executor;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.api.data.ApiParameterData;
 import net.getnova.framework.api.data.ApiRequest;
 import net.getnova.framework.api.exception.ApiParameterException;
 import net.getnova.framework.json.JsonUtils;
-
-import java.io.IOException;
-import java.util.Optional;
 
 @Slf4j
 final class ApiParameterExecutor {
@@ -20,8 +18,11 @@ final class ApiParameterExecutor {
     throw new UnsupportedOperationException();
   }
 
-  static Object[] parseParameters(final ApiRequest request, final ApiParameterData[] parameters) throws ApiParameterException {
-    if (parameters.length == 0) return EMPTY_PARAMETERS;
+  static Object[] parseParameters(final ApiRequest request, final ApiParameterData[] parameters)
+    throws ApiParameterException {
+    if (parameters.length == 0) {
+      return EMPTY_PARAMETERS;
+    }
 
     final Object[] values = new Object[parameters.length];
     for (int i = 0; i < parameters.length; i++) {
@@ -31,23 +32,28 @@ final class ApiParameterExecutor {
     return values;
   }
 
-  private static Object getParameter(final ApiRequest request, final ApiParameterData parameter) throws ApiParameterException {
+  private static Object getParameter(final ApiRequest request, final ApiParameterData parameter)
+    throws ApiParameterException {
     return switch (parameter.getType()) {
       case NORMAL -> parseNormalParameter(request, parameter);
       case REQUEST -> request;
     };
   }
 
-  private static Object parseNormalParameter(final ApiRequest request, final ApiParameterData parameter) throws ApiParameterException {
-    final JsonElement jsonValue = request.getData().get(parameter.getId());
-    if (parameter.isRequired() && (jsonValue == null || jsonValue instanceof JsonNull)) {
+  private static Object parseNormalParameter(final ApiRequest request, final ApiParameterData parameter)
+    throws ApiParameterException {
+    final JsonNode node = request.getData().get(parameter.getId());
+    if (parameter.isRequired() && (node == null || node.isNull())) {
       throw new ApiParameterException(String.format("PARAMETER_%s_MISSING", parameter.getId()));
     }
 
     try {
-      return Optional.ofNullable(JsonUtils.fromJson(jsonValue, parameter.getClassType()))
-        .orElseThrow(IOException::new); // Enum witch not exist returns null (Developer has "FE" and "BE"; FULL_STACK returns null)
-    } catch (Throwable cause) {
+      return Optional.ofNullable(JsonUtils.fromJson(node, parameter.getClassType()))
+        .orElseThrow(IOException::new);
+      // ^
+      // Enum witch not exist returns null (Developer has "FE" and "BE"; FULL_STACK returns null)
+    }
+    catch (Throwable cause) {
       if (log.isInfoEnabled()) {
         log.info("Unable to parse parameter \"{}\" in endpoint \"{}\": {}",
           parameter.getId(), request.getEndpoint(), cause.getMessage(), cause);

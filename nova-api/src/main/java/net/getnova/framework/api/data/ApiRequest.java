@@ -1,6 +1,6 @@
 package net.getnova.framework.api.data;
 
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,6 @@ import lombok.RequiredArgsConstructor;
 public class ApiRequest {
 
   private final String endpoint;
-  private final JsonObject data;
+  private final JsonNode data;
   private String tag;
 }
