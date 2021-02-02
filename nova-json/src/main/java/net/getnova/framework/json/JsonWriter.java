@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * The {@link JsonWriter} is a tool to provide data to a {@link JsonGenerator} without much boilerplate code.
@@ -24,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
  * @see JsonBuilder
  */
 @EqualsAndHashCode
-@Slf4j
 public final class JsonWriter implements AutoCloseable {
 
   private final JsonGenerator generator;

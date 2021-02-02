@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.Optional;
 import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * The {@link JsonBuilder} is a tool to create a {@link ObjectNode}.
@@ -27,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
  * @see JsonWriter
  */
 @EqualsAndHashCode
-@Slf4j
 public final class JsonBuilder {
 
   private final ObjectNode node;
