@@ -15,7 +15,7 @@ FROM adoptopenjdk:15-jre-hotspot-bionic
 ARG NOVA_USER=nova
 ARG NOVA_GROUP=nova
 
-ENV NOVA_HOME /opt/nova-framework
+ENV NOVA_HOME /opt/framework
 ENV DATA_DIR /data
 
 RUN set -o errexit -o nounset \
