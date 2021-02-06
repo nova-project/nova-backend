@@ -1,4 +1,4 @@
-rootProject.name = 'nova-framework'
+rootProject.name = 'framework'
 include(
   'nova-api',
   'nova-boot',

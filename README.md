@@ -2,11 +2,11 @@
     Nova Framework
 </h1>
 <p align="center">
-    <a style="text-decoration:none" href="https://github.com/getnova/nova-framework/releases">
-        <img alt="Releases" src="https://img.shields.io/github/v/tag/getnova/nova-framework?label=latest%20version&style=flat-square">
+    <a style="text-decoration:none" href="https://github.com/getnova/framework/releases">
+        <img alt="Releases" src="https://img.shields.io/github/v/tag/getnova/framework?label=latest%20version&style=flat-square">
     </a>
-    <a style="text-decoration:none" href="https://github.com/getnova/nova-framework/actions">
-        <img alt="Build" src="https://img.shields.io/github/workflow/status/getnova/nova-framework/CI?label=CI&style=flat-square">
+    <a style="text-decoration:none" href="https://github.com/getnova/framework/actions">
+        <img alt="Build" src="https://img.shields.io/github/workflow/status/getnova/framework/CI?label=CI&style=flat-square">
     </a>
     <a style="text-decoration:none" href="https://hub.docker.com/r/getnova/nova-framework">
         <img alt="DockerHub" src="https://img.shields.io/docker/pulls/getnova/nova-framework?style=flat-square">
@@ -34,7 +34,7 @@ What things you need to install the software and how to install them
 A step by step series of examples that tell you how to get a development env running
 
 ```sh
-git clone https://github.com/getnova/nova-framework.git
+git clone https://github.com/getnova/framework.git
 ```
 
 Then you can open it with you IDE and start contributing.
@@ -64,7 +64,7 @@ Then you can open it with you IDE and start contributing.
 | Licenses                                                                                                              |
 |-----------------------------------------------------------------------------------------------------------------------|
 | From 08.08.2020 [AGPL v3](LICENSE)                                                                                    |
-| Upto 07.08.2020 [MIT](https://github.com/getnova/nova-framework/blob/9988969fdfdf69540b3cb54a04cd70b21457f1fc/LICENSE)  |
+| Upto 07.08.2020 [MIT](https://github.com/getnova/framework/blob/9988969fdfdf69540b3cb54a04cd70b21457f1fc/LICENSE)  |
 
 # Third Party Licenses
 
