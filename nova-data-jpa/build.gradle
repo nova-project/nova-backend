@@ -5,7 +5,8 @@ plugins {
 }
 
 dependencies {
-  api(project(':nova-data'))
+  api(platform('org.springframework.data:spring-data-releasetrain:Neumann-SR4'))
+  //implementation('org.springframework.boot:spring-boot-starter-data-jpa')
   api(project(':nova-json'))
   annotationProcessor('org.springframework:spring-context-indexer:5.3.3')
 

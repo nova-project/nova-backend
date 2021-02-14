@@ -3,7 +3,6 @@ include(
   'nova-api',
   'nova-boot',
   'nova-cdn',
-  'nova-data',
   'nova-data-jpa',
   'nova-json',
   'nova-network',

@@ -12,7 +12,6 @@ dependencies {
   implementation(project(':nova-api'))
   implementation(project(':nova-boot'))
   implementation(project(':nova-cdn'))
-  implementation(project(':nova-data'))
   implementation(project(':nova-data-jpa'))
   implementation(project(':nova-json'))
   implementation(project(':nova-network'))
