@@ -1,4 +1,5 @@
-FROM adoptopenjdk:15-jdk-hotspot-bionic AS builder
+ARG JVM_VENDOR=hotspot
+FROM adoptopenjdk:15-jdk-${JVM_VENDOR} AS builder
 
 RUN set -o errexit -o nounset \
     && apt-get update \
@@ -10,7 +11,7 @@ WORKDIR /home/src
 RUN chmod +x ./gradlew \
     && ./gradlew :nova-starter:installDist --stacktrace --no-daemon
 
-FROM adoptopenjdk:15-jre-hotspot-bionic
+FROM adoptopenjdk:15-jre-${JVM_VENDOR}
 
 ARG NOVA_USER=nova
 ARG NOVA_GROUP=nova
