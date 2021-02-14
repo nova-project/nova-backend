@@ -1,5 +1,6 @@
+ARG JAVA_VERSION=15
 ARG JVM_IMPL=hotspot
-FROM adoptopenjdk:15-jdk-${JVM_IMPL} AS builder
+FROM adoptopenjdk:${JAVA_VERSION}-jdk-${JVM_IMPL} AS builder
 
 RUN set -o errexit -o nounset \
     && apt-get update \
@@ -11,7 +12,7 @@ WORKDIR /home/src
 RUN chmod +x ./gradlew \
     && ./gradlew :nova-starter:installDist --stacktrace --no-daemon
 
-FROM adoptopenjdk:15-jre-${JVM_IMPL}
+FROM adoptopenjdk:${JAVA_VERSION}-jre-${JVM_IMPL}
 
 ARG NOVA_USER=nova
 ARG NOVA_GROUP=nova
