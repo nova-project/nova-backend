@@ -9,7 +9,6 @@ on:
 env:
   JAVA_VERSION: 15
   IMAGE_NAME: getnova/nova-framework
-  DOCKER_PLATFORMS: linux/amd64,linux/arm/v7,linux/arm64/v8 #linux/ppc64le,linux/s390x
 
 jobs:
   lint:
@@ -149,6 +148,11 @@ jobs:
     strategy:
       matrix:
         jvm-impl: [ hotspot, openj9 ]
+        include:
+          - jvm-impl: hotspot
+            platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
+          - jvm-impl: openj9
+            platforms: linux/amd64,linux/arm64/v8,linux/ppc64le,linux/s390x
 
     steps:
       - uses: actions/checkout@v2
@@ -165,7 +169,7 @@ jobs:
             {{version}}
             {{major}}.{{minor}}
           flavor: ${{ matrix.jvm-impl }}
-          main-flavor: openj9
+          main-flavor: ${{ matrix.jvm-impl == 'hotspot' }}
 
       - uses: docker/setup-qemu-action@v1
       - uses: docker/setup-buildx-action@v1
@@ -203,7 +207,7 @@ jobs:
         with:
           context: .
           file: ./docker/Dockerfile.github-actions
-          platforms: ${{ env.DOCKER_PLATFORMS }}
+          platforms: ${{ matrix.platforms }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
