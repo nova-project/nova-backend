@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.boot.ansi.AnsiColor;
 import net.getnova.framework.boot.ansi.AnsiStyle;
 import net.getnova.framework.boot.logging.LogLevel;
@@ -30,6 +31,7 @@ import net.getnova.framework.boot.logging.LoggingHandler;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.slf4j.impl.StaticLoggerBinder;
 
+@Slf4j
 public final class LogbackHandler implements LoggingHandler {
 
   private static final String BANNER_SPACING = " ".repeat(2);
@@ -38,6 +40,9 @@ public final class LogbackHandler implements LoggingHandler {
   /* private static final String COLOR_LESS_PATTERN = "[%d{yyyy-MM-dd HH:mm:ss}] [%5p] [%15.15t] "
     + "%-40.40logger{39} : %m%n%rExW"; */
   private static final LogLevelConverter<Level> LEVELS = new LogLevelConverter<>();
+  private static final String BLUE =
+    ANSIConstants.ESC_START + AnsiStyle.BOLD + ";" + AnsiColor.BRIGHT_BLUE + ANSIConstants.ESC_END;
+  private static final String RESET = ANSIConstants.ESC_START + AnsiStyle.RESET + ANSIConstants.ESC_END;
 
   static {
     LEVELS.map(LogLevel.ALL, Level.ALL);
@@ -56,23 +61,26 @@ public final class LogbackHandler implements LoggingHandler {
     this.context = (LoggerContext) StaticLoggerBinder.getSingleton().getLoggerFactory();
     this.cleanUp();
     this.initialize(level, dsn);
-    this.printBanner(banner);
+    if (!banner.isEmpty()) {
+      this.printBanner(banner);
+    }
+    this.printInfo();
   }
 
   private void printBanner(final List<String> banner) {
-    final String version = LogbackHandler.class.getPackage().getImplementationVersion();
-    System.out.println(ANSIConstants.ESC_START + AnsiStyle.BOLD + ";" + AnsiColor.BRIGHT_BLUE + ANSIConstants.ESC_END
-      + BANNER_SPACING + String.join(CoreConstants.LINE_SEPARATOR + BANNER_SPACING
-      + ANSIConstants.ESC_START + AnsiStyle.BOLD + ";" + AnsiColor.BRIGHT_BLUE + ANSIConstants.ESC_END, banner)
-      + CoreConstants.LINE_SEPARATOR
-      + BANNER_SPACING + ANSIConstants.ESC_START + AnsiStyle.BOLD + ";" + AnsiColor.BRIGHT_BLUE
-      + ANSIConstants.ESC_END
-      + ":: Nova Backend (" + (version == null ? "development" : version) + ") :: Java Runtime: " + System
-      .getProperty("java.version")
-      + " (" + System.getProperty("java.vendor") + ") ::"
-      + ANSIConstants.ESC_START + AnsiStyle.RESET + ANSIConstants.ESC_END
-      + CoreConstants.LINE_SEPARATOR
+    System.out.println(
+      BANNER_SPACING + BLUE
+        + String.join(RESET + CoreConstants.LINE_SEPARATOR + BANNER_SPACING + BLUE, banner)
+        + RESET + CoreConstants.LINE_SEPARATOR
     );
+  }
+
+  private void printInfo() {
+    final String version = LogbackHandler.class.getPackage().getImplementationVersion();
+    log.info("Nova Framework " + (version == null ? "development" : version) + " - Java Runtime: " + System
+      .getProperty("java.version")
+      + " (" + System.getProperty("java.vendor") + ")"
+      + ANSIConstants.ESC_START + AnsiStyle.RESET + ANSIConstants.ESC_END);
   }
 
   @Override

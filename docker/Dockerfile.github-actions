@@ -1,5 +1,5 @@
-ARG JVM_VENDOR=hotspot
-FROM adoptopenjdk:15-jre-${JVM_VENDOR}
+ARG JVM_IMPL=hotspot
+FROM adoptopenjdk:15-jre-${JVM_IMPL}
 
 ARG NOVA_USER=nova
 ARG NOVA_GROUP=nova

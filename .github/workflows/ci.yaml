@@ -145,12 +145,16 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        jvm-impl: [ hotspot, openj9 ]
+
     steps:
       - uses: actions/checkout@v2
 
       - name: Docker meta
         id: docker_meta
-        uses: crazy-max/ghaction-docker-meta@v1
+        uses: hugopeixoto/ghaction-docker-meta@feature/add-flavor
         with:
           tag-edge: true
           images: |
@@ -159,6 +163,8 @@ jobs:
           tag-semver: |
             {{version}}
             {{major}}.{{minor}}
+          flavor: ${{ matrix.jvm-impl }}
+          main-flavor: openj9
 
       - uses: docker/setup-qemu-action@v1
       - uses: docker/setup-buildx-action@v1
@@ -200,6 +206,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
+          build-args: JVM_IMPL=${{ matrix.jvm-impl }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
