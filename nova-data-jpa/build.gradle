@@ -18,7 +18,7 @@ dependencies {
   }
   api('com.zaxxer:HikariCP:4.0.1')
 
-  api('org.hibernate:hibernate-core:5.4.27.Final') {
+  api('org.hibernate:hibernate-core:5.4.28.Final') {
     exclude(group: 'javax.activation', module: 'javax.activation-api')
     exclude(group: 'javax.persistence', module: 'javax.persistence-api')
 //    exclude(group: 'javax.xml.bind', module: 'jaxb-api')
