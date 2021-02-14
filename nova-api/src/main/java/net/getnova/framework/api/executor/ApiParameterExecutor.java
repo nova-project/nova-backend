@@ -2,18 +2,19 @@ package net.getnova.framework.api.executor;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
+import java.io.IOException;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.api.data.ApiParameterData;
 import net.getnova.framework.api.data.ApiRequest;
 import net.getnova.framework.api.exception.ApiParameterException;
+import net.getnova.framework.boot.Bootstrap;
 import net.getnova.framework.json.JsonUtils;
-
-import java.io.IOException;
-import java.util.Optional;
 
 @Slf4j
 final class ApiParameterExecutor {
 
+  private static final Bootstrap BOOTSTRAP = Bootstrap.getInstance();
   private static final Object[] EMPTY_PARAMETERS = new Object[0];
 
   private ApiParameterExecutor() {
@@ -48,8 +49,8 @@ final class ApiParameterExecutor {
       return Optional.ofNullable(JsonUtils.fromJson(jsonValue, parameter.getClassType()))
         .orElseThrow(IOException::new); // Enum witch not exist returns null (Developer has "FE" and "BE"; FULL_STACK returns null)
     } catch (Throwable cause) {
-      if (log.isInfoEnabled()) {
-        log.info("Unable to parse parameter \"{}\" in endpoint \"{}\": {}",
+      if (BOOTSTRAP.isDebug() && log.isErrorEnabled()) {
+        log.error("Unable to parse parameter \"{}\" in endpoint \"{}\": {}",
           parameter.getId(), request.getEndpoint(), cause.getMessage(), cause);
       }
       throw new ApiParameterException(String.format("INVALID_PARAMETER_%s", parameter.getId()));

@@ -24,6 +24,7 @@ public final class Bootstrap {
     " | |\\  | (_) \\ V / (_| |  |  _|| | | (_| | | | | | |  __/\\ V  V / (_) | |  |   < ",
     " |_| \\_|\\___/ \\_/ \\__,_|  |_|  |_|  \\__,_|_| |_| |_|\\___| \\_/\\_/ \\___/|_|  |_|\\_\\"
   );
+  private static Bootstrap INSTANCE;
 
   private final long startUpTime;
   private final String[] debugModules;
@@ -59,7 +60,7 @@ public final class Bootstrap {
 
   public static void main(final String[] args) {
     final long before = System.currentTimeMillis();
-    new Bootstrap(before, args);
+    INSTANCE = new Bootstrap(before, args);
     final double seconds = (System.currentTimeMillis() - before) / 1000D;
     log.info("The bootstrapping was finished within {} seconds.", Math.round(seconds * 1000) / 1000D);
   }
@@ -106,5 +107,9 @@ public final class Bootstrap {
 
     log.info("Shutting down took {} seconds...", Math.round(seconds * 1000) / 1000D);
     this.loggingHandler.close();
+  }
+
+  public static Bootstrap getInstance() {
+    return INSTANCE;
   }
 }
