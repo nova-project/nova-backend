@@ -28,6 +28,6 @@ dependencies {
 //  api('org.hibernate:hibernate-search-orm:5.11.5.Final')
 //  api 'org.hibernate.validator:hibernate-validator:6.1.5.Final'
 
-  runtimeOnly('org.postgresql:postgresql:42.2.18')
+  runtimeOnly('org.postgresql:postgresql:42.2.19')
 //  runtimeOnly('org.mariadb.jdbc:mariadb-java-client:2.7.0')
 }
