@@ -5,6 +5,7 @@ plugins {
 
 application {
   mainClass.set('net.getnova.framework.boot.Bootstrap')
+  applicationDefaultJvmArgs = ["-XX:+UseParallelGC"]
 }
 
 dependencies {
