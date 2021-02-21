@@ -4,55 +4,88 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MimeType;
-import org.springframework.util.MimeTypeUtils;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
+import java.util.StringTokenizer;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public final class HttpMimeTypeUtils {
 
-  private static final String MIME_TYPES_FILE_NAME = "/mime.types";
-  private static final MultiValueMap<String, MimeType> FILE_EXTENSION_TO_MEDIA_TYPES = parseMimeTypes();
+  private static final Map<String, String> MIME_TYPES;
+
+  static {
+    Map<String, String> mineTypes;
+
+    try (InputStream is = HttpMimeTypeUtils.class.getResourceAsStream("/mime.types");
+      Reader isr = new InputStreamReader(is, StandardCharsets.US_ASCII);
+      BufferedReader br = new BufferedReader(isr)) {
+      mineTypes = parseReader(br);
+    }
+    catch (IOException e) {
+      log.error("Unable to load mime types from class path file /mime.types", e);
+      mineTypes = Collections.emptyMap();
+    }
+
+    MIME_TYPES = mineTypes;
+  }
 
   private HttpMimeTypeUtils() {
     throw new UnsupportedOperationException();
   }
 
-  private static MultiValueMap<String, MimeType> parseMimeTypes() {
-    final InputStream is = HttpMimeTypeUtils.class.getResourceAsStream(MIME_TYPES_FILE_NAME);
-    try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.US_ASCII))) {
-      final MultiValueMap<String, MimeType> result = new LinkedMultiValueMap<>();
-      String line;
-      while ((line = reader.readLine()) != null) {
-        if (line.isEmpty() || line.charAt(0) == '#') {
-          continue;
-        }
-        final String[] tokens = StringUtils.tokenizeToStringArray(line, " \t\n\r\f");
-        final MimeType mediaType = MimeTypeUtils.parseMimeType(tokens[0]);
-        for (int i = 1; i < tokens.length; i++) {
-          result.add(tokens[i].toLowerCase(Locale.ENGLISH), mediaType);
-        }
+  public static Optional<String> getMediaTypes(final String filename) {
+    return getExtensionByStringHandling(filename)
+      .map(MIME_TYPES::get);
+  }
+
+  private static Map<String, String> parseReader(final BufferedReader br) throws IOException {
+    final Map<String, String> result = new HashMap<>();
+
+    String line;
+    while ((line = br.readLine()) != null) {
+      if (line.isEmpty() || line.charAt(0) == '#') {
+        continue;
       }
-      return result;
+
+      parseLine(line, result);
     }
-    catch (IOException e) {
-      throw new IllegalStateException("Unable to load mime types form file: " + MIME_TYPES_FILE_NAME, e);
+    return result;
+  }
+
+  private static void parseLine(final String line, final Map<String, String> mimeTypes) throws IOException {
+    final StringTokenizer tokenizer = new StringTokenizer(line, " \t\n\r\f");
+
+    try {
+      final String extension = tokenizer.nextToken().toLowerCase(Locale.ENGLISH);
+      if (mimeTypes.containsKey(extension)) {
+        return;
+      }
+
+      mimeTypes.put(extension, tokenizer.nextToken());
+    }
+    catch (NoSuchElementException e) {
+      throw new IOException("Unable to load mime types - Wrong format, Line: \"" + line + "\"");
     }
   }
 
-  public static Optional<MimeType> getMediaType(final String filename) {
-    return getMediaTypes(filename).stream().findFirst();
-  }
+  private static Optional<String> getExtensionByStringHandling(final String filename) {
+    if (filename == null) {
+      return Optional.empty();
+    }
 
-  public static List<MimeType> getMediaTypes(final String filename) {
-    return Optional.ofNullable(StringUtils.getFilenameExtension(filename))
-      .map(s -> FILE_EXTENSION_TO_MEDIA_TYPES.get(s.toLowerCase(Locale.ENGLISH)))
-      .orElse(Collections.emptyList());
+    final int index = filename.lastIndexOf('.');
+
+    if (index == -1) {
+      return Optional.empty();
+    }
+
+    return Optional.of(filename.substring(index + 1).toLowerCase(Locale.ENGLISH));
   }
 }
