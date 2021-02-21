@@ -17,5 +17,5 @@ public abstract class TableModel {
 
   @Version
   @Column(name = "version", nullable = false)
-  private long version;
+  private Long version;
 }
