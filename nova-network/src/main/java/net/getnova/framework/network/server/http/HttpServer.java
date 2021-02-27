@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.network.server.Server;
-import org.springframework.util.unit.DataSize;
 import reactor.netty.DisposableServer;
 import reactor.netty.http.HttpProtocol;
 
@@ -42,7 +41,7 @@ public final class HttpServer implements Server {
   public void start() {
     reactor.netty.http.server.HttpServer server = reactor.netty.http.server.HttpServer.create()
       .bindAddress(() -> this.address)
-      .compress((int) DataSize.ofKilobytes(5).toBytes())
+      .compress(1024 * 5) // 5kB
       .forwarded(true);
 
     if (this.certificateFile == null || this.keyFile == null) {

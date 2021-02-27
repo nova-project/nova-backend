@@ -5,13 +5,6 @@ plugins {
 }
 
 dependencies {
-  api(project(':nova-boot'))
-  annotationProcessor('org.springframework:spring-context-indexer:5.3.4')
-
-  api(platform('io.projectreactor:reactor-bom:2020.0.4'))
-  api('io.projectreactor:reactor-core')
-  api('io.projectreactor.netty:reactor-netty-core')
-  api('io.projectreactor.netty:reactor-netty-http')
-//  api('io.projectreactor.addons:reactor-extra')
-  runtimeOnly('io.netty:netty-tcnative-boringssl-static:2.0.36.Final')
+  api "org.springframework.boot:spring-boot-starter:$springBootVersion"
+  api "org.springframework.boot:spring-boot-starter-reactor-netty:$springBootVersion"
 }
