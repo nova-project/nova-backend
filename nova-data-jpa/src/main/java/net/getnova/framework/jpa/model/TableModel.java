@@ -1,5 +1,6 @@
 package net.getnova.framework.jpa.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
@@ -16,6 +17,7 @@ import lombok.Setter;
 public abstract class TableModel {
 
   @Version
+  @JsonIgnore
   @Column(name = "version", nullable = false)
   private Long version;
 }
