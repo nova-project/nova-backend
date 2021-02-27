@@ -121,8 +121,8 @@ jobs:
       - name: Checkout maven repo
         uses: actions/checkout@v2
         with:
-          repository: ${{ github.repository_owner + '/maven' }}
-          path: ${{ env.GITHUB_WORKSPACE + '/repo' }}
+          repository: ${{ format('{0}/maven', github.repository_owner) }}
+          path: ${{ format('{0}/repo', env.GITHUB_WORKSPACE) }}
 
       - uses: actions/cache@v2
         with:
@@ -148,7 +148,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@4.0.0
         with:
           branch: main # The branch the action should deploy to.
-          folder: ${{ env.GITHUB_WORKSPACE + '/repo' }} # The folder the action should deploy.
+          folder: ${{ format('{0}/repo', env.GITHUB_WORKSPACE) }} # The folder the action should deploy.
 
           # https://github.com/crazy-max/ghaction-github-pages/blob/dev/src/git.ts#L3-L8
           commit-message: Publish ${{ github.reposetory }}
