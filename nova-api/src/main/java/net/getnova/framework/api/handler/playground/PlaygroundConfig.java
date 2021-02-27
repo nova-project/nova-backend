@@ -2,10 +2,8 @@ package net.getnova.framework.api.handler.playground;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import net.getnova.framework.boot.config.Config;
 import org.springframework.beans.factory.annotation.Value;
 
-@Config
 @Getter(AccessLevel.PACKAGE)
 public final class PlaygroundConfig {
 
