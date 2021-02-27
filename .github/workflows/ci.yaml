@@ -110,13 +110,19 @@ jobs:
           name: framework
           path: nova-starter/build/install/nova-starter
 
-  publish-gpr:
+  publish:
     needs: build
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Checkout maven repo
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.repository_owner + '/maven' }}
+          path: ${{ env.GITHUB_WORKSPACE + '/repo' }}
 
       - uses: actions/cache@v2
         with:
@@ -135,11 +141,19 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Publish with Gradle
-        run: ./gradlew publishNebulaPublicationToGitHubPackagesRepository --stacktrace --no-daemon
-        env:
-          GPR_USERNAME: ${{ env.reposetory_owner }}
-          GPR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build with Gradle
+        run: ./gradlew publishNebulaPublicationToLocalRepoRepository --stacktrace --no-daemon
+
+      - name: Publish
+        uses: JamesIves/github-pages-deploy-action@4.0.0
+        with:
+          branch: main # The branch the action should deploy to.
+          folder: ${{ env.GITHUB_WORKSPACE + '/repo' }} # The folder the action should deploy.
+
+          # https://github.com/crazy-max/ghaction-github-pages/blob/dev/src/git.ts#L3-L8
+          commit-message: Publish ${{ github.reposetory }}
+          git-config-name: github-actions[bot]
+          git-config-email: 41898282+github-actions[bot]@users.noreply.github.com
 
   docker:
     needs: build
