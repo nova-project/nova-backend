@@ -5,8 +5,7 @@ plugins {
 }
 
 dependencies {
-  api(project(':nova-boot'))
-  api(project(':nova-network'))
-  api(project(':nova-data-jpa'))
-  annotationProcessor('org.springframework:spring-context-indexer:5.3.4')
+  api "org.springframework.boot:spring-boot-starter:$springBootVersion"
+  api project(':nova-network')
+  api project(':nova-data-jpa')
 }

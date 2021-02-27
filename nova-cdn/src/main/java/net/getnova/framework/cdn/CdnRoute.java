@@ -86,9 +86,9 @@ public class CdnRoute implements HttpRoute {
         response.header(HttpHeaderNames.CONTENT_DISPOSITION,
           "inline; " + HttpHeaderValues.FILENAME + "=\"" + result.getCdnFile().getName() + "\"");
 
-        HttpMimeTypeUtils.getMediaType(result.getCdnFile().getName())
+        HttpMimeTypeUtils.getMediaTypes(result.getCdnFile().getName())
           .ifPresentOrElse(
-            mediaType -> response.header(HttpHeaderNames.CONTENT_TYPE, mediaType.toString()),
+            mediaType -> response.header(HttpHeaderNames.CONTENT_TYPE, mediaType),
             () -> response.header(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_OCTET_STREAM)
           );
 
