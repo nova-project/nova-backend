@@ -18,5 +18,5 @@ public abstract class TableModelAutoId extends TableModel {
   @Id
   @GeneratedValue
   @Column(name = "id", updatable = false, nullable = false, unique = true)
-  protected UUID id;
+  private UUID id;
 }

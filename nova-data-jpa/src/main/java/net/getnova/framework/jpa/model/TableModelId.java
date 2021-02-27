@@ -16,5 +16,5 @@ public abstract class TableModelId extends TableModel {
 
   @Id
   @Column(name = "id", updatable = false, nullable = false)
-  protected UUID id;
+  private UUID id;
 }
