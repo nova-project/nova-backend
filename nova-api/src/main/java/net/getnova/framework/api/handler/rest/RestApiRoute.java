@@ -9,6 +9,9 @@ import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.AsciiString;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.api.data.ApiEndpointData;
@@ -23,16 +26,13 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-
 @Slf4j
 @RequiredArgsConstructor
 final class RestApiRoute implements HttpRoute {
 
   private static final Charset CHARSET = StandardCharsets.UTF_8;
-  private static final AsciiString CONTENT_TYPE = AsciiString.of(HttpHeaderValues.APPLICATION_JSON + "; " + HttpHeaderValues.CHARSET + "=" + CHARSET.toString());
+  private static final AsciiString CONTENT_TYPE = AsciiString
+    .of(HttpHeaderValues.APPLICATION_JSON + "; " + HttpHeaderValues.CHARSET + "=" + CHARSET.toString());
   private static final String EMPTY_RESPONSE = "{}";
   private final Map<String, ApiEndpointData> endpoints;
 
@@ -56,8 +56,10 @@ final class RestApiRoute implements HttpRoute {
   private Mono<ApiResponse> execute(final HttpServerRequest httpRequest, final String content) {
     final JsonObject json;
     try {
-      json = content.isEmpty() && content.isBlank() ? JsonUtils.EMPTY_OBJECT : JsonUtils.fromJson(JsonParser.parseString(content), JsonObject.class);
-    } catch (JsonParseException e) {
+      json = content.isEmpty() && content.isBlank() ? JsonUtils.EMPTY_OBJECT
+        : JsonUtils.fromJson(JsonParser.parseString(content), JsonObject.class);
+    }
+    catch (JsonParseException e) {
       return Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, "JSON_SYNTAX"));
     }
 
@@ -74,7 +76,9 @@ final class RestApiRoute implements HttpRoute {
     final boolean hasData = apiResponse.getJson() != null;
     final boolean hasMessage = apiResponse.getMessage() != null;
 
-    if (!hasData && !hasMessage) return EMPTY_RESPONSE;
+    if (!hasData && !hasMessage) {
+      return EMPTY_RESPONSE;
+    }
 
     final JsonElement jsonResponse = hasData
       ? apiResponse.getJson()

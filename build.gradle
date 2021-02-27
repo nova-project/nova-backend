@@ -1,22 +1,33 @@
 plugins {
   id('base')
-  id('io.freefair.lombok') version('5.3.0')
+  id('io.freefair.lombok') version('5.3.0') // apply, because javadoc
   id('nebula.project') version('8.0.0') apply(false)
   id('com.palantir.git-version') version('0.12.3')
   id('com.github.spotbugs') version('4.6.0') apply(false)
 
   id('io.spring.javadoc') version('0.0.1') apply(false)
-  id('io.spring.javadoc-aggregate') version('0.0.1') apply(false)
+  id('io.spring.javadoc-aggregate') version('0.0.1')
 }
 
-version(gitVersion())
+def details = versionDetails()
+version details.commitDistance != 0 || !details.isCleanTag ? 'edge' : version
 
 allprojects {
   group('net.getnova.framework')
+
+  ext {
+    springBootVersion = '2.4.3'
+    jakartaPersistanceApiVersion = '2.2.3'
+    gsonVersion = '2.8.6'
+  }
+
+  repositories {
+    mavenCentral()
+  }
 }
 
 subprojects {
-  version(rootProject.version)
+  version rootProject.version
 
   apply(plugin: "nebula.project")
   apply(from: "${rootDir}/gradle/java.gradle")

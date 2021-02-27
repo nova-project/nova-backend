@@ -8,7 +8,6 @@ on:
 
 env:
   JAVA_VERSION: 15
-  IMAGE_NAME: getnova/nova-framework
 
 jobs:
   lint:
@@ -35,7 +34,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Lint with Gradle
-        run: ./gradlew checkstyleMain checkstyleTest spotbugsMain spotbugsTest pmdMain pmdTest :nova-starter:aggregateJavadoc --stacktrace --no-daemon
+        run: ./gradlew checkstyleMain checkstyleTest spotbugsMain spotbugsTest pmdMain pmdTest :aggregateJavadoc --stacktrace --no-daemon
 
       - name: Annotate Checkstyle Issues
         uses: jwgmeligmeyling/checkstyle-github-action@master
@@ -103,20 +102,21 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew :nova-starter:installDist --stacktrace --no-daemon
+        run: ./gradlew assemble --stacktrace --no-daemon
 
-      - uses: actions/upload-artifact@v2
-        with:
-          name: framework
-          path: nova-starter/build/install/nova-starter
-
-  publish-gpr:
+  publish:
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: ${{ github.event_name != 'pull_request' }}
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Checkout maven repo
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ format('{0}/maven', github.repository_owner) }}
+          path: ${{ format('{0}/repo', env.GITHUB_WORKSPACE) }}
 
       - uses: actions/cache@v2
         with:
@@ -135,95 +135,16 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Publish with Gradle
-        run: ./gradlew publishNebulaPublicationToGitHubPackagesRepository --stacktrace --no-daemon
-        env:
-          GPR_USERNAME: ${{ env.reposetory_owner }}
-          GPR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build with Gradle
+        run: ./gradlew publishNebulaPublicationToLocalRepoRepository --stacktrace --no-daemon
 
-  docker:
-    needs: build
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        jvm-impl: [ hotspot, openj9 ]
-        include:
-          - jvm-impl: hotspot
-            platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          - jvm-impl: openj9
-            platforms: linux/amd64,linux/arm64/v8,linux/ppc64le,linux/s390x
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Docker meta
-        id: docker_meta
-        uses: hugopeixoto/ghaction-docker-meta@feature/add-flavor
+      - name: Publish
+        uses: JamesIves/github-pages-deploy-action@4.0.0
         with:
-          tag-edge: true
-          images: |
-            ${{ env.IMAGE_NAME }}
-            ghcr.io/${{ env.IMAGE_NAME }}
-          tag-semver: |
-            {{version}}
-            {{major}}.{{minor}}
-          flavor: ${{ matrix.jvm-impl }}
-          main-flavor: ${{ matrix.jvm-impl == 'hotspot' }}
+          branch: main # The branch the action should deploy to.
+          folder: ${{ format('{0}/repo', env.GITHUB_WORKSPACE) }} # The folder the action should deploy.
 
-      - uses: docker/setup-qemu-action@v1
-      - uses: docker/setup-buildx-action@v1
-
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        if: ${{ github.event_name != 'pull_request' }}
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN }}
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        if: ${{ github.event_name != 'pull_request' }}
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GH_PAT_PACKAGES }}
-
-      - uses: actions/download-artifact@v2
-        with:
-          name: framework
-          path: framework
-
-      - name: Build
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./docker/Dockerfile.github-actions
-          platforms: ${{ matrix.platforms }}
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.docker_meta.outputs.tags }}
-          labels: ${{ steps.docker_meta.outputs.labels }}
-          build-args: |
-            JAVA_VERSION=${{ env.JAVA_VERSION }}
-            JVM_IMPL=${{ matrix.jvm-impl }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new
-
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-
-      - name: Check manifest
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          docker buildx imagetools inspect ${{ env.IMAGE_NAME }}:${{ steps.docker_meta.outputs.version }}
-          docker buildx imagetools inspect ghcr.io/${{ env.IMAGE_NAME }}:${{ steps.docker_meta.outputs.version }}
+          # https://github.com/crazy-max/ghaction-github-pages/blob/dev/src/git.ts#L3-L8
+          commit-message: Publish ${{ github.reposetory }}
+          git-config-name: github-actions[bot]
+          git-config-email: 41898282+github-actions[bot]@users.noreply.github.com
