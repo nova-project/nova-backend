@@ -31,10 +31,14 @@ final class ApiParameterExecutor {
   }
 
   private static Object getParameter(final ApiRequest request, final ApiParameterData parameter) throws ApiParameterException {
-    return switch (parameter.getType()) {
-      case NORMAL -> parseNormalParameter(request, parameter);
-      case REQUEST -> request;
-    };
+    switch (parameter.getType()) {
+      case NORMAL:
+        return parseNormalParameter(request, parameter);
+      case REQUEST:
+        return request;
+      default:
+        throw new IllegalArgumentException();
+    }
   }
 
   private static Object parseNormalParameter(final ApiRequest request, final ApiParameterData parameter) throws ApiParameterException {

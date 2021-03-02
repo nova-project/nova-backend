@@ -1,6 +1,6 @@
 apply(plugin: 'java')
 
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_15
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_11
 
 jar {
   manifest.attributes([

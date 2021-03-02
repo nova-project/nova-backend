@@ -7,7 +7,7 @@ on:
   pull_request:
 
 env:
-  JAVA_VERSION: 15
+  JAVA_VERSION: 11
 
 jobs:
   lint:
