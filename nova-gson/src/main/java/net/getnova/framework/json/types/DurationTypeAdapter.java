@@ -20,7 +20,8 @@ public final class DurationTypeAdapter implements JsonSerializer<Duration>, Json
   }
 
   @Override
-  public Duration deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
+  public Duration deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
+    throws JsonParseException {
     if (!json.isJsonPrimitive()) {
       throw new JsonParseException(String.format("Unable to parse \"%s\" into a \"%s\".", json, DURATION_CLASS_NAME));
     }

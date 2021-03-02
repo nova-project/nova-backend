@@ -1,16 +1,20 @@
 package net.getnova.framework.api.data;
 
-import com.google.gson.JsonObject;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import io.netty.handler.codec.http.HttpMethod;
+import java.util.Map;
+import net.getnova.framework.api.exception.ParserApiException;
 
-@Data
-@AllArgsConstructor
-@RequiredArgsConstructor
-public class ApiRequest {
+public interface ApiRequest {
 
-  private final String endpoint;
-  private final JsonObject data;
-  private String tag;
+  HttpMethod getMethod();
+
+  String getPath();
+
+  Map<String, String> getPathVariables();
+
+  void setPathVariables(Map<String, String> variables);
+
+  String getPathVariable(String name);
+
+  <T> T getData(Class<T> clazz) throws ParserApiException;
 }

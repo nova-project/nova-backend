@@ -1,8 +1,6 @@
 package net.getnova.framework.api.exception;
 
-import java.io.IOException;
-
-public class ApiException extends IOException {
+public class ApiException extends Exception {
 
   public ApiException(final String message) {
     super(message);
@@ -10,5 +8,9 @@ public class ApiException extends IOException {
 
   public ApiException(final String message, final Throwable cause) {
     super(message, cause);
+  }
+
+  public ApiException(final Throwable cause) {
+    super(cause);
   }
 }

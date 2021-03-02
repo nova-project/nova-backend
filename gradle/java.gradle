@@ -1,8 +1,11 @@
-apply(plugin: 'java')
+apply plugin: 'java'
+apply plugin: 'java-library'
+//apply plugin: 'io.freefair.maven-optional'
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_11
 
 jar {
+  from "${rootDir}/LICENSE"
   manifest.attributes([
     'Specification-Title'     : project.name,
     'Specification-Vendor'    : 'Nova Project (https://github.com/getnova)',
@@ -20,4 +23,9 @@ tasks.withType(JavaCompile) {
     // Java Modularity:
     // options.compilerArgs.addAll(['--module-path', classpath.asPath])
   }
+}
+
+dependencies {
+  implementation 'org.slf4j:slf4j-api'
+  api platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
 }

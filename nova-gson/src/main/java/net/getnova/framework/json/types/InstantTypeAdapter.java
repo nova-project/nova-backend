@@ -20,7 +20,8 @@ public final class InstantTypeAdapter implements JsonSerializer<Instant>, JsonDe
   }
 
   @Override
-  public Instant deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
+  public Instant deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
+    throws JsonParseException {
     if (!json.isJsonPrimitive()) {
       throw new JsonParseException(String.format("Unable to parse \"%s\" into a \"%s\".", json, INSTANT_CLASS_NAME));
     }

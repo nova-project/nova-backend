@@ -1,49 +1,18 @@
 package net.getnova.framework.api.parser;
 
-import java.lang.reflect.Method;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
-import lombok.extern.slf4j.Slf4j;
-import net.getnova.framework.api.annotations.ApiParameter;
-import net.getnova.framework.api.data.ApiParameterData;
+import java.util.Optional;
+import net.getnova.framework.api.data.ApiParameter;
 
-@Slf4j
-final class ApiParameterParser {
+public interface ApiParameterParser<A extends Annotation, P extends ApiParameter<?>> {
 
-  private ApiParameterParser() {
-    throw new UnsupportedOperationException();
+  Class<A> getAnnotationType();
+
+  default Optional<P> parse(Parameter parameter) {
+    return Optional.ofNullable(parameter.getAnnotation(this.getAnnotationType()))
+      .map(annotation -> this.parse(annotation, parameter));
   }
 
-  static ApiParameterData[] parseParameters(final Class<?> clazz, final Method method) {
-    final Parameter[] methodParameters = method.getParameters();
-    final ApiParameterData[] parameterData = new ApiParameterData[methodParameters.length];
-
-    for (int i = 0; i < methodParameters.length; i++) {
-      final ApiParameterData currentParameterData = parseParameter(methodParameters[i]);
-      if (currentParameterData == null) {
-        log.error("Parameter {}.{}.{} is missing Annotation {}.",
-          clazz.getName(), method.getName(), methodParameters[i].getName(), ApiParameter.class.getName());
-        return null;
-      }
-      else {
-        parameterData[i] = currentParameterData;
-      }
-    }
-
-    return parameterData;
-  }
-
-  private static ApiParameterData parseParameter(final Parameter parameter) {
-    if (!parameter.isAnnotationPresent(ApiParameter.class)) {
-      return null;
-    }
-    final ApiParameter parameterAnnotation = parameter.getAnnotation(ApiParameter.class);
-
-    return new ApiParameterData(
-      parameterAnnotation.id(),
-      parameterAnnotation.required(),
-      parameterAnnotation.type(),
-      String.join("\n", parameterAnnotation.description()),
-      parameter.getType()
-    );
-  }
+  P parse(A annotation, Parameter parameter);
 }

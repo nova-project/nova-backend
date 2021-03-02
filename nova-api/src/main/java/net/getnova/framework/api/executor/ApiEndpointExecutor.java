@@ -2,76 +2,47 @@ package net.getnova.framework.api.executor;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import java.lang.reflect.InvocationTargetException;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.getnova.framework.api.data.ApiEndpointData;
+import net.getnova.framework.api.data.ApiEndpoint;
+import net.getnova.framework.api.data.ApiParameter;
 import net.getnova.framework.api.data.ApiRequest;
-import net.getnova.framework.api.data.ApiResponse;
-import net.getnova.framework.api.exception.ApiParameterException;
+import net.getnova.framework.api.data.response.ApiResponse;
+import net.getnova.framework.api.exception.ParameterApiException;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-final class ApiEndpointExecutor {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+class ApiEndpointExecutor {
 
-  private ApiEndpointExecutor() {
-    throw new UnsupportedOperationException();
-  }
+  static final ApiEndpointExecutor INSTANCE = new ApiEndpointExecutor();
 
-  static Mono<ApiResponse> execute(final ApiRequest request, final ApiEndpointData endpoint) {
-    if (endpoint.isDisabled()) {
-      return Mono.just(new ApiResponse(HttpResponseStatus.SERVICE_UNAVAILABLE, "ENDPOINT_DISABLED"));
-    }
-
-    if (!endpoint.getAuthenticator().isPermitted(request, endpoint.getAuthentication(), endpoint)) {
-      return Mono.just(new ApiResponse(HttpResponseStatus.UNAUTHORIZED));
-    }
-
-    final Object[] parameters;
-
+  Mono<ApiResponse> execute(final ApiEndpoint endpoint, final ApiRequest request) {
     try {
-      parameters = ApiParameterExecutor.parseParameters(request, endpoint.getParameters());
-    }
-    catch (ApiParameterException e) {
-      return Mono.just(new ApiResponse(HttpResponseStatus.BAD_REQUEST, e.getMessage()));
-    }
-    catch (Throwable e) {
-      log.error("Unable to parse parameters of endpoint {}.", getMethodPath(endpoint), e);
-      return Mono.just(new ApiResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR));
-    }
+      final Object[] args = new Object[endpoint.getParameters().size()];
 
-    try {
-      final Object response = endpoint.getMethod().invoke(endpoint.getInstance(), parameters);
-
-      if (response == null) {
-        log.error("Endpoint {} returned null, which is not allowed.", getMethodPath(endpoint));
-        return Mono.just(new ApiResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR));
+      int i = 0;
+      for (final ApiParameter<?> parameter : endpoint.getParameters()) {
+        try {
+          args[i] = parameter.parse(request);
+        }
+        catch (ParameterApiException e) {
+          return Mono.just(e.toApiResponse());
+        }
       }
 
-      if (response instanceof ApiResponse) {
-        return Mono.just((ApiResponse) response);
-      }
-      else if (response instanceof Mono) {
-        return ((Mono<?>) response).cast(ApiResponse.class);
-      }
-      else {
-        throw new UnsupportedOperationException(String.format("Neither a %s nor a %s was returned by endpoint %s.",
-          ApiResponse.class.getName(), Mono.class.getName(), getMethodPath(endpoint)));
-      }
-
-    }
-    catch (IllegalArgumentException e) {
-      log.error("Endpoint {} does not have the right parameters.", getMethodPath(endpoint), e);
+      return endpoint.execute(args);
     }
     catch (InvocationTargetException e) {
-      log.error("An exception was thrown in endpoint {}.", getMethodPath(endpoint), e.getTargetException());
+      log.error("Unable to execute endpoint \"{} {}\".",
+        endpoint.getMethod(), endpoint.getPath().getRaw(), e.getTargetException());
     }
-    catch (Throwable e) {
-      log.error("Unable to execute endpoint {}.", getMethodPath(endpoint), e);
+    catch (IllegalAccessException | IllegalArgumentException e) {
+      log.error("Unable to execute endpoint \"{} {}\".",
+        endpoint.getMethod(), endpoint.getPath().getRaw(), e);
     }
 
-    return Mono.just(new ApiResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR));
-  }
-
-  private static String getMethodPath(final ApiEndpointData endpoint) {
-    return String.format("%s.%s", endpoint.getClazz().getName(), endpoint.getMethod().getName());
+    return Mono.just(ApiResponse.of(HttpResponseStatus.INTERNAL_SERVER_ERROR));
   }
 }

@@ -2,81 +2,63 @@ package net.getnova.framework.api.parser;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
-import net.getnova.framework.api.ApiAuthenticator;
-import net.getnova.framework.api.annotations.ApiEndpoint;
-import net.getnova.framework.api.data.ApiEndpointData;
-import net.getnova.framework.api.data.ApiParameterData;
-import net.getnova.framework.api.data.ApiResponse;
-import reactor.core.publisher.Mono;
+import java.util.stream.Stream;
+import lombok.RequiredArgsConstructor;
+import net.getnova.framework.api.data.ApiController;
+import net.getnova.framework.api.data.ApiEndpoint;
+import net.getnova.framework.api.data.ApiEndpointMetadata;
+import net.getnova.framework.api.data.ApiParameter;
+import net.getnova.framework.api.data.ApiPath;
+import net.getnova.framework.api.exception.RuntimeApiException;
+import net.getnova.framework.core.Executable;
 
-@Slf4j
+@RequiredArgsConstructor
 final class ApiEndpointParser {
 
-  private static final ApiParameterData[] EMPTY_PARAMETERS = new ApiParameterData[0];
+  private final Set<ApiParameterParser<?, ?>> parameterParsers;
 
-  private ApiEndpointParser() {
-    throw new UnsupportedOperationException();
+  Stream<ApiEndpoint> parse(final ApiController controller) {
+    return Arrays.stream(controller.getMethods())
+      .flatMap(method -> this.parse(controller, method).stream());
   }
 
-  static Map<String, ApiEndpointData> parseEndpoints(final Object object, final Class<?> clazz,
-    final boolean disabled, final ApiAuthenticator authenticator) {
-    return Arrays.stream(clazz.getDeclaredMethods())
-      .parallel()
-      .map(method -> parseEndpoint(object, clazz, method, disabled, authenticator))
-      .filter(Objects::nonNull)
-      .collect(Collectors.toUnmodifiableMap(ApiEndpointData::getId, Function.identity()));
+  private Optional<ApiEndpoint> parse(final ApiController controller, final Method method) {
+    final Optional<ApiEndpointMetadata> optionalMetadata = this.parseMetadata(method);
+    if (optionalMetadata.isEmpty()) {
+      return Optional.empty();
+    }
+
+    final List<ApiParameter<?>> parameters = this.parseParameters(method);
+    final ApiEndpointMetadata metadata = optionalMetadata.get();
+
+    final String path = metadata.getPath().equals("/")
+      ? controller.getPath()
+      : controller.getPath() + metadata.getPath();
+
+    return Optional.of(new ApiEndpoint(
+      metadata.getMethod(),
+      ApiPath.of(path),
+      parameters,
+      new Executable(controller.getObject(), method, false)
+    ));
   }
 
-  private static ApiEndpointData parseEndpoint(final Object instance, final Class<?> clazz, final Method method,
-    final boolean disabled, final ApiAuthenticator authenticator) {
-    final boolean hasAccess;
-    try {
-      hasAccess = method.canAccess(instance);
-    }
-    catch (IllegalArgumentException e) {
-      return null;
-    }
+  private Optional<ApiEndpointMetadata> parseMetadata(final Method method) {
+    return ApiEndpointMetadataParser.PARSERS.stream()
+      .flatMap(parser -> parser.parse(method).stream())
+      .findFirst();
+  }
 
-    if (!hasAccess && !method.trySetAccessible()) {
-      return null;
-    }
-
-    if (!method.isAnnotationPresent(ApiEndpoint.class)) {
-      if (!hasAccess) {
-        method.setAccessible(false);
-      }
-      return null;
-    }
-
-    final Class<?> returnType = method.getReturnType();
-    if (!(returnType.equals(ApiResponse.class) || returnType.equals(Mono.class))) {
-      log.error("Endpoint {}.{} cannot be parsed because it does not have the return type {} or {}<{}>.",
-        clazz.getName(), method.getName(), ApiResponse.class.getName(), Mono.class.getName(),
-        ApiResponse.class.getName());
-      if (!hasAccess) {
-        method.setAccessible(false);
-      }
-      return null;
-    }
-
-    final ApiEndpoint endpointAnnotation = method.getAnnotation(ApiEndpoint.class);
-    final ApiParameterData[] parameters = ApiParameterParser.parseParameters(clazz, method);
-
-    return new ApiEndpointData(
-      endpointAnnotation.id(),
-      String.join("\n", endpointAnnotation.description()),
-      parameters == null || parameters.length == 0 ? EMPTY_PARAMETERS : parameters,
-      endpointAnnotation.authentication(),
-      endpointAnnotation.disabled() || parameters == null || disabled,
-      authenticator,
-      instance,
-      clazz,
-      method
-    );
+  private List<ApiParameter<?>> parseParameters(final Method method) {
+    return Arrays.stream(method.getParameters())
+      .map(parameter -> this.parameterParsers.stream()
+        .flatMap(parser -> parser.parse(parameter).stream())
+        .findFirst() // TODO: custom exception, error message
+        .orElseThrow(() -> new RuntimeApiException("Unable to parse parameter")))
+      .collect(Collectors.toList());
   }
 }

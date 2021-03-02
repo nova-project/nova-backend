@@ -21,9 +21,12 @@ public final class OffsetDateTimeAdapter implements JsonSerializer<OffsetDateTim
   }
 
   @Override
-  public OffsetDateTime deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
+  public OffsetDateTime deserialize(final JsonElement json, final Type typeOfT,
+    final JsonDeserializationContext context) throws JsonParseException {
     if (!json.isJsonPrimitive()) {
-      throw new JsonParseException("Unable to parse a non \"" + JsonPrimitive.class.getName() + "\" into a \"" + OffsetDateTime.class.getName() + "\".");
+      throw new JsonParseException(
+        "Unable to parse a non \"" + JsonPrimitive.class.getName() + "\" into a \"" + OffsetDateTime.class.getName()
+          + "\".");
     }
     return Instant.ofEpochSecond(json.getAsLong()).atOffset(ZoneOffset.UTC);
   }

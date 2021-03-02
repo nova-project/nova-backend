@@ -1,9 +1,12 @@
-rootProject.name = 'framework'
+rootProject.name = 'nova-framework'
 include(
   'nova-api',
+  'nova-api-processor',
+  'nova-api-rest',
+  'nova-api-ws',
   'nova-cdn',
   'nova-core',
   'nova-data-jpa',
   'nova-gson',
-  'nova-network'
+  'nova-web'
 )

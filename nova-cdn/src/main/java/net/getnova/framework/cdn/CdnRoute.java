@@ -2,7 +2,6 @@ package net.getnova.framework.cdn;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
-import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.multipart.FileUpload;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
@@ -19,33 +18,37 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import net.getnova.framework.cdn.data.CdnFileResolver;
-import net.getnova.framework.network.server.http.HttpMimeTypeUtils;
-import net.getnova.framework.network.server.http.HttpUtils;
-import net.getnova.framework.network.server.http.route.HttpRoute;
+import net.getnova.framework.web.server.http.HttpMimeTypeUtils;
+import net.getnova.framework.web.server.http.HttpUtils;
+import net.getnova.framework.web.server.http.route.HttpRoute;
+import net.getnova.framework.web.server.http.route.HttpRouteHandler;
 import org.reactivestreams.Publisher;
 import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
 
 @RequiredArgsConstructor
-public class CdnRoute implements HttpRoute {
+public class CdnRoute implements HttpRouteHandler {
 
   private static final DateTimeFormatter HTTP_DATE_TIME_FORMATTER = DateTimeFormatter.RFC_1123_DATE_TIME;
   private static final long HTTP_CACHE_SECONDS = Duration.ofDays(7).getSeconds();
   private final CdnFileResolver resolver;
 
   @Override
-  public Publisher<Void> execute(final HttpServerRequest request, final HttpServerResponse response) {
-    return HttpUtils.checkMethod(request, response, HttpMethod.GET, HttpMethod.POST)
-      .orElseGet(() -> {
-        final Optional<UUID> uuid = this.parseUuid(request.path());
-        if (uuid.isEmpty()) {
-          return HttpUtils.sendStatus(response, HttpResponseStatus.BAD_REQUEST, "BAD_UUID");
-        }
+  public Publisher<Void> handle(final HttpRoute route, final HttpServerRequest request,
+    final HttpServerResponse response) throws Exception {
+//    return HttpUtils.checkMethod(request, response, HttpMethod.GET, HttpMethod.POST)
+//      .orElseGet(() -> {
+//        final Optional<UUID> uuid = this.parseUuid(request.path());
+//        if (uuid.isEmpty()) {
+//          return HttpUtils.status(response, HttpResponseStatus.BAD_REQUEST, "BAD_UUID");
+//        }
+//
+//        return request.method().equals(HttpMethod.GET)
+//          ? this.handleFile(request, response, uuid.get())
+//          : this.handleUpload(request, response, uuid.get());
+//      });
 
-        return request.method().equals(HttpMethod.GET)
-          ? this.handleFile(request, response, uuid.get())
-          : this.handleUpload(request, response, uuid.get());
-      });
+    return HttpUtils.status(response, HttpResponseStatus.NOT_IMPLEMENTED);
   }
 
   private Optional<UUID> parseUuid(final String uuid) {
@@ -75,7 +78,7 @@ public class CdnRoute implements HttpRoute {
           }
         }
       })
-      .thenEmpty(HttpUtils.sendStatus(response, HttpResponseStatus.OK));
+      .thenEmpty(HttpUtils.status(response, HttpResponseStatus.OK));
   }
 
   private Publisher<Void> handleFile(final HttpServerRequest request, final HttpServerResponse response,
@@ -94,7 +97,7 @@ public class CdnRoute implements HttpRoute {
 
         final File file = result.getFile();
         if (!file.exists()) {
-          return HttpUtils.sendStatus(response, HttpResponseStatus.NO_CONTENT, false);
+          return response.status(HttpResponseStatus.NO_CONTENT).send();
         }
 
         // working with seconds, because the http date time format does not has milliseconds
@@ -108,7 +111,7 @@ public class CdnRoute implements HttpRoute {
           .orElse(false);
 
         if (isModified) {
-          return HttpUtils.sendStatus(response, HttpResponseStatus.NOT_MODIFIED, false);
+          return response.status(HttpResponseStatus.NOT_MODIFIED).send();
         }
 
         response.header(HttpHeaderNames.CACHE_CONTROL, "private, max-age=" + HTTP_CACHE_SECONDS);
@@ -117,6 +120,6 @@ public class CdnRoute implements HttpRoute {
 
         return response.sendFile(file.toPath());
       })
-      .orElseGet(() -> HttpUtils.sendStatus(response, HttpResponseStatus.NOT_FOUND));
+      .orElseGet(() -> HttpUtils.status(response, HttpResponseStatus.NOT_FOUND));
   }
 }

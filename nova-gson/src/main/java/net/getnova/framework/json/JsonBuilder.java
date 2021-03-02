@@ -8,8 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * The {@link JsonBuilder} is a tool to create {@link JsonObject}
- * or a Json as a {@link String} without declaring any variables.
+ * The {@link JsonBuilder} is a tool to create {@link JsonObject} or a Json as a {@link String} without declaring any
+ * variables.
  * <br>
  * Example:
  *
@@ -32,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class JsonBuilder implements JsonSerializable {
 
+  @SuppressWarnings("PMD.BeanMembersShouldSerialize")
   private final JsonObject json;
 
   private JsonBuilder(final JsonObject json) {
@@ -114,14 +115,13 @@ public final class JsonBuilder implements JsonSerializable {
    * @param value2Supplier the alternative value of the pair
    * @return the JsonBuilder
    */
-  public static JsonBuilder create(final String key, final boolean condition, final Supplier<Object> value1Supplier, final Supplier<Object> value2Supplier) {
+  public static JsonBuilder create(final String key, final boolean condition, final Supplier<Object> value1Supplier,
+    final Supplier<Object> value2Supplier) {
     return JsonBuilder.create().add(key, condition, value1Supplier, value2Supplier);
   }
 
   /**
-   * This adds a Key, Value pair to the Json,
-   * and return this instance to call other
-   * functions to manipulate the Json.
+   * This adds a Key, Value pair to the Json, and return this instance to call other functions to manipulate the Json.
    *
    * @param key   the key of the pair
    * @param value the value of the pair
@@ -135,25 +135,31 @@ public final class JsonBuilder implements JsonSerializable {
   public JsonBuilder add(final String key, final Object value, final Supplier<Object> valueSupplier) {
     try {
       return this.add(key, Optional.ofNullable(value).orElseGet(valueSupplier));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       log.error("Error while calling second value.", e);
     }
     return this;
   }
 
   public JsonBuilder add(final String key, final boolean condition, final Supplier<Object> valueSupplier) {
-    if (condition) try {
-      return this.add(key, valueSupplier.get());
-    } catch (Exception e) {
-      log.error("Error while calling value.", e);
+    if (condition) {
+      try {
+        return this.add(key, valueSupplier.get());
+      }
+      catch (Exception e) {
+        log.error("Error while calling value.", e);
+      }
     }
     return this;
   }
 
-  public JsonBuilder add(final String key, final boolean condition, final Supplier<Object> value1Supplier, final Supplier<Object> value2Supplier) {
+  public JsonBuilder add(final String key, final boolean condition, final Supplier<Object> value1Supplier,
+    final Supplier<Object> value2Supplier) {
     try {
       return this.add(key, condition ? value1Supplier.get() : value2Supplier.get());
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       log.error("Error while calling second value.", e);
     }
     return this;
