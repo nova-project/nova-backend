@@ -77,11 +77,11 @@ jobs:
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.1.0
         with:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: nova-starter/build/docs/javadoc
-          TARGET_FOLDER: javadoc/${{ steps.version.outputs.version }}
-          CLEAN: true
-          DEBUG: true
-          GIT_CONFIG_NAME: GitHub Actions
-          GIT_CONFIG_EMAIL: actions@github.com
+          github-token: ${{ secrets.GH_TOKEN }}
+          branch: gh-pages
+          folder: nova-starter/build/docs/javadoc
+          target-folder: javadoc/${{ steps.version.outputs.version }}
+          clean: true
+          debug: true
+          git-config-name: GitHub Actions
+          git-config-email: actions@github.com
