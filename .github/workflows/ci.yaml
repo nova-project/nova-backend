@@ -149,6 +149,6 @@ jobs:
 
           token: ${{ secrets.GH_PAT_PACKAGES }}
           # https://github.com/crazy-max/ghaction-github-pages/blob/dev/src/git.ts#L3-L8
-          commit-message: Publish ${{ github.reposetory }}
+          commit-message: Publish ${{ github.repository }}
           git-config-name: github-actions[bot]
           git-config-email: 41898282+github-actions[bot]@users.noreply.github.com
