@@ -52,7 +52,7 @@ public class HttpRoute {
   }
 
   public String getPath(final HttpServerRequest request) {
-    return PathUtils.stripSegments(this.rootPrefix, request.fullPath());
+    return PathUtils.stripSegments(this.rootPrefix, request.fullPath()).toLowerCase();
   }
 
   private Publisher<Void> handleError(
