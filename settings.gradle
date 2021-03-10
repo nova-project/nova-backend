@@ -6,6 +6,5 @@ include(
   'nova-cdn',
   'nova-core',
   'nova-data-jpa',
-  'nova-gson',
   'nova-web'
 )
