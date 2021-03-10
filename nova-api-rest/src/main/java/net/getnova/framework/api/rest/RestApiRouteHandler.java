@@ -50,13 +50,9 @@ public class RestApiRouteHandler implements HttpRouteHandler {
   }
 
   private Mono<ApiResponse> execute(final HttpRoute route, final HttpServerRequest request) {
-    // TODO: use netty string decoding -> see RestApiRequest#getData(Class<?>)
-    // JsonUtils
-    return request.receive()
-      .aggregate()
-      .asByteArray()
-      .defaultIfEmpty(EMPTY_BODY)
-      .flatMap(content -> this.executor.execute(new RestApiRequest(this.objectMapper, route, request, content)));
+    return this.executor.execute(
+      new RestApiRequest(route, request, new RestApiBodyReceiver(this.objectMapper, request))
+    );
   }
 
   private Mono<String> handleResponse(
@@ -73,8 +69,8 @@ public class RestApiRouteHandler implements HttpRouteHandler {
           return this.objectMapper.writeValueAsString(data);
         }
         catch (JsonProcessingException e) {
-          log
-            .error("Unable to convert apiResponse to json. \"{} {}\"", httpRequest.method(), httpRequest.fullPath(), e);
+          log.error("Unable to convert apiResponse to json. \"{} {}\"",
+            httpRequest.method(), httpRequest.fullPath(), e);
           httpResponse.status(HttpResponseStatus.INTERNAL_SERVER_ERROR);
           return "{}";
         }
