@@ -1,29 +1,34 @@
 package net.getnova.framework.api.ws;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.netty.handler.codec.http.HttpMethod;
+import java.io.IOException;
 import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import net.getnova.framework.api.ApiUtils;
 import net.getnova.framework.api.data.AbstractApiRequest;
+import net.getnova.framework.core.JsonRawDeserializer;
+import reactor.core.publisher.Mono;
 
-@RequiredArgsConstructor
 @EqualsAndHashCode
 public class WebsocketApiRequest extends AbstractApiRequest {
 
-  @JsonDeserialize(using = HttpMethodDeserializer.class)
   private final HttpMethod method;
   private final String path;
-
-  //  @JsonRawValue
-  private final JsonNode data;
-
-  @Setter
-  @JsonIgnore
+  private final String data;
   private ObjectMapper objectMapper;
+
+  public WebsocketApiRequest(
+    @JsonProperty("method") @JsonDeserialize(using = HttpMethodDeserializer.class) HttpMethod method,
+    @JsonProperty("path") String path,
+    @JsonProperty("data") @JsonDeserialize(using = JsonRawDeserializer.class) String data
+  ) {
+    this.method = method;
+    this.path = path;
+    this.data = data;
+  }
 
   @Override
   public HttpMethod getMethod() {
@@ -36,7 +41,17 @@ public class WebsocketApiRequest extends AbstractApiRequest {
   }
 
   @Override
-  public <T> T getData(final Class<T> clazz) /*throws ParserApiException*/ {
-    return this.objectMapper.convertValue(this.data, clazz);
+  public <T> Mono<T> getData(final Class<T> clazz) {
+    try {
+      return Mono.just(this.objectMapper.readValue(this.data, clazz));
+    }
+    catch (IOException e) {
+      return Mono.error(ApiUtils.mapJsonError(e));
+    }
+  }
+
+  @JsonIgnore
+  public void setObjectMapper(final ObjectMapper objectMapper) {
+    this.objectMapper = objectMapper;
   }
 }

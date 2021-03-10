@@ -1,8 +1,8 @@
 package net.getnova.framework.api;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import net.getnova.framework.api.data.ApiResponse;
 import net.getnova.framework.api.exception.ResponseApiException;
@@ -14,16 +14,18 @@ public class ApiUtils {
   }
 
   public static Throwable mapJsonError(final Throwable cause) {
+    if (cause instanceof InvalidDefinitionException) {
+      return cause;
+    }
+
     if (cause instanceof JsonParseException) {
-      return new ResponseApiException(ApiResponse.of(HttpResponseStatus.BAD_REQUEST, "JSON", "SYNTAX"));
+      return new ResponseApiException(ApiResponse.of(HttpResponseStatus.BAD_REQUEST,
+        "JSON", "SYNTAX"), cause);
     }
 
-    if (cause instanceof JsonMappingException) {
-      return new ResponseApiException(ApiResponse.of(HttpResponseStatus.BAD_REQUEST, "JSON", "UNEXPECTED_CONTENT"));
-    }
-
-    if (cause instanceof JsonProcessingException) {
-      return new ResponseApiException(ApiResponse.of(HttpResponseStatus.INTERNAL_SERVER_ERROR));
+    if (cause instanceof MismatchedInputException) {
+      return new ResponseApiException(ApiResponse.of(HttpResponseStatus.BAD_REQUEST,
+        "JSON", "UNEXPECTED_CONTENT"), cause);
     }
 
     return cause;

@@ -68,14 +68,15 @@ class ApiEndpointExecutor {
       return endpoint.execute(args);
     }
     catch (InvocationTargetException e) {
-      log.error("Unable to execute endpoint \"{} {}\".",
-        endpoint.getMethod(), endpoint.getPath().getRaw(), e.getTargetException());
+      return this.handleError(endpoint, e.getTargetException());
     }
     catch (IllegalAccessException | IllegalArgumentException e) {
-      log.error("Unable to execute endpoint \"{} {}\".",
-        endpoint.getMethod(), endpoint.getPath().getRaw(), e);
+      return this.handleError(endpoint, e);
     }
+  }
 
+  private Mono<ApiResponse> handleError(final ApiEndpoint endpoint, final Throwable exception) {
+    log.error("Unable to execute endpoint \"{} {}\".", endpoint.getMethod(), endpoint.getPath().getRaw(), exception);
     return Mono.just(ApiResponse.of(HttpResponseStatus.INTERNAL_SERVER_ERROR));
   }
 }

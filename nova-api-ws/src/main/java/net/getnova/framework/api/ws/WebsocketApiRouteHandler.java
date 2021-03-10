@@ -1,22 +1,23 @@
 package net.getnova.framework.api.ws;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.json.JsonObjectDecoder;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.getnova.framework.api.ApiUtils;
 import net.getnova.framework.api.data.ApiResponse;
 import net.getnova.framework.api.data.ApiResponse.DataResponse;
 import net.getnova.framework.api.data.ApiResponse.FluxDataResponse;
 import net.getnova.framework.api.data.ApiResponse.MessageResponse;
 import net.getnova.framework.api.data.ApiResponse.TargetMessageResponse;
+import net.getnova.framework.api.data.ToApiResponse;
 import net.getnova.framework.api.exception.RuntimeApiException;
 import net.getnova.framework.api.executor.ApiExecutor;
 import net.getnova.framework.web.server.http.route.WebsocketRouteHandler;
@@ -29,6 +30,7 @@ import reactor.netty.http.websocket.WebsocketOutbound;
 @RequiredArgsConstructor
 public class WebsocketApiRouteHandler implements WebsocketRouteHandler {
 
+  private static final Charset CHARSET = StandardCharsets.UTF_8;
   private static final JsonNodeFactory NODE_FACTORY = new JsonNodeFactory(false);
   private final ApiExecutor executor;
   private final ObjectMapper objectMapper;
@@ -38,11 +40,11 @@ public class WebsocketApiRouteHandler implements WebsocketRouteHandler {
     return outbound.sendString(
       inbound.withConnection(c -> c.addHandler(new JsonObjectDecoder()))
         .receive()
-        .asString(StandardCharsets.UTF_8)
+        .asString(CHARSET)
         .flatMap(this::execute)
         .flatMap(this::serialize)
         .map(this::jsonToString),
-      StandardCharsets.UTF_8
+      CHARSET
     );
   }
 
@@ -52,14 +54,15 @@ public class WebsocketApiRouteHandler implements WebsocketRouteHandler {
     try {
       request = this.objectMapper.readValue(data, WebsocketApiRequest.class);
     }
-    catch (JsonParseException e) {
-      return Mono.just(ApiResponse.of(HttpResponseStatus.BAD_REQUEST, "JSON", "SYNTAX"));
-    }
-    catch (JsonMappingException e) {
-      return Mono.just(ApiResponse.of(HttpResponseStatus.BAD_REQUEST, "JSON", "UNEXPECTED_CONTENT"));
-    }
-    catch (JsonProcessingException e) {
-      return Mono.just(ApiResponse.of(HttpResponseStatus.INTERNAL_SERVER_ERROR));
+    catch (IOException e) {
+      final Throwable cause = ApiUtils.mapJsonError(e);
+
+      if (cause instanceof ToApiResponse) {
+        return Mono.just(((ToApiResponse) cause).toApiResponse());
+      }
+
+      log.error("Unable to parse websocket api request.", e);
+      return Mono.empty();
     }
 
     request.setObjectMapper(this.objectMapper);
