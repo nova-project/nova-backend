@@ -1,4 +1,4 @@
-package net.getnova.framework.api.data.response;
+package net.getnova.framework.api.data;
 
 public interface ToApiResponse {
 

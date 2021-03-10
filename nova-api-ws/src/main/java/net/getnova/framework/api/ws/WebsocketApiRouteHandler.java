@@ -2,19 +2,21 @@ package net.getnova.framework.api.ws;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.json.JsonObjectDecoder;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.getnova.framework.api.data.response.ApiDataResponse;
-import net.getnova.framework.api.data.response.ApiMessageResponse;
-import net.getnova.framework.api.data.response.ApiResponse;
+import net.getnova.framework.api.data.ApiResponse;
+import net.getnova.framework.api.data.ApiResponse.DataResponse;
+import net.getnova.framework.api.data.ApiResponse.FluxDataResponse;
+import net.getnova.framework.api.data.ApiResponse.MessageResponse;
+import net.getnova.framework.api.data.ApiResponse.TargetMessageResponse;
 import net.getnova.framework.api.exception.RuntimeApiException;
 import net.getnova.framework.api.executor.ApiExecutor;
 import net.getnova.framework.web.server.http.route.WebsocketRouteHandler;
@@ -27,6 +29,7 @@ import reactor.netty.http.websocket.WebsocketOutbound;
 @RequiredArgsConstructor
 public class WebsocketApiRouteHandler implements WebsocketRouteHandler {
 
+  private static final JsonNodeFactory NODE_FACTORY = new JsonNodeFactory(false);
   private final ApiExecutor executor;
   private final ObjectMapper objectMapper;
 
@@ -35,36 +38,37 @@ public class WebsocketApiRouteHandler implements WebsocketRouteHandler {
     return outbound.sendString(
       inbound.withConnection(c -> c.addHandler(new JsonObjectDecoder()))
         .receive()
-        .asInputStream()
+        .asString(StandardCharsets.UTF_8)
         .flatMap(this::execute)
-        .map(this::serializeResponse),
+        .flatMap(this::serialize)
+        .map(this::jsonToString),
       StandardCharsets.UTF_8
     );
   }
 
-  private Mono<ApiResponse> execute(final InputStream inputStream) {
+  private Mono<ApiResponse> execute(final String data) {
     final WebsocketApiRequest request;
 
-    try (inputStream) {
-      request = this.objectMapper.readValue(inputStream, WebsocketApiRequest.class);
-      request.setObjectMapper(this.objectMapper);
+    try {
+      request = this.objectMapper.readValue(data, WebsocketApiRequest.class);
     }
     catch (JsonParseException e) {
-      return Mono.just(ApiResponse.of(HttpResponseStatus.BAD_REQUEST, "SYNTAX", "JSON"));
+      return Mono.just(ApiResponse.of(HttpResponseStatus.BAD_REQUEST, "JSON", "SYNTAX"));
     }
-    catch (IOException e) { // JsonMappingException
-      log.error("", e);
+    catch (JsonMappingException e) {
+      return Mono.just(ApiResponse.of(HttpResponseStatus.BAD_REQUEST, "JSON", "UNEXPECTED_CONTENT"));
+    }
+    catch (JsonProcessingException e) {
       return Mono.just(ApiResponse.of(HttpResponseStatus.INTERNAL_SERVER_ERROR));
     }
 
+    request.setObjectMapper(this.objectMapper);
     return this.executor.execute(request);
   }
 
-  private String serializeResponse(final ApiResponse response) {
+  private String jsonToString(final JsonNode json) {
     try {
-      return this.objectMapper.writeValueAsString(
-        this.convertResponse(response)
-      );
+      return this.objectMapper.writeValueAsString(json);
     }
     catch (JsonProcessingException e) {
 //      log.error("Unable to convert apiResponse to json. \"{} {}\"", request.getMethod(), request.getPath(), e);
@@ -72,20 +76,44 @@ public class WebsocketApiRouteHandler implements WebsocketRouteHandler {
     }
   }
 
-  private Object convertResponse(final ApiResponse response) {
-    final Map<String, Object> object = new HashMap<>(2);
-    object.put("status", Map.of(
-      "code", response.getStatus().code(),
-      "name", response.getStatus().reasonPhrase()
-    ));
-
-    if (response instanceof ApiDataResponse) {
-      object.put("data", ((ApiDataResponse) response).getData());
+  private Mono<ObjectNode> serialize(final ApiResponse response) {
+    if (response instanceof FluxDataResponse) {
+      return ((FluxDataResponse) response).getData()
+        .collectList()
+        .map(data -> this.jsonToString(response, data));
     }
-    else if (response instanceof ApiMessageResponse) {
-      object.put("message", ((ApiMessageResponse) response).getMessage());
+    else if (response instanceof DataResponse) {
+      return Mono.just(this.jsonToString(response, ((DataResponse) response).getData()));
     }
+    else if (response instanceof TargetMessageResponse) {
+      return Mono.just(
+        this.serializeHeader(response)
+          .<ObjectNode>set("message", NODE_FACTORY.textNode(((TargetMessageResponse) response).getMessage()))
+          .set("target", NODE_FACTORY.textNode(((TargetMessageResponse) response).getTarget()))
+      );
+    }
+    else if (response instanceof MessageResponse) {
+      return Mono.just(this.serializeHeader(response)
+        .set("message", NODE_FACTORY.textNode(((MessageResponse) response).getMessage())));
+    }
+    else {
+      return Mono.just(this.serializeHeader(response));
+    }
+  }
 
-    return object;
+  private ObjectNode jsonToString(final ApiResponse response, final Object data) {
+    return this.serializeHeader(response)
+      .set("data", this.objectMapper.valueToTree(data));
+  }
+
+  private ObjectNode serializeHeader(final ApiResponse response) {
+    final ObjectNode node = NODE_FACTORY.objectNode();
+
+    final ObjectNode status = NODE_FACTORY.objectNode();
+    status.set("code", NODE_FACTORY.numberNode(response.getStatus().code()));
+    status.set("name", NODE_FACTORY.textNode(response.getStatus().reasonPhrase()));
+    node.set("status", status);
+
+    return node;
   }
 }

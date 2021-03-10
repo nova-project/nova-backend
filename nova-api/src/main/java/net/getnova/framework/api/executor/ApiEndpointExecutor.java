@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.api.data.ApiEndpoint;
 import net.getnova.framework.api.data.ApiParameter;
 import net.getnova.framework.api.data.ApiRequest;
-import net.getnova.framework.api.data.response.ApiResponse;
+import net.getnova.framework.api.data.ApiResponse;
 import net.getnova.framework.api.exception.ParameterApiException;
 import reactor.core.publisher.Mono;
 

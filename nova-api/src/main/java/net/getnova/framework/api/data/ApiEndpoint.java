@@ -4,9 +4,8 @@ import io.netty.handler.codec.http.HttpMethod;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import lombok.Data;
-import net.getnova.framework.api.data.response.ApiResponse;
-import net.getnova.framework.api.data.response.ToApiResponse;
 import net.getnova.framework.core.Executable;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Data
@@ -27,6 +26,10 @@ public class ApiEndpoint {
 
     if (response instanceof Mono) {
       return ((Mono<?>) response).map(this::toApiResponse);
+    }
+
+    if (response instanceof Flux) {
+      return Mono.just(ApiResponse.of((Flux<Object>) response));
     }
 
     return Mono.just(this.toApiResponse(response));

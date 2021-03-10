@@ -1,8 +1,8 @@
 package net.getnova.framework.api.exception;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
-import net.getnova.framework.api.data.response.ApiResponse;
-import net.getnova.framework.api.data.response.ToApiResponse;
+import net.getnova.framework.api.data.ApiResponse;
+import net.getnova.framework.api.data.ToApiResponse;
 
 public class ParameterApiException extends ApiException implements ToApiResponse {
 
