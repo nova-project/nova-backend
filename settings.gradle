@@ -1,7 +1,6 @@
 rootProject.name = 'nova-framework'
 include(
   'nova-api',
-  'nova-api-processor',
   'nova-api-rest',
   'nova-api-ws',
   'nova-cdn',

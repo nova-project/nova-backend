@@ -26,7 +26,6 @@ allprojects {
     gsonVersion = '2.8.6'
     junitVersion = '5.7.0'
     mockitoVersion = '3.7.0'
-    autoServiceVersion = '1.0-rc7'
   }
 
   repositories {
