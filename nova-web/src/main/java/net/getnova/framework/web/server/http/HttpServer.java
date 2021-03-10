@@ -2,7 +2,9 @@ package net.getnova.framework.web.server.http;
 
 import java.net.SocketAddress;
 import java.time.Duration;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.web.server.http.route.HttpRoutes;
 import org.springframework.util.unit.DataSize;
@@ -11,8 +13,10 @@ import reactor.netty.DisposableServer;
 import reactor.netty.http.HttpProtocol;
 import reactor.netty.resources.LoopResources;
 
-@Data
 @Slf4j
+@Getter
+@EqualsAndHashCode
+@RequiredArgsConstructor
 public class HttpServer implements AutoCloseable {
 
   private static final Duration TIMEOUT = Duration.ofSeconds(5);
