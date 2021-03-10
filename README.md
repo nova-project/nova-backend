@@ -26,11 +26,12 @@ repositories {
 dependencies {
   // use only the modules that you need
   implementation 'net.getnova.framework:nova-api:<version>'
+  implementation 'net.getnova.framework:nova-api-rest:<version>'
+  implementation 'net.getnova.framework:nova-api-ws:<version>'
   implementation 'net.getnova.framework:nova-cdn:<version>'
   implementation 'net.getnova.framework:nova-core:<version>'
   implementation 'net.getnova.framework:nova-data-jpa:<version>'
-  implementation 'net.getnova.framework:nova-gson:<version>'
-  implementation 'net.getnova.framework:nova-network:<version>'
+  implementation 'net.getnova.framework:nova-web:<version>'
 }
 ````
 
