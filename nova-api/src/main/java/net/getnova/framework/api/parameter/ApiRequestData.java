@@ -12,8 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.api.data.ApiParameter;
 import net.getnova.framework.api.data.ApiRequest;
 import net.getnova.framework.api.exception.ParameterApiException;
-import net.getnova.framework.api.exception.ParserApiException;
 import net.getnova.framework.api.parser.ApiParameterParser;
+import reactor.core.publisher.Mono;
 
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
@@ -22,19 +22,13 @@ public @interface ApiRequestData {
   @Data
   @Slf4j
   @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-  class Parameter<T> implements ApiParameter<T> {
+  class Parameter<T> implements ApiParameter<Mono<T>> {
 
     private final Class<T> clazz;
 
     @Override
-    public T parse(final ApiRequest request) throws ParameterApiException {
-      try {
-        return request.getData(this.clazz);
-      }
-      catch (ParserApiException e) {
-        log.error("Unable to parse parameter.", e);
-        throw new ParameterApiException("INVALID_REQUEST_DATA", e);
-      }
+    public Mono<T> parse(final ApiRequest request) throws ParameterApiException {
+      return request.getData(this.clazz);
     }
   }
 

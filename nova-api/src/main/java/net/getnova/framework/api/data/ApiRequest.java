@@ -2,7 +2,7 @@ package net.getnova.framework.api.data;
 
 import io.netty.handler.codec.http.HttpMethod;
 import java.util.Map;
-import net.getnova.framework.api.exception.ParserApiException;
+import reactor.core.publisher.Mono;
 
 public interface ApiRequest {
 
@@ -16,5 +16,5 @@ public interface ApiRequest {
 
   String getPathVariable(String name);
 
-  <T> T getData(Class<T> clazz) throws ParserApiException;
+  <T> Mono<T> getData(Class<T> clazz);
 }

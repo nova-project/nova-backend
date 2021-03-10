@@ -6,12 +6,16 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.api.data.ApiEndpoint;
 import net.getnova.framework.api.data.ApiRequest;
 import net.getnova.framework.api.data.ApiResponse;
+import net.getnova.framework.api.data.ToApiResponse;
+import net.getnova.framework.api.exception.ValidationApiException;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -20,8 +24,8 @@ public class ApiExecutor {
   private final ApiEndpointExecutor endpointExecutor;
   private final Set<ApiEndpoint> endpoints;
 
-  public ApiExecutor(final Set<ApiEndpoint> endpoints) {
-    this.endpointExecutor = ApiEndpointExecutor.INSTANCE;
+  public ApiExecutor(final Set<ApiEndpoint> endpoints, final Validator validator) {
+    this.endpointExecutor = new ApiEndpointExecutor(validator);
     this.endpoints = endpoints;
   }
 
@@ -35,8 +39,17 @@ public class ApiExecutor {
     return this.matchMethod(matchedEndpoints, request)
       .map(endpoint ->
         endpoint.execute(this.endpointExecutor, request)
-          .onErrorResume(throwable -> {
-            log.error("Unable to execute api request \"{} {}\".", request.getMethod(), request.getPath(), throwable);
+          .onErrorResume(cause -> {
+            if (cause instanceof ToApiResponse) {
+              return Mono.just(((ToApiResponse) cause).toApiResponse());
+            }
+
+            if (cause instanceof ValidationApiException) {
+              final Set<? extends ConstraintViolation<?>> violations = ((ValidationApiException) cause).getViolations();
+
+            }
+
+            log.error("Unable to execute api request \"{} {}\".", request.getMethod(), request.getPath(), cause);
             return Mono.just(ApiResponse.of(HttpResponseStatus.INTERNAL_SERVER_ERROR));
           })
       )

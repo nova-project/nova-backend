@@ -5,6 +5,7 @@ plugins {
 }
 
 dependencies {
+  api 'jakarta.validation:jakarta.validation-api'
   api 'org.springframework:spring-core'
   api project(':nova-core')
   api project(':nova-web')
