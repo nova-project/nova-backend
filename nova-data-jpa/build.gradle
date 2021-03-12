@@ -2,9 +2,20 @@ plugins {
   id 'java'
   id 'java-library'
   id 'io.spring.javadoc'
+  id 'org.hibernate.orm'
 }
 
 dependencies {
   api 'com.fasterxml.jackson.core:jackson-databind' // optional
-  api 'jakarta.persistence:jakarta.persistence-api'
+  api 'org.springframework.boot:spring-boot-starter-data-jpa' // cause of hibernate plugin
+  // api 'jakarta.persistence:jakarta.persistence-api'
+}
+
+hibernate {
+  enhance {
+    enableLazyInitialization = true
+    enableDirtyTracking = true
+    enableAssociationManagement = true
+    enableExtendedEnhancement = false
+  }
 }

@@ -2,9 +2,19 @@ plugins {
   id 'java'
   id 'java-library'
   id 'io.spring.javadoc'
+//  id 'org.hibernate.orm'
 }
 
 dependencies {
   api project(':nova-web')
   api project(':nova-data-jpa')
 }
+
+//hibernate {
+//  enhance {
+//    enableLazyInitialization = true
+//    enableDirtyTracking = true
+//    enableAssociationManagement = true
+//    enableExtendedEnhancement = false
+//  }
+//}
