@@ -18,7 +18,7 @@ if (version.toString().endsWith('SNAPSHOT')) {
 }
 
 allprojects {
-  group('net.getnova.framework')
+  group 'net.getnova.framework'
 
   ext {
     springBootVersion = '2.4.3'
@@ -35,13 +35,13 @@ allprojects {
 subprojects {
   version rootProject.version
 
-  apply(plugin: "nebula.project")
-  apply(from: "${rootDir}/gradle/java.gradle")
-  apply(from: "${rootDir}/gradle/lombok.gradle")
-  apply(from: "${rootDir}/gradle/test.gradle")
-  apply(from: "${rootDir}/gradle/checkstyle.gradle")
-  apply(from: "${rootDir}/gradle/spotbugs.gradle")
-  apply(from: "${rootDir}/gradle/pmd.gradle")
-  apply(from: "${rootDir}/gradle/javadoc.gradle")
-  apply(from: "${rootDir}/gradle/publish.gradle")
+  apply plugin: "nebula.project"
+  apply from: "${rootDir}/gradle/java.gradle"
+  apply from: "${rootDir}/gradle/lombok.gradle"
+  apply from: "${rootDir}/gradle/test.gradle"
+  apply from: "${rootDir}/gradle/checkstyle.gradle"
+  apply from: "${rootDir}/gradle/spotbugs.gradle"
+  apply from: "${rootDir}/gradle/pmd.gradle"
+  apply from: "${rootDir}/gradle/javadoc.gradle"
+  apply from: "${rootDir}/gradle/publish.gradle"
 }
