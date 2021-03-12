@@ -6,5 +6,5 @@ import net.getnova.framework.api.data.response.ApiError;
 @Data
 public class ErrorRestApiResponse {
 
-  public final ApiError[] errors;
+  private final ApiError[] errors;
 }

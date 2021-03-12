@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import net.getnova.framework.api.ApiBootstrappingException;
 import net.getnova.framework.api.data.ApiController;
 import net.getnova.framework.api.data.ApiEndpoint;
 import net.getnova.framework.api.data.ApiEndpointMetadata;
@@ -56,8 +57,11 @@ final class ApiEndpointParser {
     return Arrays.stream(method.getParameters())
       .map(parameter -> this.parameterParsers.stream()
         .flatMap(parser -> parser.parse(parameter).stream())
-        .findFirst() // TODO: custom exception, error message
-        .orElseThrow(() -> new IllegalArgumentException("Unable to parse parameter")))
+        .findFirst()
+        .orElseThrow(() -> new ApiBootstrappingException(
+          String.format("Unable to find parser for parameter \"%s\" in method \"%s\".",
+            parameter.toString(), method.toString())
+        )))
       .collect(Collectors.toList());
   }
 }

@@ -9,12 +9,13 @@ import net.getnova.framework.api.data.response.ApiResponse;
 import net.getnova.framework.api.data.response.ErrorApiResponse;
 
 @Data
+@SuppressWarnings("PMD.MissingSerialVersionUID")
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class ApiException extends RuntimeException {
+public final class ApiException extends RuntimeException {
 
   private final ErrorApiResponse response;
 
-  public ApiException(final ErrorApiResponse response, final Throwable cause) {
+  private ApiException(final ErrorApiResponse response, final Throwable cause) {
     super(cause);
     this.response = response;
   }

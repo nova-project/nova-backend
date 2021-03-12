@@ -35,7 +35,7 @@ public @interface ApiQueryVariable {
     @Override
     public T parse(final ApiRequest request) {
       try {
-        // TODO: better solution
+        // todo: better solution
         if (!Collection.class.isAssignableFrom(this.clazz)) {
           return this.conversionService.convert(
             Optional.ofNullable(request.getQueryVariable(this.name))

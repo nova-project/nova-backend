@@ -4,6 +4,7 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import reactor.netty.ByteBufMono;
 
+@SuppressWarnings("PMD.MissingSerialVersionUID")
 public abstract class HttpStatusException extends Exception {
 
   public HttpStatusException(final String message) {

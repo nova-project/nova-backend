@@ -2,6 +2,7 @@ package net.getnova.framework.api.executor;
 
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -17,6 +18,8 @@ import net.getnova.framework.api.data.response.ApiResponse;
 import reactor.core.publisher.Mono;
 
 @Slf4j
+@EqualsAndHashCode
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class ApiExecutor {
 
   private final ApiEndpointExecutor endpointExecutor;
@@ -39,13 +42,13 @@ public class ApiExecutor {
         endpoint.execute(this.endpointExecutor, request)
           .onErrorResume(cause -> this.handleError(request, cause))
       )
-      .orElseGet(() -> Mono.just(ApiResponse.of(HttpResponseStatus.METHOD_NOT_ALLOWED))); // TODO: add allowed methods
+      .orElseGet(() -> Mono.just(ApiResponse.of(HttpResponseStatus.METHOD_NOT_ALLOWED))); // todo: add allowed methods
   }
 
   private Set<MatchedEndpoint> matchPath(final ApiRequest request) {
     return this.endpoints.stream()
       .flatMap(endpoint ->
-        endpoint.getPath().match(request.getPath())
+        endpoint.getPath().match(request.getPath().toLowerCase(Locale.ENGLISH))
           .map(matcher -> new MatchedEndpoint(endpoint, matcher))
           .stream())
       .collect(Collectors.toSet());

@@ -3,6 +3,7 @@ package net.getnova.framework.api.data;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringTokenizer;
@@ -33,7 +34,7 @@ public class ApiPath {
         continue;
       }
 
-      // TODO: check for valid regex group name
+      // todo: check for valid regex group name
 
       int end = component.length() - 1;
       if (component.charAt(0) == '{' && component.charAt(end) == '}') {
@@ -63,7 +64,7 @@ public class ApiPath {
           escape = true;
         }
 
-        regex.append("/").append(component.toLowerCase());
+        regex.append("/").append(component.toLowerCase(Locale.ENGLISH));
       }
     }
 
@@ -91,7 +92,7 @@ public class ApiPath {
       variables.put(this.variables[i], matcher.group(i + 1));
     }
 
-    // TODO: unmodifiable??
+    // todo: unmodifiable??
     return variables;
   }
 }

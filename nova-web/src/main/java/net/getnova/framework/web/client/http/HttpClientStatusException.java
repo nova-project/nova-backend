@@ -9,6 +9,7 @@ import reactor.netty.ByteBufMono;
 import reactor.netty.http.client.HttpClientResponse;
 
 @EqualsAndHashCode
+@SuppressWarnings("PMD.MissingSerialVersionUID")
 public class HttpClientStatusException extends HttpStatusException {
 
   @Getter

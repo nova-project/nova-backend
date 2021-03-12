@@ -29,7 +29,7 @@ class PathUtilsTest {
   }
 
   @Test
-  void stripSegments_InvalidSegment() {
+  void stripSegmentsInvalidSegment() {
     assertThrows(IllegalArgumentException.class, () -> PathUtils.stripComponents("hello", "/hello/world"));
   }
 
@@ -45,12 +45,12 @@ class PathUtilsTest {
   }
 
   @Test
-  void normalizePath_Slash() {
+  void normalizePathSlash() {
     assertEquals("/", PathUtils.normalizePath("/"));
   }
 
   @Test
-  void normalizePath_Empty() {
+  void normalizePathEmpty() {
     assertEquals("/", PathUtils.normalizePath(""));
   }
 }

@@ -17,7 +17,7 @@ import reactor.netty.http.server.HttpServerResponse;
 @Data
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.NONE)
-public class HttpRoute {
+public final class HttpRoute {
 
   // 'null' means that this route accepts all methods
   private final HttpMethod method;
@@ -52,7 +52,7 @@ public class HttpRoute {
   }
 
   public String getPath(final HttpServerRequest request) {
-    return PathUtils.stripComponents(this.rootPrefix, request.fullPath()).toLowerCase();
+    return PathUtils.stripComponents(this.rootPrefix, request.fullPath());
   }
 
   private Publisher<Void> handleError(

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import net.getnova.framework.api.data.response.ApiError;
 
-public class ApiUtils {
+public final class ApiUtils {
 
   private ApiUtils() {
     throw new UnsupportedOperationException();
