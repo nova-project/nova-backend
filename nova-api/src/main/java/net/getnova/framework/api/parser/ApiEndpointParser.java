@@ -13,7 +13,6 @@ import net.getnova.framework.api.data.ApiEndpoint;
 import net.getnova.framework.api.data.ApiEndpointMetadata;
 import net.getnova.framework.api.data.ApiParameter;
 import net.getnova.framework.api.data.ApiPath;
-import net.getnova.framework.api.exception.RuntimeApiException;
 import net.getnova.framework.core.Executable;
 
 @RequiredArgsConstructor
@@ -58,7 +57,7 @@ final class ApiEndpointParser {
       .map(parameter -> this.parameterParsers.stream()
         .flatMap(parser -> parser.parse(parameter).stream())
         .findFirst() // TODO: custom exception, error message
-        .orElseThrow(() -> new RuntimeApiException("Unable to parse parameter")))
+        .orElseThrow(() -> new IllegalArgumentException("Unable to parse parameter")))
       .collect(Collectors.toList());
   }
 }

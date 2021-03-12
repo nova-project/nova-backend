@@ -10,11 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.api.data.ApiEndpoint;
 import net.getnova.framework.api.data.ApiParameter;
-import net.getnova.framework.api.data.ApiRequest;
-import net.getnova.framework.api.data.ApiResponse;
-import net.getnova.framework.api.exception.ParameterApiException;
-import net.getnova.framework.api.exception.ValidationApiException;
-import reactor.core.Exceptions;
+import net.getnova.framework.api.data.request.ApiRequest;
+import net.getnova.framework.api.data.response.ApiError;
+import net.getnova.framework.api.data.response.ApiResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -27,36 +25,20 @@ class ApiEndpointExecutor {
   Mono<ApiResponse> execute(final ApiEndpoint endpoint, final ApiRequest request) {
     return Flux.fromIterable(endpoint.getParameters())
       .flatMap(parameter -> this.parseParameter(request, parameter))
-      .doOnNext(arg -> {
+      .map(arg -> {
         final Set<? extends ConstraintViolation<?>> violations = this.validator.validate(arg);
         if (violations.isEmpty()) {
-          return;
+          return arg;
         }
 
-        throw Exceptions.propagate(new ValidationApiException(violations));
+        return ApiResponse.of(HttpResponseStatus.BAD_REQUEST, ApiError.of(violations));
       })
       .collectList()
-      .flatMap(args -> this.execute(endpoint, args.toArray()))
-      .onErrorResume(ValidationApiException.class, cause -> {
-        final ConstraintViolation<?> violation = cause.getViolations().stream().findFirst().get();
-
-        // TODO: show all violations
-
-        return Mono.just(
-          ApiResponse.of(HttpResponseStatus.BAD_REQUEST, violation.getPropertyPath().toString(), violation.getMessage())
-        );
-      });
+      .flatMap(args -> this.execute(endpoint, args.toArray()));
   }
 
   private Mono<?> parseParameter(final ApiRequest request, final ApiParameter<?> parameter) {
-    final Object value;
-
-    try {
-      value = parameter.parse(request);
-    }
-    catch (ParameterApiException e) {
-      return Mono.error(e);
-    }
+    final Object value = parameter.parse(request);
 
     return value instanceof Mono
       ? (Mono<?>) value

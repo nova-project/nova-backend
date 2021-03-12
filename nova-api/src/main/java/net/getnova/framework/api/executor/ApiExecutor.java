@@ -6,16 +6,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
-import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.getnova.framework.api.ApiException;
 import net.getnova.framework.api.data.ApiEndpoint;
-import net.getnova.framework.api.data.ApiRequest;
-import net.getnova.framework.api.data.ApiResponse;
-import net.getnova.framework.api.data.ToApiResponse;
-import net.getnova.framework.api.exception.ValidationApiException;
+import net.getnova.framework.api.data.request.ApiRequest;
+import net.getnova.framework.api.data.response.ApiResponse;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -33,25 +31,13 @@ public class ApiExecutor {
     final Set<MatchedEndpoint> matchedEndpoints = this.matchPath(request);
 
     if (matchedEndpoints.isEmpty()) {
-      return Mono.just(ApiResponse.of(HttpResponseStatus.NOT_FOUND, "ENDPOINT"));
+      return Mono.just(ApiResponse.of(HttpResponseStatus.NOT_FOUND, "ENDPOINT", "NOT_FOUND"));
     }
 
     return this.matchMethod(matchedEndpoints, request)
       .map(endpoint ->
         endpoint.execute(this.endpointExecutor, request)
-          .onErrorResume(cause -> {
-            if (cause instanceof ToApiResponse) {
-              return Mono.just(((ToApiResponse) cause).toApiResponse());
-            }
-
-            if (cause instanceof ValidationApiException) {
-              final Set<? extends ConstraintViolation<?>> violations = ((ValidationApiException) cause).getViolations();
-
-            }
-
-            log.error("Unable to execute api request \"{} {}\".", request.getMethod(), request.getPath(), cause);
-            return Mono.just(ApiResponse.of(HttpResponseStatus.INTERNAL_SERVER_ERROR));
-          })
+          .onErrorResume(cause -> this.handleError(request, cause))
       )
       .orElseGet(() -> Mono.just(ApiResponse.of(HttpResponseStatus.METHOD_NOT_ALLOWED))); // TODO: add allowed methods
   }
@@ -69,6 +55,20 @@ public class ApiExecutor {
     return endpoints.stream()
       .filter(endpoint -> endpoint.getMethod().equals(request.getMethod()))
       .findFirst();
+  }
+
+  private Mono<ApiResponse> handleError(final ApiRequest request, final Throwable cause) {
+    final boolean apiException = cause instanceof ApiException;
+
+    if (!apiException || cause.getCause() == null) {
+      log.error("Unable to execute api request \"{} {}\".", request.getMethod(), request.getPath(), cause);
+    }
+
+    if (apiException) {
+      return Mono.just(((ApiException) cause).getResponse());
+    }
+
+    return Mono.just(ApiResponse.of(HttpResponseStatus.INTERNAL_SERVER_ERROR));
   }
 
   @EqualsAndHashCode

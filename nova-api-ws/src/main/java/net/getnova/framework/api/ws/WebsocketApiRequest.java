@@ -6,10 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.netty.handler.codec.http.HttpMethod;
 import java.io.IOException;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import net.getnova.framework.api.ApiUtils;
-import net.getnova.framework.api.data.AbstractApiRequest;
+import net.getnova.framework.api.data.request.AbstractApiRequest;
 import net.getnova.framework.core.JsonRawDeserializer;
+import org.springframework.util.MultiValueMap;
 import reactor.core.publisher.Mono;
 
 @EqualsAndHashCode
@@ -17,16 +19,19 @@ public class WebsocketApiRequest extends AbstractApiRequest {
 
   private final HttpMethod method;
   private final String path;
+  private final String tag;
   private final String data;
   private ObjectMapper objectMapper;
 
   public WebsocketApiRequest(
-    @JsonProperty("method") @JsonDeserialize(using = HttpMethodDeserializer.class) HttpMethod method,
-    @JsonProperty("path") String path,
-    @JsonProperty("data") @JsonDeserialize(using = JsonRawDeserializer.class) String data
+    @JsonProperty("method") @JsonDeserialize(using = HttpMethodDeserializer.class) final HttpMethod method,
+    @JsonProperty("path") final String path,
+    @JsonProperty("tag") final String tag,
+    @JsonProperty("data") @JsonDeserialize(using = JsonRawDeserializer.class) final String data
   ) {
     this.method = method;
     this.path = path;
+    this.tag = tag;
     this.data = data;
   }
 
@@ -38,6 +43,20 @@ public class WebsocketApiRequest extends AbstractApiRequest {
   @Override
   public String getPath() {
     return this.path;
+  }
+
+  @Override
+  public MultiValueMap<String, String> getQueryVariables() {
+    throw new UnsupportedOperationException("currently not for websockets");
+  }
+
+  @Override
+  public List<String> getQueryVariable(final String name) {
+    throw new UnsupportedOperationException("currently not for websockets");
+  }
+
+  public String getTag() {
+    return this.tag;
   }
 
   @Override

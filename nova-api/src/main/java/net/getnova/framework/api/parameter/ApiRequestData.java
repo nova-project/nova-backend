@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.getnova.framework.api.data.ApiParameter;
-import net.getnova.framework.api.data.ApiRequest;
-import net.getnova.framework.api.exception.ParameterApiException;
+import net.getnova.framework.api.data.request.ApiRequest;
 import net.getnova.framework.api.parser.ApiParameterParser;
 import reactor.core.publisher.Mono;
 
@@ -27,7 +26,7 @@ public @interface ApiRequestData {
     private final Class<T> clazz;
 
     @Override
-    public Mono<T> parse(final ApiRequest request) throws ParameterApiException {
+    public Mono<T> parse(final ApiRequest request) {
       return request.getData(this.clazz);
     }
   }

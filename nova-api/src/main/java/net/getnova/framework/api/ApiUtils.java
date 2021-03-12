@@ -4,8 +4,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import net.getnova.framework.api.data.ApiResponse;
-import net.getnova.framework.api.exception.ResponseApiException;
+import net.getnova.framework.api.data.response.ApiError;
 
 public class ApiUtils {
 
@@ -19,13 +18,11 @@ public class ApiUtils {
     }
 
     if (cause instanceof JsonParseException) {
-      return new ResponseApiException(ApiResponse.of(HttpResponseStatus.BAD_REQUEST,
-        "JSON", "SYNTAX"), cause);
+      return ApiException.of(HttpResponseStatus.BAD_REQUEST, ApiError.of("JSON", "SYNTAX"));
     }
 
     if (cause instanceof MismatchedInputException) {
-      return new ResponseApiException(ApiResponse.of(HttpResponseStatus.BAD_REQUEST,
-        "JSON", "UNEXPECTED_CONTENT"), cause);
+      return ApiException.of(HttpResponseStatus.BAD_REQUEST, ApiError.of("JSON", "UNEXPECTED_CONTENT"));
     }
 
     return cause;

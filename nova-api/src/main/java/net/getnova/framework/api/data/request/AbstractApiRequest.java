@@ -1,4 +1,4 @@
-package net.getnova.framework.api.data;
+package net.getnova.framework.api.data.request;
 
 import java.util.Map;
 import lombok.Data;
@@ -11,7 +11,7 @@ public abstract class AbstractApiRequest implements ApiRequest {
   @Override
   public Map<String, String> getPathVariables() {
     if (this.pathVariables == null) {
-      throw new IllegalStateException("variables are not parsed");
+      throw new IllegalStateException("path variables are not parsed");
     }
 
     return this.pathVariables;
@@ -20,7 +20,7 @@ public abstract class AbstractApiRequest implements ApiRequest {
   @Override
   public void setPathVariables(final Map<String, String> variables) {
     if (this.pathVariables != null) {
-      throw new IllegalStateException("variables already parsed");
+      throw new IllegalStateException("path variables already parsed");
     }
 
     this.pathVariables = variables;
@@ -29,7 +29,7 @@ public abstract class AbstractApiRequest implements ApiRequest {
   @Override
   public String getPathVariable(final String name) {
     if (this.pathVariables == null) {
-      throw new IllegalStateException("variables are not parsed");
+      throw new IllegalStateException("path variables are not parsed");
     }
 
     return this.pathVariables.get(name);

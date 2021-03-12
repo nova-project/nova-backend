@@ -1,10 +1,7 @@
 package net.getnova.framework.api.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -12,11 +9,10 @@ import io.netty.util.AsciiString;
 import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.getnova.framework.api.data.ApiResponse;
-import net.getnova.framework.api.data.ApiResponse.DataResponse;
-import net.getnova.framework.api.data.ApiResponse.FluxDataResponse;
-import net.getnova.framework.api.data.ApiResponse.MessageResponse;
-import net.getnova.framework.api.data.ApiResponse.TargetMessageResponse;
+import net.getnova.framework.api.data.response.ApiResponse;
+import net.getnova.framework.api.data.response.DataApiResponse;
+import net.getnova.framework.api.data.response.DefaultApiResponse;
+import net.getnova.framework.api.data.response.ErrorApiResponse;
 import net.getnova.framework.api.executor.ApiExecutor;
 import net.getnova.framework.web.server.http.route.HttpRoute;
 import net.getnova.framework.web.server.http.route.HttpRouteHandler;
@@ -29,10 +25,8 @@ import reactor.netty.http.server.HttpServerResponse;
 @RequiredArgsConstructor
 public class RestApiRouteHandler implements HttpRouteHandler {
 
-  private static final JsonNodeFactory NODE_FACTORY = new JsonNodeFactory(false);
   private static final AsciiString CONTENT_TYPE = AsciiString.of(HttpHeaderValues.APPLICATION_JSON
     + "; " + HttpHeaderValues.CHARSET + "=" + StandardCharsets.UTF_8.name());
-  private static final byte[] EMPTY_BODY = new byte[0];
 
   private final ApiExecutor executor;
   private final ObjectMapper objectMapper;
@@ -45,7 +39,7 @@ public class RestApiRouteHandler implements HttpRouteHandler {
   ) throws Exception {
     return httpResponse.sendString(
       this.execute(route, httpRequest)
-        .flatMap(apiResponse -> handleResponse(apiResponse, httpRequest, httpResponse))
+        .map(apiResponse -> handleResponse(apiResponse, httpRequest, httpResponse))
     );
   }
 
@@ -55,7 +49,7 @@ public class RestApiRouteHandler implements HttpRouteHandler {
     );
   }
 
-  private Mono<String> handleResponse(
+  private String handleResponse(
     final ApiResponse apiResponse,
     final HttpServerRequest httpRequest,
     final HttpServerResponse httpResponse
@@ -63,45 +57,35 @@ public class RestApiRouteHandler implements HttpRouteHandler {
     httpResponse.status(apiResponse.getStatus());
     httpResponse.header(HttpHeaderNames.CONTENT_TYPE, CONTENT_TYPE);
 
-    return this.serialize(apiResponse)
-      .map(data -> {
-        try {
-          return this.objectMapper.writeValueAsString(data);
-        }
-        catch (JsonProcessingException e) {
-          log.error("Unable to convert apiResponse to json. \"{} {}\"",
-            httpRequest.method(), httpRequest.fullPath(), e);
-          httpResponse.status(HttpResponseStatus.INTERNAL_SERVER_ERROR);
-          return "{}";
-        }
-      });
+    try {
+      final Object convert = this.convert(apiResponse);
+      if (convert == null) {
+        return "{}";
+      }
+
+      return this.objectMapper.writeValueAsString(convert);
+    }
+    catch (JsonProcessingException e) {
+      log.error("Unable to convert apiResponse to json. \"{} {}\"",
+        httpRequest.method(), httpRequest.fullPath(), e);
+      httpResponse.status(HttpResponseStatus.INTERNAL_SERVER_ERROR);
+      return "{}";
+    }
   }
 
-  private Mono<JsonNode> serialize(final ApiResponse response) {
-    if (response instanceof FluxDataResponse) {
-      return ((FluxDataResponse) response).getData()
-        .collectList()
-        .map(this::dataToJson);
+  private Object convert(final ApiResponse response) {
+    if (response instanceof DataApiResponse) {
+      return ((DataApiResponse) response).getData();
     }
-    else if (response instanceof DataResponse) {
-      return Mono.just(this.dataToJson(((DataResponse) response).getData()));
-    }
-    else if (response instanceof TargetMessageResponse) {
-      return Mono.just(this.messageToJson(((TargetMessageResponse) response).getMessage())
-        .set("target", NODE_FACTORY.textNode(((TargetMessageResponse) response).getTarget())));
-    }
-    else if (response instanceof MessageResponse) {
-      return Mono.just(this.messageToJson(((MessageResponse) response).getMessage()));
-    }
-    return Mono.just(NODE_FACTORY.objectNode());
-  }
 
-  private JsonNode dataToJson(final Object data) {
-    return this.objectMapper.valueToTree(data);
-  }
+    if (response instanceof ErrorApiResponse) {
+      return new ErrorRestApiResponse(((ErrorApiResponse) response).getErrors());
+    }
 
-  private ObjectNode messageToJson(final String message) {
-    return NODE_FACTORY.objectNode()
-      .set("message", NODE_FACTORY.textNode(message));
+    if (response instanceof DefaultApiResponse) {
+      return null;
+    }
+
+    throw new IllegalArgumentException("unknown response type: " + response.getClass());
   }
 }

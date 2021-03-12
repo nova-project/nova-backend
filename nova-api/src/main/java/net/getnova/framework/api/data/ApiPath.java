@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import net.getnova.framework.api.exception.PathApiException;
 
 @Data
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -40,14 +39,14 @@ public class ApiPath {
       if (component.charAt(0) == '{' && component.charAt(end) == '}') {
         final int separator = component.indexOf(':');
         if (separator == end - 1) {
-          throw new PathApiException("Missing regex");
+          throw new IllegalArgumentException("Missing regex");
         }
 
         final String name = component.substring(1, separator == -1 ? end : separator);
         final String valueRegex = separator == -1 ? "[^\\/]+" : component.substring(separator + 1, end);
 
         if (name.length() == 0) {
-          throw new PathApiException("Missing variable name");
+          throw new IllegalArgumentException("Missing variable name");
         }
 
         if (escape) {

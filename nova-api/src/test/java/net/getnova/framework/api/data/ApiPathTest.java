@@ -3,7 +3,6 @@ package net.getnova.framework.api.data;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import net.getnova.framework.api.exception.PathApiException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -25,10 +24,10 @@ class ApiPathTest {
 
   @Test
   void ofException() {
-    assertThrows(PathApiException.class, () -> ApiPath.of("/hello/world/{id:}"));
-    assertThrows(PathApiException.class, () -> ApiPath.of("/hello/world/{:[A-Z]+}"));
-    assertThrows(PathApiException.class, () -> ApiPath.of("/hello/world/{:}"));
-    assertThrows(PathApiException.class, () -> ApiPath.of("/hello/world/{}"));
+    assertThrows(IllegalArgumentException.class, () -> ApiPath.of("/hello/world/{id:}"));
+    assertThrows(IllegalArgumentException.class, () -> ApiPath.of("/hello/world/{:[A-Z]+}"));
+    assertThrows(IllegalArgumentException.class, () -> ApiPath.of("/hello/world/{:}"));
+    assertThrows(IllegalArgumentException.class, () -> ApiPath.of("/hello/world/{}"));
   }
 
 //  @Test

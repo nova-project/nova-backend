@@ -6,20 +6,44 @@ public final class PathUtils {
     throw new UnsupportedOperationException();
   }
 
-  public static String stripSegments(final String segments, final String path) {
-    if (segments.isEmpty() || (segments.length() == 1 && segments.charAt(0) == '/')) {
+  /**
+   * Strips one or multiple path components from the beginning of a path.
+   * <pre>
+   * stripComponent("/hello", "/hello/world") -&gt; "/world"
+   * stripComponent("/hello/world", "/hello/world/123") -&gt; "/123"
+   * </pre>
+   *
+   * @param component the component to strip from the path (must start with a {@code /}, multiple components separated
+   *                  with a {@code /})
+   * @param path      the path, where the components should be stripped
+   * @return the path without the specified components
+   * @throws IllegalArgumentException if the components does not start with a {@code /}
+   */
+  public static String stripComponents(final String component, final String path) {
+    if (component.isEmpty() || (component.length() == 1 && component.charAt(0) == '/')) {
       return normalizePath(path);
     }
 
-    if (segments.charAt(0) != '/') {
-      throw new IllegalArgumentException("segments should start with \"/\"");
+    if (component.charAt(0) != '/') {
+      throw new IllegalArgumentException("component should start with \"/\"");
     }
 
-    final int length = path.charAt(0) == '/' ? segments.length() : segments.length() - 1;
+    final int length = path.charAt(0) == '/' ? component.length() : component.length() - 1;
 
     return normalizePath(path.substring(length));
   }
 
+  /**
+   * Removes leading and trailing {@code /} from a path.
+   * <pre>
+   * normalizePath("/hello/") -&gt; "hello"
+   * normalizePath("/hello/world") -&gt; "hello/world"
+   * normalizePath("") -&gt; "/"
+   * </pre>
+   *
+   * @param fullPath the path witch should be normalized
+   * @return the normalized path
+   */
   public static String normalizePath(final String fullPath) {
     if (fullPath.isEmpty()) {
       return "/";

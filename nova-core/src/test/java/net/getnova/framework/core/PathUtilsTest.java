@@ -25,12 +25,12 @@ class PathUtilsTest {
     "/,hello/world/,/hello/world",
   })
   void stripSegments(final String segments, final String path, final String output) {
-    assertEquals(output, PathUtils.stripSegments(segments, path));
+    assertEquals(output, PathUtils.stripComponents(segments, path));
   }
 
   @Test
   void stripSegments_InvalidSegment() {
-    assertThrows(IllegalArgumentException.class, () -> PathUtils.stripSegments("hello", "/hello/world"));
+    assertThrows(IllegalArgumentException.class, () -> PathUtils.stripComponents("hello", "/hello/world"));
   }
 
   @ParameterizedTest
