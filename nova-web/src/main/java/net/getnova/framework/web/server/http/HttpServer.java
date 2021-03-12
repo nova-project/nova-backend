@@ -47,7 +47,7 @@ public class HttpServer implements AutoCloseable {
       .doOnNext(server -> {
         this.server = server;
         this.server.onDispose(() -> this.server = null);
-        log.info("Netty is listening on {}.", this.server.address());
+        log.info("Netty is listening on \"{}\".", this.server.address());
 
         final Thread thread = new Thread(this.server.onDispose()::block);
         thread.setDaemon(false);
