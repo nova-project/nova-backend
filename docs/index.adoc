@@ -1,0 +1,65 @@
+= Nova Framework
+
+image:https://img.shields.io/github/v/tag/getnova/framework?label=latest%20version&style=flat-square[latest version,link=https://github.com/getnova/framework/releases]
+image:https://img.shields.io/github/workflow/status/getnova/framework/CI?label=CI&style=flat-square[CI,link=https://github.com/getnova/framework/actions]
+
+Nova Framework is a framework on top of spring boot.
+It aims to provide nice additions to the spring ecosystem.
+
+== Getting Started
+
+To add it to your project just add this repository and thees dependencies.
+To keep your bundle size small it is recommended to only add the modules witch you are need.
+Dependencies between modules are resolved automatically.
+Keep in mind that you still need a stand-alone spring boot application to start.
+You can use the https://start.spring.io/[Spring Initializer].
+Nova aims to provide out of the box compatibility for https://github.com/spring-projects-experimental/spring-native/[spring native].
+
+Currently, the latest version is:
+
+image:https://img.shields.io/github/v/tag/getnova/framework?label=latest%20version&style=flat-square[latest version,link=https://github.com/getnova/framework/releases]
+
+[source,groovy]
+----
+repositories {
+ maven { url 'https://raw.githubusercontent.com/getnova/maven/main' }
+}
+
+dependencies {
+ implementation 'net.getnova.framework:nova-api:<version>'
+ implementation 'net.getnova.framework:nova-api-rest:<version>'
+ implementation 'net.getnova.framework:nova-api-ws:<version>'
+ implementation 'net.getnova.framework:nova-cdn:<version>'
+ implementation 'net.getnova.framework:nova-core:<version>'
+ implementation 'net.getnova.framework:nova-data-jpa:<version>'
+ implementation 'net.getnova.framework:nova-web:<version>'
+}
+----
+
+== Modules
+
+The documentation to all modules can be found hear:
+
+|===
+|Name|Description|Reference Doc|Api Doc
+
+|nova-api[-rest/-ws]
+|System to implement rest api's over http and websockets.
+|WIP
+|WIP
+
+|nova-core
+|Core utilities for all other modules and your application.
+|WIP
+|WIP
+
+|nova-data-jpa
+|A collection of utilities for the Java EE JPA specification
+|WIP
+|WIP
+
+|nova-web
+|Reactive http client and server implementations on top of https://github.com/reactor/reactor-netty[reactor-netty].
+|WIP
+|WIP
+|===

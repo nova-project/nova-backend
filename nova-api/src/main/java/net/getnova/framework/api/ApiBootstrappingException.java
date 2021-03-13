@@ -1,7 +1,5 @@
 package net.getnova.framework.api;
 
-import java.util.Collection;
-
 /**
  * An {@link RuntimeException} witch indicated that an error occurred in the process of bootstrapping the api system.
  *
