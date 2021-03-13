@@ -4,12 +4,14 @@ import io.netty.handler.codec.http.HttpMethod;
 import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.Set;
-import net.getnova.framework.api.annotation.DeleteEndpoint;
-import net.getnova.framework.api.annotation.GetEndpoint;
-import net.getnova.framework.api.annotation.PatchEndpoint;
-import net.getnova.framework.api.annotation.PostEndpoint;
-import net.getnova.framework.api.annotation.PutEndpoint;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import net.getnova.framework.api.data.ApiEndpointMetadata;
+import net.getnova.framework.api.endpoint.DeleteEndpoint;
+import net.getnova.framework.api.endpoint.GetEndpoint;
+import net.getnova.framework.api.endpoint.PatchEndpoint;
+import net.getnova.framework.api.endpoint.PostEndpoint;
+import net.getnova.framework.api.endpoint.PutEndpoint;
 
 interface ApiEndpointMetadataParser {
 
@@ -23,6 +25,7 @@ interface ApiEndpointMetadataParser {
 
   Optional<ApiEndpointMetadata> parse(Method method);
 
+  @NoArgsConstructor(access = AccessLevel.PRIVATE)
   final class GetApiEndpointMetadataParser implements ApiEndpointMetadataParser {
 
     @Override
@@ -32,6 +35,7 @@ interface ApiEndpointMetadataParser {
     }
   }
 
+  @NoArgsConstructor(access = AccessLevel.PRIVATE)
   final class PostApiEndpointMetadataParser implements ApiEndpointMetadataParser {
 
     @Override
@@ -41,6 +45,7 @@ interface ApiEndpointMetadataParser {
     }
   }
 
+  @NoArgsConstructor(access = AccessLevel.PRIVATE)
   final class PutApiEndpointMetadataParser implements ApiEndpointMetadataParser {
 
     @Override
@@ -50,6 +55,7 @@ interface ApiEndpointMetadataParser {
     }
   }
 
+  @NoArgsConstructor(access = AccessLevel.PRIVATE)
   final class PatchApiEndpointMetadataParser implements ApiEndpointMetadataParser {
 
     @Override
@@ -59,6 +65,7 @@ interface ApiEndpointMetadataParser {
     }
   }
 
+  @NoArgsConstructor(access = AccessLevel.PRIVATE)
   final class DeleteApiEndpointMetadataParser implements ApiEndpointMetadataParser {
 
     @Override

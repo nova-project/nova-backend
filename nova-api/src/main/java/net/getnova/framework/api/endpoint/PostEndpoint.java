@@ -1,4 +1,4 @@
-package net.getnova.framework.api.annotation;
+package net.getnova.framework.api.endpoint;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DeleteEndpoint {
+public @interface PostEndpoint {
 
   String value() default "";
 }
