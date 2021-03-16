@@ -2,7 +2,6 @@ package net.getnova.framework.api.executor;
 
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -48,7 +47,7 @@ public class ApiExecutor {
   private Set<MatchedEndpoint> matchPath(final ApiRequest request) {
     return this.endpoints.stream()
       .flatMap(endpoint ->
-        endpoint.getPath().match(request.getPath().toLowerCase(Locale.ENGLISH))
+        endpoint.getPath().match(request.getPath())
           .map(matcher -> new MatchedEndpoint(endpoint, matcher))
           .stream())
       .collect(Collectors.toSet());

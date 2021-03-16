@@ -1,6 +1,7 @@
 package net.getnova.framework.web.server.http.route;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -39,12 +40,16 @@ public class HttpRoutes {
 
   private Set<HttpRoute> matchPath(final HttpServerRequest request) {
     return this.routes.stream()
-      .filter(route -> this.matchPath(request, route.getRootPrefix(), route.getPrefix()))
+      .filter(route -> this.matchPath(
+        request.fullPath().toLowerCase(Locale.ENGLISH),
+        route.getRootPrefix(),
+        route.getPrefix()
+      ))
       .collect(Collectors.toSet());
   }
 
-  private boolean matchPath(final HttpServerRequest request, final String rootPrefix, final String prefix) {
-    return request.fullPath().startsWith(prefix) || request.fullPath().equals(rootPrefix);
+  private boolean matchPath(final String path, final String rootPrefix, final String prefix) {
+    return path.startsWith(prefix) || path.equals(rootPrefix);
   }
 
   private Optional<HttpRoute> matchMethod(final Set<HttpRoute> routes, final HttpServerRequest request) {

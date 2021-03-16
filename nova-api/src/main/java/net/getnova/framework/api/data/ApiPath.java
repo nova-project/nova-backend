@@ -72,7 +72,11 @@ public class ApiPath {
       regex.append("\\E");
     }
 
-    return new ApiPath(path, Pattern.compile(regex.toString()), variables.toArray(new String[0]));
+    return new ApiPath(
+      path,
+      Pattern.compile(regex.toString(), Pattern.CASE_INSENSITIVE),
+      variables.toArray(new String[0])
+    );
   }
 
   public Optional<Matcher> match(final String input) {

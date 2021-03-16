@@ -3,7 +3,7 @@ package net.getnova.framework.api;
 /**
  * An {@link RuntimeException} witch indicated that an error occurred in the process of bootstrapping the api system.
  *
- * @see net.getnova.framework.api.parser.ApiParser#parse(Collection)
+ * @see net.getnova.framework.api.parser.ApiParser#parse(java.util.Collection)
  */
 @SuppressWarnings("PMD.MissingSerialVersionUID")
 public class ApiBootstrappingException extends RuntimeException {
