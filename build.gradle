@@ -1,3 +1,12 @@
+buildscript {
+  ext {
+    springBootVersion = '2.4.3'
+    jakartaPersistanceApiVersion = '2.2.3'
+    junitVersion = '5.7.0'
+    mockitoVersion = '3.7.0'
+  }
+}
+
 plugins {
   id 'base'
   id 'io.freefair.lombok' version '5.3.0' // apply, because javadoc
@@ -20,13 +29,6 @@ if (version.toString().endsWith('SNAPSHOT')) {
 
 allprojects {
   group 'net.getnova.framework'
-
-  ext {
-    springBootVersion = '2.4.3'
-    jakartaPersistanceApiVersion = '2.2.3'
-    junitVersion = '5.7.0'
-    mockitoVersion = '3.7.0'
-  }
 
   repositories {
     mavenCentral()
