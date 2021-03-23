@@ -19,6 +19,7 @@
           <option value="spotbugsTest"/>
           <option value="pmdMain"/>
           <option value="pmdTest"/>
+          <option value="nohttp"/>
         </list>
       </option>
       <option name="vmOptions" value=""/>

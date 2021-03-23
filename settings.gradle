@@ -1,7 +1,11 @@
 pluginManagement {
   repositories {
     gradlePluginPortal()
-    mavenCentral()
+    mavenCentral {
+      content {
+        includeModule('org.hibernate', 'hibernate-gradle-plugin')
+      }
+    }
   }
 
   resolutionStrategy {
