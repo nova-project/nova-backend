@@ -19,11 +19,7 @@ pluginManagement {
 
 rootProject.name = 'nova-framework'
 include(
-  'nova-api',
-  'nova-api-rest',
-  'nova-api-ws',
   'nova-cdn',
   'nova-core',
-  'nova-data-jpa',
-  'nova-web'
+  'nova-data-jpa'
 )

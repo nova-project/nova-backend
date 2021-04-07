@@ -5,9 +5,6 @@ plugins {
 }
 
 dependencies {
-  api 'org.springframework:spring-aop'
+//  api 'org.springframework:spring-core'
   api 'com.fasterxml.jackson.core:jackson-databind'
-
-  api 'com.fasterxml.jackson.core:jackson-databind'
-  api 'io.projectreactor.netty:reactor-netty-http'
 }
