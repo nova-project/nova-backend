@@ -1,10 +1,12 @@
 package net.getnova.framework.core;
 
-public interface Converter<I, M, D> {
+public interface Converter<M, D> {
 
   M toModel(D dto);
 
-  M toModel(I id, D dto);
-
   D toDto(M model);
+
+  void override(M model, D dto);
+
+  void merge(M model, D dto);
 }
