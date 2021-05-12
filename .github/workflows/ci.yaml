@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v2.1.5
         with:
           path: |
             ~/.gradle/caches
@@ -57,7 +57,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v2.1.5
         with:
           path: |
             ~/.gradle/caches
@@ -83,7 +83,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v2.1.5
         with:
           path: |
             ~/.gradle/caches
@@ -113,7 +113,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v2.1.5
         with:
           path: |
             ~/.gradle/caches
@@ -140,7 +140,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v2.1.5
         with:
           path: |
             ~/.gradle/caches
@@ -171,7 +171,7 @@ jobs:
       - name: Checkout maven repo
         run: git clone https://github.com/${{ format('{0}/maven', github.repository_owner) }}.git /tmp/repo
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v2.1.5
         with:
           path: |
             ~/.gradle/caches
