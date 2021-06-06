@@ -52,6 +52,7 @@ jobs:
           path: '**/build/reports/pmd/*.xml'
 
   lint-javadoc:
+    if: false
     runs-on: ubuntu-latest
 
     steps:
@@ -134,7 +135,7 @@ jobs:
         run: ./gradlew test --stacktrace --no-daemon
 
   build:
-    needs: [ lint, lint-javadoc, nohttp, test ]
+    needs: [ lint, nohttp, test ] # lint-javadoc,
     runs-on: ubuntu-latest
 
     steps:
