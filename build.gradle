@@ -11,7 +11,7 @@ plugins {
   id 'nebula.project' version '8.0.0' apply false
   id 'io.freefair.git-version' version "${freefairVersion}"
   id 'com.github.spotbugs' version '4.7.0' apply false
-//  id 'io.freefair.maven-optional' version '5.3.0' // apply, because javadoc
+  id 'io.freefair.maven-optional' version "${freefairVersion}"
   id 'com.github.jk1.dependency-license-report' version '1.16'
 
   id 'io.spring.nohttp' version '0.0.6.RELEASE'
@@ -37,7 +37,8 @@ allprojects {
 subprojects {
   version rootProject.version
 
-  apply plugin: "nebula.project"
+  apply plugin: 'nebula.project'
+  apply plugin: 'io.freefair.maven-optional'
   apply from: "${rootDir}/gradle/java.gradle"
   apply from: "${rootDir}/gradle/lombok.gradle"
   apply from: "${rootDir}/gradle/test.gradle"
