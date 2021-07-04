@@ -6,6 +6,8 @@ public interface CrudService<D, I> {
 
   Set<D> findAll();
 
+  D findById(I id);
+
   boolean exist(I id);
 
   D save(D dto);

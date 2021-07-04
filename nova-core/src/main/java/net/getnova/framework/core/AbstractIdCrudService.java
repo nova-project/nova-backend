@@ -19,6 +19,16 @@ public abstract class AbstractIdCrudService<D, I, M, P> extends AbstractCrudServ
   }
 
   @Override
+  public D findById(final I id) {
+    final P pId = this.idConverter.toModel(id);
+
+    return this.converter.toDto(
+      this.repository.findById(pId)
+        .orElseThrow(() -> new NotFoundException(this.name))
+    );
+  }
+
+  @Override
   public boolean exist(final I id) {
     final P pId = this.idConverter.toModel(id);
 

@@ -13,6 +13,9 @@ public interface CrudController<D, I> {
   @GetMapping
   Set<D> findAll();
 
+  @GetMapping("{id}")
+  D get(@PathVariable I id);
+
   @PostMapping
   D post(@RequestBody D dto);
 

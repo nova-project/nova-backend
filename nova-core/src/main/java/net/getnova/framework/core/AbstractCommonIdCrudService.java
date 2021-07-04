@@ -16,6 +16,14 @@ public abstract class AbstractCommonIdCrudService<D, I, M> extends AbstractCrudS
   }
 
   @Override
+  public D findById(final I id) {
+    return this.converter.toDto(
+      this.repository.findById(id)
+        .orElseThrow(() -> new NotFoundException(this.name))
+    );
+  }
+
+  @Override
   public boolean exist(final I id) {
     return this.repository.existsById(id);
   }

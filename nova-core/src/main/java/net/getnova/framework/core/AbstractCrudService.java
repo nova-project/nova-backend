@@ -20,6 +20,9 @@ public abstract class AbstractCrudService<D, I, M, P> implements CrudService<D, 
   }
 
   @Override
+  public abstract D findById(I id);
+
+  @Override
   public abstract boolean exist(I id);
 
   @Override

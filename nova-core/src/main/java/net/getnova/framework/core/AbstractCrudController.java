@@ -14,6 +14,11 @@ public class AbstractCrudController<D, I> implements CrudController<D, I> {
   }
 
   @Override
+  public D get(final I id) {
+    return this.service.findById(id);
+  }
+
+  @Override
   public D post(final D dto) {
     return this.service.save(dto);
   }
