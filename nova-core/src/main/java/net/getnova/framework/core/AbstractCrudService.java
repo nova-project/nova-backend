@@ -27,6 +27,8 @@ public abstract class AbstractCrudService<D, I, M, P> implements CrudService<D, 
 
   @Override
   public D save(final D dto) {
+    Validatable.validate(dto);
+
     return this.converter.toDto(
       this.repository.save(
         this.converter.toModel(dto)

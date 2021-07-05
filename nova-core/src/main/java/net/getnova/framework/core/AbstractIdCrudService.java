@@ -37,6 +37,8 @@ public abstract class AbstractIdCrudService<D, I, M, P> extends AbstractCrudServ
 
   @Override
   public D save(final I id, final D dto) {
+    Validatable.validate(dto);
+
     final P pId = this.idConverter.toModel(id);
 
     final M model = this.repository.findById(pId)

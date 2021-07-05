@@ -40,6 +40,8 @@ public abstract class AbstractSmallIdCrudService<D, S, I, M, SM, P>
 
   @Override
   public D save(final I id, final D dto) {
+    Validatable.validate(dto);
+
     final P pId = this.idConverter.toModel(id);
 
     final M model = this.repository.findById(pId)

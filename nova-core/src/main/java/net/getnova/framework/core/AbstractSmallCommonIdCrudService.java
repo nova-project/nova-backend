@@ -33,6 +33,10 @@ public abstract class AbstractSmallCommonIdCrudService<D, S, I, M, SM>
 
   @Override
   public D save(final I id, final D dto) {
+    if (dto instanceof Validatable) {
+      ((Validatable) dto).validate();
+    }
+
     final M model = this.repository.findById(id)
       .orElseThrow(() -> new NotFoundException(this.name));
 

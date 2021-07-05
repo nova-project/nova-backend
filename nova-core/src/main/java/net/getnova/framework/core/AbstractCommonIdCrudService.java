@@ -30,6 +30,8 @@ public abstract class AbstractCommonIdCrudService<D, I, M> extends AbstractCrudS
 
   @Override
   public D save(final I id, final D dto) {
+    Validatable.validate(dto);
+
     final M model = this.repository.findById(id)
       .orElseThrow(() -> new NotFoundException(this.name));
 

@@ -29,6 +29,8 @@ public abstract class AbstractSmallCrudService<D, S, I, M, SM, P> implements Sma
 
   @Override
   public D save(final D dto) {
+    Validatable.validate(dto);
+
     return this.converter.toDto(
       this.repository.save(
         this.converter.toModel(dto)
