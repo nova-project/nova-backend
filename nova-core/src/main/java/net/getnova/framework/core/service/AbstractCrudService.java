@@ -1,9 +1,11 @@
-package net.getnova.framework.core;
+package net.getnova.framework.core.service;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import lombok.RequiredArgsConstructor;
+import net.getnova.framework.core.Converter;
+import net.getnova.framework.core.Validatable;
 import org.springframework.data.repository.CrudRepository;
 
 @RequiredArgsConstructor

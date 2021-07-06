@@ -1,4 +1,4 @@
-package net.getnova.framework.core;
+package net.getnova.framework.core.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

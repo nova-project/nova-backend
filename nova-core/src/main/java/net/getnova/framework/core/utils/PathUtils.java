@@ -1,4 +1,4 @@
-package net.getnova.framework.core;
+package net.getnova.framework.core.utils;
 
 public final class PathUtils {
 

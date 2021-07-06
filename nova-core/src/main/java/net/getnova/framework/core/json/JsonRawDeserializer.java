@@ -1,4 +1,4 @@
-package net.getnova.framework.core;
+package net.getnova.framework.core.json;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

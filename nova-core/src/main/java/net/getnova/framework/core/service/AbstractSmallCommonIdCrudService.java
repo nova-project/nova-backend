@@ -1,5 +1,8 @@
-package net.getnova.framework.core;
+package net.getnova.framework.core.service;
 
+import net.getnova.framework.core.Converter;
+import net.getnova.framework.core.Validatable;
+import net.getnova.framework.core.exception.NotFoundException;
 import org.springframework.data.repository.CrudRepository;
 
 public abstract class AbstractSmallCommonIdCrudService<D, S, I, M, SM>

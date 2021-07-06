@@ -1,4 +1,4 @@
-package net.getnova.framework.core;
+package net.getnova.framework.core.service;
 
 import java.util.Set;
 

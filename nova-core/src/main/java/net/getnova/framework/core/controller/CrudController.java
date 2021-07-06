@@ -1,4 +1,4 @@
-package net.getnova.framework.core;
+package net.getnova.framework.core.controller;
 
 import java.util.Set;
 import org.springframework.web.bind.annotation.DeleteMapping;

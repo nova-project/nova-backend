@@ -1,5 +1,8 @@
-package net.getnova.framework.core;
+package net.getnova.framework.core.service;
 
+import net.getnova.framework.core.Converter;
+import net.getnova.framework.core.Validatable;
+import net.getnova.framework.core.exception.NotFoundException;
 import org.springframework.data.repository.CrudRepository;
 
 public abstract class AbstractCommonIdCrudService<D, I, M> extends AbstractCrudService<D, I, M, I> {
