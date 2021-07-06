@@ -1,23 +1,44 @@
 package net.getnova.framework.core.exception;
 
+import java.util.Map;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
-@Getter
 @AllArgsConstructor
-public class ValidationException extends RuntimeException {
+public class ValidationException extends HttpException {
 
-  private final String field;
+  private static final String TYPE = "VALIDATION_FAILED";
+  private static final String MESSAGE_FORMAT = "Expected property \"%s\" to be in state \"%s\".";
+
+  private final String property;
   private final String expected;
 
-  public ValidationException(final String field, final String expected, final Throwable cause) {
+  public ValidationException(final String property, final String expected, final Throwable cause) {
     super(cause);
-    this.field = field;
+    this.property = property;
     this.expected = expected;
   }
 
   @Override
+  public HttpStatus getStatus() {
+    return HttpStatus.BAD_REQUEST;
+  }
+
+  @Override
+  public String getType() {
+    return TYPE;
+  }
+
+  @Override
+  public Map<String, String> getAdditionalProperties() {
+    return Map.of(
+      "property", this.property,
+      "expected", this.expected
+    );
+  }
+
+  @Override
   public String getMessage() {
-    return String.format("Field: \"%s\", Expected: \"%s\"", this.field, this.expected);
+    return String.format(MESSAGE_FORMAT, this.property, this.expected);
   }
 }
