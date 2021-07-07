@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import lombok.RequiredArgsConstructor;
 import net.getnova.framework.core.Converter;
-import net.getnova.framework.core.Validatable;
+import net.getnova.framework.core.utils.ValidationUtils;
 import org.springframework.data.repository.CrudRepository;
 
 @RequiredArgsConstructor
@@ -29,7 +29,7 @@ public abstract class AbstractCrudService<D, I, M, P> implements CrudService<D, 
 
   @Override
   public D save(final D dto) {
-    Validatable.validate(dto);
+    ValidationUtils.validate(dto);
 
     return this.converter.toDto(
       this.repository.save(

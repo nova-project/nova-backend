@@ -1,8 +1,8 @@
 package net.getnova.framework.core.service;
 
 import net.getnova.framework.core.Converter;
-import net.getnova.framework.core.Validatable;
 import net.getnova.framework.core.exception.NotFoundException;
+import net.getnova.framework.core.utils.ValidationUtils;
 import org.springframework.data.repository.CrudRepository;
 
 public abstract class AbstractIdCrudService<D, I, M, P> extends AbstractCrudService<D, I, M, P> {
@@ -40,7 +40,7 @@ public abstract class AbstractIdCrudService<D, I, M, P> extends AbstractCrudServ
 
   @Override
   public D save(final I id, final D dto) {
-    Validatable.validate(dto);
+    ValidationUtils.validate(dto);
 
     final P pId = this.idConverter.toModel(id);
 
