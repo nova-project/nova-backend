@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" factoryName="Gradle" name="Clean Build" type="GradleRunConfiguration">
+  <configuration default="false" factoryName="Gradle" name="Clean Assemble" type="GradleRunConfiguration">
     <DebugAllEnabled>false</DebugAllEnabled>
     <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
@@ -14,7 +14,7 @@
       <option name="taskNames">
         <list>
           <option value="clean"/>
-          <option value="build"/>
+          <option value="assemble"/>
         </list>
       </option>
       <option name="vmOptions" value=""/>
