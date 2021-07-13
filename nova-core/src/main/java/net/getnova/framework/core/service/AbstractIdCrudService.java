@@ -7,8 +7,8 @@ import org.springframework.data.repository.CrudRepository;
 
 public abstract class AbstractIdCrudService<D, I, M, P> extends AbstractCrudService<D, I, M, P> {
 
-  private final String name;
-  private final Converter<P, I> idConverter;
+  protected final String name;
+  protected final Converter<P, I> idConverter;
 
   public AbstractIdCrudService(
     final String name,

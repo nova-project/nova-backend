@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 public abstract class AbstractSmallCommonIdCrudService<D, S, I, M, SM>
   extends AbstractSmallCrudService<D, S, I, M, SM, I> {
 
-  private final String name;
+  protected final String name;
 
   public AbstractSmallCommonIdCrudService(
     final String name,

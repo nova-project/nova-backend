@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AbstractCrudController<D, I> implements CrudController<D, I> {
 
-  private final CrudService<D, I> service;
+  protected final CrudService<D, I> service;
 
   @Override
   @Transactional(readOnly = true)
